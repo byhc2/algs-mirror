@@ -11,13 +11,13 @@ class Allocator
 {
 
 public:
-    typedef size_t      size_type;
-    typedef ptrdiff_t   difference_type;
-    typedef Tp*        pointer;
-    typedef const Tp*  const_pointer;
-    typedef Tp&        reference;
-    typedef const Tp&  const_reference;
-    typedef Tp         value_type;
+    typedef size_t    size_type;
+    typedef ptrdiff_t difference_type;
+    typedef Tp*       pointer;
+    typedef const Tp* const_pointer;
+    typedef Tp&       reference;
+    typedef const Tp& const_reference;
+    typedef Tp        value_type;
 
     //这里需要单独声明一个struct
     //使容器层在使用这个allocator的时候
@@ -72,6 +72,11 @@ public:
     {
         //new (p) Tp(val);
         new (p) (val); //FIXME 试试这样行不行
+    }
+
+    void deconstruct(pointer p)
+    {
+        p->~Tp();
     }
 };
 
