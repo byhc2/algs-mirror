@@ -1,11 +1,11 @@
 #ifndef __ALGSTL_MEMORY_H__
 #define __ALGSTL_MEMORY_H__
 
-namespace algstl
+namespace Algstl
 {
 
 template <typename _Tp>
-class allocator
+class Allocator
 {
 
 public:
@@ -55,7 +55,12 @@ public:
         {
             return p;
         }
-        throw bad_alloc;
+        throw bad_alloc();
+    }
+
+    void deallocate(pointer p, size_type n)
+    {
+        free(p);
     }
 };
 
