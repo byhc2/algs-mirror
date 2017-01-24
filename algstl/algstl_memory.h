@@ -3,11 +3,11 @@
 
 #include <new>
 
-namespace algstl
+namespace Algstl
 {
 
-template <typename Tp>
-class allocator
+template <typename _Tp>
+class Allocator
 {
 
 public:
