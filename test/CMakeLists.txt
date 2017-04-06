@@ -13,3 +13,5 @@ add_executable(test4 test4.cpp)
 target_link_libraries(test4 algs)
 
 add_executable(sizeof sizeof.cpp)
+
+add_executable(test5 test5.cpp)

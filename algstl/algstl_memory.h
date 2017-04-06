@@ -2,6 +2,8 @@
 #define __ALGSTL_MEMORY_H__
 
 #include <new>
+#include <cstddef>
+#include <cstdlib>
 
 namespace Algstl
 {
@@ -11,13 +13,13 @@ class Allocator
 {
 
 public:
-    typedef size_t    size_type;
-    typedef ptrdiff_t difference_type;
-    typedef Tp*       pointer;
-    typedef const Tp* const_pointer;
-    typedef Tp&       reference;
-    typedef const Tp& const_reference;
-    typedef Tp        value_type;
+    typedef size_t     size_type;
+    typedef ptrdiff_t  difference_type;
+    typedef _Tp*       pointer;
+    typedef const _Tp* const_pointer;
+    typedef _Tp&       reference;
+    typedef const _Tp& const_reference;
+    typedef _Tp        value_type;
 
     //这里需要单独声明一个struct
     //使容器层在使用这个allocator的时候
@@ -27,13 +29,13 @@ public:
     //可以通过rebind来得到list_node的allocator
     template <typename Tp1> struct rebind
     {
-        typedef allocator<Tp1> other;
+        typedef Allocator<Tp1> other;
     };
 
-    allocator() = default;
-    allocator(const allocator &) {}
-    template <typename Tp1> allocator(const allocator<Tp1> &) {}
-    ~allocator() {}
+    Allocator() = default;
+    Allocator(const Allocator &) {}
+    template <typename Tp1> Allocator(const Allocator<Tp1> &) {}
+    ~Allocator() {}
 
     pointer address(reference x) const
     {
@@ -45,19 +47,19 @@ public:
         return &x;
     }
 
-    Tp *allocate(size_type n)
+    pointer allocate(size_type n)
     {
         if (n == 0)
         {
             return 0;
         }
 
-        void *p = malloc(n * sizeof(Tp));
+        void *p = malloc(n * sizeof(value_type));
         if (p)
         {
-            return p;
+            return static_cast<pointer>(p);
         }
-        throw bad_alloc();
+        throw std::bad_alloc();
     }
 
     void deallocate(pointer p, size_type n)
@@ -68,15 +70,15 @@ public:
         free(p);
     }
 
-    void construct(pointer p, const Tp &val)
+    void construct(pointer p, const value_type &val)
     {
-        //new (p) Tp(val);
-        new (p) (val); //FIXME 试试这样行不行
+        new (p) value_type(val);
+        //new (p) (val); //FIXME 试试这样行不行
     }
 
     void deconstruct(pointer p)
     {
-        p->~Tp();
+        p->~value_type();
     }
 };
 
