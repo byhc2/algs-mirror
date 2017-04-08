@@ -11,10 +11,14 @@ int main(int argc, char *argv[])
     lst1.push_back(3);
     lst1.push_back(5);
 
-    for (auto it = lst1.begin(); it != lst1.end(); ++it)
+    auto it = lst1.begin();
+
+#if 0
+    for (Algstl::List<int>::Iterator it = lst1.begin(); it != lst1.end(); ++it)
     {
-        cout << *it << endl;
+        //cout << *it << endl;
     }
+#endif
 
     return 0;
 }

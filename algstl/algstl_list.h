@@ -3,6 +3,7 @@
 
 //双向链表
 
+#include <iostream>
 #include "algstl_memory.h"
 
 namespace Algstl
@@ -12,8 +13,8 @@ template<typename Tp>
 class _ListNode
 {
 public:
-    _ListNode *next;
-    _ListNode *prev;
+    _ListNode<Tp> *next;
+    _ListNode<Tp> *prev;
     Tp data;
 };
 
@@ -21,16 +22,20 @@ template<typename Tp>
 class ListIterator
 {
 public:
-    ListIterator(const _ListNode<Tp> *p): _p(p) {}
+    typedef _ListNode<Tp> _NodeType;
+    ListIterator(_NodeType *&p): _p(p)
+    {
+        std::cout << "hello" << std::endl;
+    }
     ListIterator &operator++() //前置自增，返回左值
     {
         _p = _p->next;
-        return _p;
+        return *this;
     }
 
     ListIterator operator++(int) //后置自增，返回右值
     {
-        _ListNode<Tp> *tmp = _p;
+        _NodeType *tmp = _p;
         _p = _p->next;
 
         return tmp;
@@ -41,7 +46,7 @@ public:
         return _p->data;
     }
 
-    _ListNode<Tp> *_p;
+    _NodeType *_p;
 };
 
 template<typename Tp>
@@ -69,12 +74,14 @@ public:
 
     Iterator begin()
     {
-        return head->next;
+        //return (_NodeType *)((_NodeType *)head)->next;
+        //return (_NodeType *)head;
+        return Iterator(head);
     }
 
     Iterator end()
     {
-        return head; //返回head自己
+        return Iterator(head);
     }
 
     void push_back(const value_type &val)
