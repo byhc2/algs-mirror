@@ -23,10 +23,7 @@ class ListIterator
 {
 public:
     typedef _ListNode<Tp> _NodeType;
-    ListIterator(_NodeType *&p): _p(p)
-    {
-        std::cout << "hello" << std::endl;
-    }
+    ListIterator(_NodeType *&p): _p(p) {}
     ListIterator &operator++() //前置自增，返回左值
     {
         _p = _p->next;
@@ -35,7 +32,7 @@ public:
 
     ListIterator operator++(int) //后置自增，返回右值
     {
-        _NodeType *tmp = _p;
+        Tp *tmp = _p;
         _p = _p->next;
 
         return tmp;
@@ -46,7 +43,7 @@ public:
         return _p->data;
     }
 
-    _NodeType *_p;
+    _ListNode<Tp> *_p;
 };
 
 template<typename Tp>
@@ -63,7 +60,7 @@ public:
     typedef Alloc _Allocator;
     typedef _ListNode<Tp> _NodeType;
     typedef typename _Allocator::template rebind<_NodeType>::other _NodeAllocator;
-    typedef ListIterator<_NodeType> Iterator;
+    typedef ListIterator<value_type> Iterator;
 
     List()
     {
@@ -74,14 +71,12 @@ public:
 
     Iterator begin()
     {
-        //return (_NodeType *)((_NodeType *)head)->next;
-        //return (_NodeType *)head;
-        return Iterator(head);
+        return head->next;
     }
 
     Iterator end()
     {
-        return Iterator(head);
+        return head;
     }
 
     void push_back(const value_type &val)
@@ -97,6 +92,7 @@ public:
     }
 private:
     _NodeType *head; //指向头节点的指针
+    //_ListNode<Tp> *head; //指向头节点的指针
     _NodeAllocator alloc;
 };
 
