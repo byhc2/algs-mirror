@@ -5,21 +5,28 @@
 #include <cstddef>
 #include <cstdlib>
 
-namespace Algstl
+//负责处理内存分配、构造、析构等事宜
+
+namespace algstl
 {
 
-template <typename _Tp>
+template<typename _Tp> inline void destroy(_Tp *p)
+{
+    p->~_Tp();
+}
+
+template<typename _Tp>
 class Allocator
 {
 
 public:
-    typedef size_t     size_type;
-    typedef ptrdiff_t  difference_type;
-    typedef _Tp*       pointer;
-    typedef const _Tp* const_pointer;
-    typedef _Tp&       reference;
-    typedef const _Tp& const_reference;
-    typedef _Tp        value_type;
+    typedef size_t     SizeType;
+    typedef ptrdiff_t  DifferenceType;
+    typedef _Tp*       Pointer;
+    typedef const _Tp* ConstPointer;
+    typedef _Tp&       Reference;
+    typedef const _Tp& ConstReference;
+    typedef _Tp        ValueType;
 
     //这里需要单独声明一个struct
     //使容器层在使用这个allocator的时候
@@ -27,42 +34,42 @@ public:
     //比如list容器，数据本身是存放在list_node中的
     //所以在知道了数据本身的allocator之后
     //可以通过rebind来得到list_node的allocator
-    template <typename Tp1> struct rebind
+    template<typename _Tp1> struct Rebind
     {
-        typedef Allocator<Tp1> other;
+        typedef Allocator<_Tp1> Other;
     };
 
     Allocator() = default;
     Allocator(const Allocator &) {}
-    template <typename Tp1> Allocator(const Allocator<Tp1> &) {}
+    template<typename _Tp1> Allocator(const Allocator<_Tp1> &) {}
     ~Allocator() {}
 
-    pointer address(reference x) const
+    Pointer address(Reference x) const
     {
         return &x;
     }
 
-    const_pointer address(const_reference x) const
+    ConstPointer address(ConstReference x) const
     {
         return &x;
     }
 
-    pointer allocate(size_type n)
+    Pointer allocate(SizeType n)
     {
         if (n == 0)
         {
             return 0;
         }
 
-        void *p = malloc(n * sizeof(value_type));
+        void *p = malloc(n * sizeof(ValueType));
         if (p)
         {
-            return static_cast<pointer>(p);
+            return static_cast<Pointer>(p);
         }
         throw std::bad_alloc();
     }
 
-    void deallocate(pointer p, size_type n)
+    void deallocate(Pointer p, SizeType n=1)
     {
         //因为分配的时候调用的是malloc
         //操作系统已经记录了n的信息
@@ -70,15 +77,14 @@ public:
         free(p);
     }
 
-    void construct(pointer p, const value_type &val)
+    void construct(Pointer p, const ValueType &val)
     {
-        new (p) value_type(val);
-        //new (p) (val); //FIXME 试试这样行不行
+        new (p) ValueType(val);
     }
 
-    void deconstruct(pointer p)
+    void deconstruct(Pointer p)
     {
-        p->~value_type();
+        p->~ValueType();
     }
 };
 

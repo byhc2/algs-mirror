@@ -5,16 +5,13 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    Algstl::List<int> lst1;
+    algstl::List<int> lst1;
 
-    lst1.push_back(2);
-    lst1.push_back(3);
-    lst1.push_back(5);
+    lst1.pushBack(2);
+    lst1.pushBack(3);
+    lst1.pushBack(5);
 
-    auto it = lst1.begin();
-    *it;
-
-    for (Algstl::List<int>::Iterator it = lst1.begin(); it != lst1.end(); ++it)
+    for (algstl::List<int>::Iterator it = lst1.begin(); it != lst1.end(); ++it)
     {
         cout << *it << endl;
     }

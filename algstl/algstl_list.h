@@ -3,97 +3,115 @@
 
 //双向链表
 
-#include <iostream>
 #include "algstl_memory.h"
 
-namespace Algstl
+namespace algstl
 {
 
-template<typename Tp>
-class _ListNode
+template<typename _Tp>
+class ListNode
 {
 public:
-    _ListNode<Tp> *next;
-    _ListNode<Tp> *prev;
-    Tp data;
+    ListNode<_Tp>(const _Tp &&val): data_(val) {}
+    ListNode<_Tp>(const _Tp &val): data_(val) {}
+
+    ListNode<_Tp> *next_;
+    ListNode<_Tp> *prev_;
+    _Tp data_;
 };
 
-template<typename Tp>
+template<typename _Tp>
 class ListIterator
 {
 public:
-    typedef _ListNode<Tp> _NodeType;
-    ListIterator(_NodeType *&p): _p(p) {}
+    typedef ListNode<_Tp> NodeType;
+    ListIterator(NodeType *&p): p_(p) {}
     ListIterator &operator++() //前置自增，返回左值
     {
-        _p = _p->next;
+        p_ = p_->next_;
         return *this;
     }
 
     ListIterator operator++(int) //后置自增，返回右值
     {
-        Tp *tmp = _p;
-        _p = _p->next;
+        NodeType *tmp = p_;
+        p_ = p_->next;
 
         return tmp;
     }
 
-    Tp &operator*()
+    _Tp &operator*()
     {
-        return _p->data;
+        return p_->data_;
     }
 
-    _ListNode<Tp> *_p;
+    NodeType *p_;
 };
 
-template<typename Tp>
-bool operator!=(const ListIterator<Tp> &lhs, const ListIterator<Tp> &rhs)
+template<typename _Tp>
+bool operator!=(const ListIterator<_Tp> &lhs, const ListIterator<_Tp> &rhs)
 {
-    return lhs._p != rhs._p;
+    return lhs.p_ != rhs.p_;
 }
 
-template<typename Tp, typename Alloc=Allocator<Tp>>
+template<typename _Tp, typename _Alloc=Allocator<_Tp>>
 class List
 {
 public:
-    typedef Tp value_type;
-    typedef Alloc _Allocator;
-    typedef _ListNode<Tp> _NodeType;
-    typedef typename _Allocator::template rebind<_NodeType>::other _NodeAllocator;
-    typedef ListIterator<value_type> Iterator;
+    typedef _Tp ValueType;
+    typedef _Alloc Allocator;
+    typedef ListNode<ValueType> NodeType;
+    typedef typename Allocator::template Rebind<NodeType>::Other NodeAllocator;
+    typedef ListIterator<ValueType> Iterator;
 
     List()
     {
-        head = alloc.allocate(1);
-        head->next = head;
-        head->prev = head;
+        head_ = alloc_.allocate(1);
+        head_->next_ = head_;
+        head_->prev_ = head_;
+    }
+
+    ~List()
+    {
+        auto cur = head_->next_;
+        while (cur != head_)
+        {
+            //摘出当前节点
+            NodeType *tmp = cur;
+            cur = cur->next_;
+
+            alloc_.deconstruct(tmp);
+            alloc_.deallocate(tmp);
+        }
+
+        alloc_.deconstruct(head_);
+        alloc_.deallocate(head_);
     }
 
     Iterator begin()
     {
-        return head->next;
+        return head_->next_;
     }
 
     Iterator end()
     {
-        return head;
+        return head_;
     }
 
-    void push_back(const value_type &val)
+    void pushBack(const ValueType &val)
     {
-        _NodeType *p = alloc.allocate(1);
-        p->data = val;
-        _NodeType *prev = head->prev;
+        NodeType *p = alloc_.allocate(1);
+        alloc_.construct(p, val);
+        NodeType *prev = head_->prev_;
 
-        p->prev = prev;
-        p->next = head;
-        head->prev = p;
-        prev->next = p;
+        p->prev_ = prev;
+        p->next_ = head_;
+        head_->prev_ = p;
+        prev->next_ = p;
     }
 private:
-    _NodeType *head; //指向头节点的指针
-    //_ListNode<Tp> *head; //指向头节点的指针
-    _NodeAllocator alloc;
+    NodeType *head_; //指向头节点的指针
+    NodeAllocator alloc_;
 };
 
 }
