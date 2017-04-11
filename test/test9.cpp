@@ -7,7 +7,12 @@ using namespace algs;
 int main(int argc, char *argv[])
 {
     StdRandom::initialize();
-    cout << StdRandom::uniform(1000) << endl;
 
+    int i = 0;
+    while (i < 100)
+    {
+        cout << StdRandom::gaussian() << endl;
+        ++i;
+    }
     return 0;
 }

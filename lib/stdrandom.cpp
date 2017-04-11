@@ -1,44 +1,59 @@
+#include <cstdlib>
+#include <sys/random.h>
+#include <ctime>
+#include <cmath>
 #include "stdrandom.h"
 
 namespace algs
 {
 
-std::random_device *StdRandom::_rd = 0;
-
-void StdRandom::initialize(long seed)
+Void StdRandom::initialize(long seed)
 {
-    if (!_rd)
-    {
-        _rd = new std::random_device;
-    }
+    unsigned short s[7] = {0x12, 0x34, 0x56, 0x78, 0x90, 0x12, 0x34};
+    getrandom(s, sizeof(unsigned short) * 7, 0);
+    lcong48(s);
+    return;
 }
 
-double StdRandom::random()
+Double StdRandom::random()
 {
-    initialize();
-    return static_cast<double>((*_rd)()) / _rd->max();
+    return drand48();
 }
 
-int StdRandom::uniform(int N)
+Int StdRandom::uniform(Int N)
 {
-    initialize();
-    //转化为long是为了避免结果出现负数
-    //_rd()返回unsigned类型，扩展成long时
-    //先按无符号类型进行位扩展，再转换为long
-    //因此结果一定是正数
-    return static_cast<long>((*_rd)()) % N;
+    return lrand48() % N;
 }
 
-int StdRandom::uniform(int lo, int hi)
+Int StdRandom::uniform(Int lo, Int hi)
 {
-    initialize();
-    return static_cast<long>((*_rd)()) % (hi - lo) + lo;
+    return lrand48() % (hi - lo) + lo;
 }
 
-double StdRandom::uniform(double lo, double hi)
+Double StdRandom::uniform(Double lo, Double hi)
 {
-    initialize();
     return random() * (hi - lo) + lo;
+}
+
+Bool StdRandom::bernoulli(Double p)
+{
+    return random() < p ? true : false;
+}
+
+//采用极坐标形式的Box-Muller变换
+Double StdRandom::gaussian()
+{
+    double x, y, r;
+
+    do
+    {
+        x = random() * 2 - 1;
+        y = random() * 2 - 1;
+        r = x * x + y * y;
+    }
+    while (r > 1.0 || r == 0); //去掉不合理的随机点
+
+    return x * sqrt(-2.0 * log(r) / r);
 }
 
 }
