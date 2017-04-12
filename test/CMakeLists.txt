@@ -29,3 +29,9 @@ target_link_libraries(test10 algs)
 
 add_executable(test11 test11.cpp)
 target_link_libraries(test11 algs)
+
+add_executable(test12 test12.cpp)
+target_link_libraries(test12 algs)
+
+add_executable(test13 test13.cpp)
+target_link_libraries(test13 algs)

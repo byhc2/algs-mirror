@@ -24,7 +24,7 @@ public:
     template<Int n>
     static Int discrete(Double (&a)[n])
     {
-        Double b[n + 1];
+        Double b[n + 1] = {0.0};
         memcpy(&b[1], a, n * sizeof(Double));
 
         for (auto i = 1; i < n + 1; ++i)
@@ -42,9 +42,22 @@ public:
                 return i;
             }
         }
-
         return -1; //应该不会到这里
     }
+
+    template<Int n>
+    static void shuffle(Double (&a)[n])
+    {
+        //Fisher-Yates算法
+        for (int i = n - 1; i >= 0; --i)
+        {
+            auto j = StdRandom::uniform(i + 1);
+            Double tmp = a[i];
+            a[i] = a[j];
+            a[j] = tmp;
+        }
+    }
+
 private:
 };
 
