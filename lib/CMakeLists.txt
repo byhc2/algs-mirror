@@ -1,5 +1,6 @@
 set(algs_src
         stdrandom.cpp
+        stdstring.cpp
    )
 
 add_library(algs SHARED ${algs_src})
