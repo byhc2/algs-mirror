@@ -8,6 +8,9 @@ namespace algs
 
 class String
 {
+friend String operator+(const Char *lhs, const String &rhs);
+friend String operator+(const String &lhs, const Char *rhs);
+friend String operator+(const String &lhs, const String &rhs);
 public:
     struct StringBuf
     {
@@ -19,7 +22,8 @@ public:
 
     typedef StringBuf::SizeType SizeType;
 
-    String() = default;
+    ~String();
+    String();
     String(const String &s);
     String(String &&s);
     String(const Char *s);
@@ -27,9 +31,14 @@ public:
 
     String &operator=(const String &s);
 
-    const Char *empty_ = ""; //用作空字符串
+    constexpr static Char empty_[] = ""; //用作空字符串
 
-    inline const Char *c_str()
+    inline const SizeType size() const
+    {
+        return buf_->size_;
+    }
+
+    inline const Char *c_str() const
     {
         if (buf_)
         {
@@ -42,14 +51,27 @@ public:
     }
 
 private:
+    void set_buf(StringBuf *b)
+    {
+        if (buf_)
+        {
+            if (!--buf_->ref_count_)
+            {
+                free(buf_->buf_);
+                delete buf_;
+            }
+        }
+
+        buf_ = b;
+        ++buf_->ref_count_;
+    }
+
     StringBuf *buf_ = nullptr;
 };
 
-#if 0
 String operator+(const Char *lhs, const String &rhs);
 String operator+(const String &lhs, const Char *rhs);
 String operator+(const String &lhs, const String &rhs);
-#endif
 
 }
 
