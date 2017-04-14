@@ -22,10 +22,14 @@ int main(int argc, char *argv[])
 
     String e = "Hello world";
 
+    //cout << e.size() << endl;
+
     cout << ("Hello " + e).c_str() << endl;
-    cout << (e + "Hello ").c_str() << endl;
-    cout << (e + "Hello " + e).c_str() << endl;
+    //cout << ("Hello " + e).size() << endl;
+    cout << (e + "Hello ").c_str() << "x" << endl;
+    cout << (e + e).c_str() << endl;
     cout << ("Hello " + e + " Hello").c_str() << endl;
+    cout << (e + "Hello " + e).c_str() << endl;
 
     return 0;
 }

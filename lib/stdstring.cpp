@@ -51,6 +51,7 @@ String::String(const Char *s)
 {
     assert(buf_ == nullptr);
     buf_ = new String::StringBuf;
+    //strlen不包括结尾的\0
     buf_->size_ = strlen(s);
     buf_->buf_ = static_cast<Char *>(malloc(buf_->size_ + 1));
     memcpy(buf_->buf_, s, buf_->size_);
@@ -63,7 +64,7 @@ String::String(const Char *s, SizeType n)
     assert(buf_ == nullptr);
     buf_ = new String::StringBuf;
     buf_->size_ = n;
-    buf_->buf_ = static_cast<Char *>(malloc(buf_->size_));
+    buf_->buf_ = static_cast<Char *>(malloc(buf_->size_ + 1));
     memcpy(buf_->buf_, s, n);
     buf_->ref_count_ = 1;
     buf_->buf_[n] = '\0';
@@ -96,6 +97,7 @@ String &String::operator=(const String &s)
 
 String operator+(const Char *lhs, const String &rhs)
 {
+    //std::cout << "in " << __LINE__ << std::endl;
     auto lhs_size = strlen(lhs);
 
     String ret;
@@ -106,7 +108,7 @@ String operator+(const Char *lhs, const String &rhs)
     memcpy(p->buf_, lhs, lhs_size);
     memcpy(p->buf_ + lhs_size, rhs.buf_->buf_, rhs.size());
     p->buf_[new_size] = '\0';
-    p->size_ = new_size - 1;
+    p->size_ = new_size;
     p->ref_count_ = 0;
 
     ret.set_buf(p);
@@ -116,6 +118,7 @@ String operator+(const Char *lhs, const String &rhs)
 
 String operator+(const String &lhs, const Char *rhs)
 {
+    //std::cout << "in " << __LINE__ << std::endl;
     auto rhs_size = strlen(rhs);
 
     String ret;
@@ -126,7 +129,7 @@ String operator+(const String &lhs, const Char *rhs)
     memcpy(p->buf_, lhs.buf_->buf_, lhs.size());
     memcpy(p->buf_ + lhs.size(), rhs, rhs_size);
     p->buf_[new_size] = '\0';
-    p->size_ = new_size - 1;
+    p->size_ = new_size;
     p->ref_count_ = 0;
 
     ret.set_buf(p);
@@ -136,6 +139,7 @@ String operator+(const String &lhs, const Char *rhs)
 
 String operator+(const String &lhs, const String &rhs)
 {
+    //std::cout << "in " << __LINE__ << std::endl;
     String ret;
     auto *p = new String::StringBuf;
     auto new_size = lhs.size() + rhs.size();

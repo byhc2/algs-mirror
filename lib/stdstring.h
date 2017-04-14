@@ -15,6 +15,7 @@ public:
     struct StringBuf
     {
         typedef Uint SizeType;
+        //真正存储字符串的内存指针，每个字符串，以\0结尾
         Char *buf_ = nullptr;
         Int ref_count_;
         SizeType size_;
