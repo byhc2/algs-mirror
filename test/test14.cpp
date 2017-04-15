@@ -6,7 +6,6 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-#if 0
     String a;
     cout << a.c_str() << endl;
 
@@ -18,14 +17,13 @@ int main(int argc, char *argv[])
 
     String d(b);
     cout << d.c_str() << endl;
-#endif
 
     String e = "Hello world";
 
-    //cout << e.size() << endl;
+    cout << e.size() << endl;
 
     cout << ("Hello " + e).c_str() << endl;
-    //cout << ("Hello " + e).size() << endl;
+    cout << ("Hello " + e).size() << endl;
     cout << (e + "Hello ").c_str() << "x" << endl;
     cout << (e + e).c_str() << endl;
     cout << ("Hello " + e + " Hello").c_str() << endl;
