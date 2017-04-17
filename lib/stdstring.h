@@ -6,6 +6,95 @@
 namespace algs
 {
 
+template<typename _Alloc=Allocator<Char>>
+class String
+{
+friend String operator+(const Char *lhs, const String &rhs);
+friend String operator+(const String &lhs, const Char *rhs);
+friend String operator+(const String &lhs, const String &rhs);
+
+public:
+    //实际存储字符串的缓冲区类
+    //维护引用计数等
+    template<typename _Alloc>
+    struct StringBuf
+    {
+    public:
+        typedef Uint SizeType;
+        typedef _Alloc Allocator;
+        Char *buf_;
+        Char *mstart_;
+        Char *mend_;
+        Char *mcapacity_;
+        Int ref_count_;
+
+        inline SizeType size() const
+        {
+            return mend_ - mstart_;
+        }
+
+        inline Int incr()
+        {
+            return ++ref_count_;
+        }
+
+        inline Int decr()
+        {
+            return --ref_count_;
+        }
+
+        inline SizeType capacity() const
+        {
+            return mcapacity_ - mstart_;
+        }
+
+        StringBuf():
+            buf_(nullptr),
+            mstart_(nullptr),
+            mend_(nullptr),
+            mcapacity_(nullptr),
+            ref_count_(0) {}
+
+        StringBuf(SizeType n): StringBuf()
+        {
+            buf_ = buf_allocator.allocator(n);
+            mstart_ = buf_;
+            mcapacity_ = buf_ + n;
+        }
+
+        void setBuf(const Char *buf, Uint n)
+        {
+            assert(n < capacity());
+            assert(buf_ != nullptr);
+            memcpy(buf_, buf, n);
+        }
+
+    private:
+        Allocator buf_allocator;
+    };
+
+    String(): sbuf_(nullptr)
+    {
+        sbuf_ = new StringBuf;
+        assert(sbuf_); //暂时如此
+        sbuf_->incr();
+    }
+
+    String(const String &rhs)
+    {
+        sbuf_ = rhs.sbuf_;
+        sbuf_->incr(); //增加引用计数
+    }
+
+    ~String()
+    {
+    }
+
+private:
+    StringBuf *sbuf_;
+};
+
+#if 0
 class String
 {
 friend String operator+(const Char *lhs, const String &rhs);
@@ -69,6 +158,7 @@ private:
 
     StringBuf *buf_ = nullptr;
 };
+#endif
 
 String operator+(const Char *lhs, const String &rhs);
 String operator+(const String &lhs, const Char *rhs);
