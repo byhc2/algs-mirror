@@ -7,6 +7,7 @@
 namespace algs
 {
 
+#if 0
 constexpr Char String::empty_[];
 
 String::~String()
@@ -155,5 +156,6 @@ String operator+(const String &lhs, const String &rhs)
 
     return ret;
 }
+#endif
 
 }

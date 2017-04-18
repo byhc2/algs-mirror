@@ -1,27 +1,31 @@
 #ifndef __ALGS_STDSTRING__
 #define __ALGS_STDSTRING__
 
+#include <cassert>
+#include <cstring>
 #include "algs_type.h"
+#include "algstl_memory.h"
 
 namespace algs
 {
 
-template<typename _Alloc=Allocator<Char>>
-class String
+template<typename _Alloc=algstl::Allocator<Char>>
+class StringBase
 {
+#if 0
 friend String operator+(const Char *lhs, const String &rhs);
 friend String operator+(const String &lhs, const Char *rhs);
 friend String operator+(const String &lhs, const String &rhs);
+#endif
 
 public:
     //实际存储字符串的缓冲区类
     //维护引用计数等
-    template<typename _Alloc>
+    template<typename _BufAlloc>
     struct StringBuf
     {
-    public:
         typedef Uint SizeType;
-        typedef _Alloc Allocator;
+        typedef _BufAlloc Allocator;
         Char *buf_;
         Char *mstart_;
         Char *mend_;
@@ -48,16 +52,19 @@ public:
             return mcapacity_ - mstart_;
         }
 
-        StringBuf():
-            buf_(nullptr),
-            mstart_(nullptr),
-            mend_(nullptr),
-            mcapacity_(nullptr),
-            ref_count_(0) {}
-
-        StringBuf(SizeType n): StringBuf()
+        ~StringBuf()
         {
-            buf_ = buf_allocator.allocator(n);
+            if (buf_)
+            {
+                buf_allocator.deallocate(buf_, capacity());
+            }
+        }
+
+        StringBuf(SizeType n=1)
+        {
+            n += 8; //本来8字节圆整只需要加7，但是考虑到c_str方法一定要多留出一个字节的空间放结束符，所以这里多分配点
+            n &= 0xfffffff8; //8字节圆整对齐
+            buf_ = buf_allocator.allocate(n);
             mstart_ = buf_;
             mcapacity_ = buf_ + n;
         }
@@ -65,34 +72,101 @@ public:
         void setBuf(const Char *buf, Uint n)
         {
             assert(n < capacity());
-            assert(buf_ != nullptr);
-            memcpy(buf_, buf, n);
+            assert(buf_);
+            mend_ = static_cast<Char *>(mempcpy(buf_, buf, n));
         }
 
-    private:
+        private:
         Allocator buf_allocator;
     };
 
-    String(): sbuf_(nullptr)
+    typedef StringBuf<_Alloc> BufferType;
+    typedef typename BufferType::SizeType SizeType;
+
+    StringBase(): sbuf_(nullptr)
     {
-        sbuf_ = new StringBuf;
+        sbuf_ = new BufferType(1);
         assert(sbuf_); //暂时如此
+        sbuf_->setBuf("\0", 1);
         sbuf_->incr();
     }
 
-    String(const String &rhs)
+    StringBase(const StringBase &rhs)
     {
         sbuf_ = rhs.sbuf_;
         sbuf_->incr(); //增加引用计数
     }
 
-    ~String()
+    StringBase(const Char *rhs)
     {
+        SizeType n = strlen(rhs);
+        sbuf_ = new BufferType(n);
+        assert(sbuf_);
+        sbuf_->setBuf(rhs, n);
+        sbuf_->incr();
+    }
+
+    StringBase(const Char *rhs, SizeType n)
+    {
+        sbuf_ = new BufferType(n);
+        assert(!sbuf_);
+        sbuf_->setBuf(rhs, n);
+    }
+
+    StringBase &operator=(const StringBase &rhs)
+    {
+        if (this == &rhs)
+        {
+            return *this;
+        }
+
+        if (!sbuf_.decr())
+        {
+            delete sbuf_;
+        }
+
+        sbuf_ = rhs.sbuf_;
+        sbuf_->incr();
+    }
+
+    StringBase &operator=(const Char *rhs)
+    {
+        if (!sbuf_.decr())
+        {
+            delete sbuf_;
+        }
+
+        SizeType n = strlen(rhs);
+        sbuf_ = new BufferType(n);
+        assert(sbuf_);
+        sbuf_->setBuf(rhs, n);
+        sbuf_->incr();
+    }
+
+    ~StringBase()
+    {
+        if (!sbuf_->decr())
+        {
+            delete sbuf_;
+        }
+    }
+
+    const Char *c_str() const
+    {
+        sbuf_->mend_ = '\0';
+        return sbuf_->mstart_;
+    }
+
+    const SizeType size() const
+    {
+        return sbuf_->size();
     }
 
 private:
-    StringBuf *sbuf_;
+    BufferType *sbuf_;
 };
+
+typedef StringBase<> String;
 
 #if 0
 class String
@@ -160,9 +234,11 @@ private:
 };
 #endif
 
+#if 0
 String operator+(const Char *lhs, const String &rhs);
 String operator+(const String &lhs, const Char *rhs);
 String operator+(const String &lhs, const String &rhs);
+#endif
 
 }
 

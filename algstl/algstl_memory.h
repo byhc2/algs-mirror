@@ -4,6 +4,7 @@
 #include <new>
 #include <cstddef>
 #include <cstdlib>
+#include "algs_type.h"
 
 //负责处理内存分配、构造、析构等事宜
 
@@ -20,7 +21,7 @@ class Allocator
 {
 
 public:
-    typedef size_t     SizeType;
+    typedef Uint       SizeType;
     typedef ptrdiff_t  DifferenceType;
     typedef _Tp*       Pointer;
     typedef const _Tp* ConstPointer;
