@@ -66,14 +66,15 @@ public:
             n &= 0xfffffff8; //8字节圆整对齐
             buf_ = buf_allocator.allocate(n);
             mstart_ = buf_;
+            mend_ = mstart_;
             mcapacity_ = buf_ + n;
         }
 
-        void setBuf(const Char *buf, Uint n)
+        void append(const Char *buf, Uint n)
         {
-            assert(n < capacity());
+            assert(size() + n < capacity());
             assert(buf_);
-            mend_ = static_cast<Char *>(mempcpy(buf_, buf, n));
+            mend_ = static_cast<Char *>(mempcpy(mend_, buf, n));
         }
 
         private:
@@ -87,7 +88,7 @@ public:
     {
         sbuf_ = new BufferType(1);
         assert(sbuf_); //暂时如此
-        sbuf_->setBuf("\0", 1);
+        sbuf_->append("\0", 1);
         sbuf_->incr();
     }
 
@@ -102,7 +103,7 @@ public:
         SizeType n = strlen(rhs);
         sbuf_ = new BufferType(n);
         assert(sbuf_);
-        sbuf_->setBuf(rhs, n);
+        sbuf_->append(rhs, n);
         sbuf_->incr();
     }
 
@@ -110,7 +111,13 @@ public:
     {
         sbuf_ = new BufferType(n);
         assert(!sbuf_);
-        sbuf_->setBuf(rhs, n);
+        sbuf_->append(rhs, n);
+    }
+
+    StringBase(SizeType n)
+    {
+        sbuf_ = new BufferType(n);
+        assert(!sbuf_);
     }
 
     StringBase &operator=(const StringBase &rhs)
@@ -139,7 +146,7 @@ public:
         SizeType n = strlen(rhs);
         sbuf_ = new BufferType(n);
         assert(sbuf_);
-        sbuf_->setBuf(rhs, n);
+        sbuf_->append(rhs, n);
         sbuf_->incr();
     }
 
@@ -162,77 +169,15 @@ public:
         return sbuf_->size();
     }
 
+    void append(const Char *rhs, SizeType n)
+    {
+        sbuf_->append(rhs, n);
+    }
+
 private:
     BufferType *sbuf_;
 };
-
 typedef StringBase<> String;
-
-#if 0
-class String
-{
-friend String operator+(const Char *lhs, const String &rhs);
-friend String operator+(const String &lhs, const Char *rhs);
-friend String operator+(const String &lhs, const String &rhs);
-public:
-    struct StringBuf
-    {
-        typedef Uint SizeType;
-        //真正存储字符串的内存指针，每个字符串，以\0结尾
-        Char *buf_ = nullptr;
-        Int ref_count_;
-        SizeType size_;
-    };
-
-    typedef StringBuf::SizeType SizeType;
-
-    ~String();
-    String();
-    String(const String &s);
-    String(String &&s);
-    String(const Char *s);
-    String(const Char *s, SizeType n);
-
-    String &operator=(const String &s);
-
-    constexpr static Char empty_[] = ""; //用作空字符串
-
-    inline const SizeType size() const
-    {
-        return buf_->size_;
-    }
-
-    inline const Char *c_str() const
-    {
-        if (buf_)
-        {
-            return buf_->buf_;
-        }
-        else
-        {
-            return empty_;
-        }
-    }
-
-private:
-    void set_buf(StringBuf *b)
-    {
-        if (buf_)
-        {
-            if (!--buf_->ref_count_)
-            {
-                free(buf_->buf_);
-                delete buf_;
-            }
-        }
-
-        buf_ = b;
-        ++buf_->ref_count_;
-    }
-
-    StringBuf *buf_ = nullptr;
-};
-#endif
 
 #if 0
 String operator+(const Char *lhs, const String &rhs);
