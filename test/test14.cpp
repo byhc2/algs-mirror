@@ -21,14 +21,15 @@ int main(int argc, char *argv[])
     String e = "Hello world";
     cout << e.size() << endl;
 
-#if 0
+    cout << "========================" << endl;
+    auto x = e + e;
+    cout << x.c_str() << endl;
+    cout << (e + e).c_str() << endl;
     cout << ("Hello " + e).c_str() << endl;
     cout << ("Hello " + e).size() << endl;
     cout << (e + "Hello ").c_str() << "x" << endl;
-    cout << (e + e).c_str() << endl;
     cout << ("Hello " + e + " Hello").c_str() << endl;
     cout << (e + "Hello " + e).c_str() << endl;
-#endif
 
     return 0;
 }

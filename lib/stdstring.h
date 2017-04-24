@@ -3,8 +3,11 @@
 
 #include <cassert>
 #include <cstring>
+#include <iostream>
 #include "algs_type.h"
 #include "algstl_memory.h"
+
+#define NDEBUG
 
 namespace algs
 {
@@ -12,11 +15,9 @@ namespace algs
 template<typename _Alloc=algstl::Allocator<Char>>
 class StringBase
 {
-#if 0
-friend String operator+(const Char *lhs, const String &rhs);
-friend String operator+(const String &lhs, const Char *rhs);
-friend String operator+(const String &lhs, const String &rhs);
-#endif
+template<typename _A> friend StringBase<_A> operator+(const Char *lhs, const StringBase<_A> &rhs);
+template<typename _A> friend StringBase<_A> operator+(const StringBase<_A> &lhs, const Char *rhs);
+template<typename _A> friend StringBase<_A> operator+(const StringBase<_A> &lhs, const StringBase<_A> &rhs);
 
 public:
     //实际存储字符串的缓冲区类
@@ -70,7 +71,7 @@ public:
             mcapacity_ = buf_ + n;
         }
 
-        void append(const Char *buf, Uint n)
+        void append(const Char *buf, SizeType n)
         {
             assert(size() + n < capacity());
             assert(buf_);
@@ -110,14 +111,14 @@ public:
     StringBase(const Char *rhs, SizeType n)
     {
         sbuf_ = new BufferType(n);
-        assert(!sbuf_);
+        assert(sbuf_);
         sbuf_->append(rhs, n);
     }
 
     StringBase(SizeType n)
     {
         sbuf_ = new BufferType(n);
-        assert(!sbuf_);
+        assert(sbuf_);
     }
 
     StringBase &operator=(const StringBase &rhs)
@@ -160,7 +161,7 @@ public:
 
     const Char *c_str() const
     {
-        sbuf_->mend_ = '\0';
+        *sbuf_->mend_ = '\0';
         return sbuf_->mstart_;
     }
 
@@ -179,11 +180,37 @@ private:
 };
 typedef StringBase<> String;
 
-#if 0
-String operator+(const Char *lhs, const String &rhs);
-String operator+(const String &lhs, const Char *rhs);
-String operator+(const String &lhs, const String &rhs);
-#endif
+template<typename _A>
+StringBase<_A> operator+(const StringBase<_A> &lhs, const StringBase<_A> &rhs)
+{
+    StringBase<_A> ret(lhs.size() + rhs.size());
+    ret.append(lhs.c_str(), lhs.size());
+    ret.append(rhs.c_str(), rhs.size());
+
+    return ret;
+}
+
+template<typename _A>
+StringBase<_A> operator+(const StringBase<_A> &lhs, const Char *rhs)
+{
+    auto rhs_size = strlen(rhs);
+    StringBase<_A> ret(lhs.size() + rhs_size);
+    ret.append(lhs.c_str(), lhs.size());
+    ret.append(rhs, rhs_size);
+
+    return ret;
+}
+
+template<typename _A>
+StringBase<_A> operator+(const Char *lhs, const StringBase<_A> &rhs)
+{
+    auto lhs_size = strlen(lhs);
+    StringBase<_A> ret(lhs_size + rhs.size());
+    ret.append(lhs, lhs_size);
+    ret.append(rhs.c_str(), rhs.size());
+
+    return ret;
+}
 
 }
 
