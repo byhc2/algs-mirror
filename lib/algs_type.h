@@ -10,5 +10,6 @@ typedef          bool Bool;
 typedef          char Char;
 typedef      unsigned Uint;
 typedef unsigned char Uchar;
+typedef unsigned long Ulong;
 
 #endif

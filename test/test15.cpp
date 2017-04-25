@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
     cout << x + 1 << endl;
 
     cout << Num::toString(x + 2) << endl;
+    cout << Num::toString(1.1) << endl;
 
     return 0;
 }

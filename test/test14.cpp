@@ -34,7 +34,13 @@ int main(int argc, char *argv[])
 
     cout << e << endl;
 
-    string aaa = "H222";
+    String aaa = "H222";
+    String bbb = aaa;
+    aaa += "aaa";
+    cout << aaa << endl;
+    cout << bbb << endl;
+    bbb += "xxx";
+    cout << bbb << endl;
 
     return 0;
 }

@@ -179,6 +179,24 @@ public:
         sbuf_->append(rhs, n);
     }
 
+    StringBase &operator+=(const StringBase &rhs)
+    {
+        auto p = new BufferType(size() + rhs.size());
+        assert(p);
+        p->append(c_str(), size());
+        p->append(rhs.c_str(), rhs.size());
+
+        if (!sbuf_->decr())
+        {
+            delete sbuf_;
+        }
+
+        sbuf_ = p;
+        sbuf_->incr();
+
+        return *this;
+    }
+
 private:
     BufferType *sbuf_;
 };
