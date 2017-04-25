@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include "stdstring.h"
 
 using namespace algs;
@@ -30,6 +31,10 @@ int main(int argc, char *argv[])
     cout << (e + "Hello ").c_str() << "x" << endl;
     cout << ("Hello " + e + " Hello").c_str() << endl;
     cout << (e + "Hello " + e).c_str() << endl;
+
+    cout << e << endl;
+
+    string aaa = "H222";
 
     return 0;
 }

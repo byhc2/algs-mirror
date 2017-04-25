@@ -19,6 +19,8 @@ template<typename _A> friend StringBase<_A> operator+(const Char *lhs, const Str
 template<typename _A> friend StringBase<_A> operator+(const StringBase<_A> &lhs, const Char *rhs);
 template<typename _A> friend StringBase<_A> operator+(const StringBase<_A> &lhs, const StringBase<_A> &rhs);
 
+template<typename _A> friend std::ostream &operator<<(std::ostream &os, const StringBase<_A> &rhs);
+
 public:
     //实际存储字符串的缓冲区类
     //维护引用计数等
@@ -31,7 +33,7 @@ public:
         Char *mstart_;
         Char *mend_;
         Char *mcapacity_;
-        Int ref_count_;
+        Int ref_count_ = 0;
 
         inline SizeType size() const
         {
@@ -119,6 +121,8 @@ public:
     {
         sbuf_ = new BufferType(n);
         assert(sbuf_);
+        sbuf_->append("\0", 1);
+        sbuf_->incr();
     }
 
     StringBase &operator=(const StringBase &rhs)
@@ -210,6 +214,13 @@ StringBase<_A> operator+(const Char *lhs, const StringBase<_A> &rhs)
     ret.append(rhs.c_str(), rhs.size());
 
     return ret;
+}
+
+template<typename _A>
+std::ostream &operator<<(std::ostream &os, const StringBase<_A> &rhs)
+{
+    os << rhs.c_str();
+    return os;
 }
 
 }
