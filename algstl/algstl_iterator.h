@@ -17,6 +17,13 @@ struct InputIterator
     typedef _T&              Reference;
 };
 
+//使用IteratorTraits的原因：
+//理论上，我们需要使用Iterator::ValueType等
+//来获取迭代器所包含的类型等
+//但是由于普通指针也是迭代器而没有ValueType
+//因此需要引入一个中间层IteratorTraits
+//对于普通迭代器，IteratorTraits::ValueType就是Iterator::ValueType
+//对于指针，特化出一个版本，IteratorTraits::ValueType就是指针所指向的类型
 template<typename _Iterator>
 struct IteratorTraits
 {
@@ -29,10 +36,24 @@ struct IteratorTraits
 
 //偏特化给特定指针用
 //指针一定是可以随机访问的迭代器
-template<typename _Tp*>
-struct IteratorTraits
+template<typename _Tp>
+struct IteratorTraits<_Tp*>
 {
-    typedef typename 
+    typedef RandomAccessIteratorTag IteratorCategory;
+    typedef _Tp                     ValueType;
+    typedef ptrdiff_t               DifferenceType;
+    typedef _Tp*                    Pointer;
+    typedef _Tp&                    Reference;
+};
+
+template<typename _Tp>
+struct IteratorTraits<const _Tp*>
+{
+    typedef RandomAccessIteratorTag IteratorCategory;
+    typedef _Tp                     ValueType;
+    typedef ptrdiff_t               DifferenceType;
+    typedef const _Tp*              Pointer;
+    typedef const _Tp&              Reference;
 };
 
 template<typename _Iterator>
@@ -40,6 +61,10 @@ class ReverseIterator
 {
 public:
     typedef _Iterator IteratorType;
+    typedef IteratorTraits<IteratorType>::ValueType ValueType; //必须使用IteratorTraits
+    typedef IteratorTraits<IteratorType>::IteratorCategory IteratorCategory;
+    typedef IteratorTraits<IteratorType>::DifferenceType DifferenceType;
+    typedef IteratorTraits<IteratorType>::Pointer Pointer;
     typedef IteratorTraits<IteratorType>::Reference Reference;
 
     ReverseIterator() {}
