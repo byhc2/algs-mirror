@@ -1,6 +1,10 @@
 #ifndef __ALGSTL_ITERATOR_H__
 #define __ALGSTL_ITERATOR_H__
 
+//IteratorTag的作用
+//当某个算法需要使用某种类型的Iterator时，需要检测迭代器的类型
+//比如某些算法需要随机访问的迭代器，某些则只需要前向迭代器
+//因此需要这个IteratorTag来表明迭代器的种类
 struct InputIteratorTag {};
 struct ForwardIteratorTag: public InputIteratorTag {};
 struct BidirectionalIteratorTag: public ForwardIteratorTag {};
