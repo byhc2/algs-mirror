@@ -176,6 +176,7 @@ const String AlgsDraw::err_msg(cairo_status_t s)
     ERR_MSG(CAIRO_STATUS_DEVICE_FINISHED);
     ERR_MSG(CAIRO_STATUS_JBIG2_GLOBAL_MISSING);
 #undef ERR_MSG
+    return "";
 }
 
 }
