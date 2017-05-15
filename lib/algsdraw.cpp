@@ -21,6 +21,7 @@ Double AlgsDraw::min_x_; //x轴右端点
 Double AlgsDraw::max_y_; //y轴上端点
 Double AlgsDraw::min_y_; //y轴下端点
 Double AlgsDraw::pen_radius_;
+AlgsDraw::Color AlgsDraw::pen_color_;
 
 void AlgsDraw::init()
 {
@@ -56,6 +57,22 @@ void AlgsDraw::init()
 void AlgsDraw::setPenColor(Color &&c)
 {
     pen_color_ = c;
+}
+
+void AlgsDraw::setCanvasSize(Int w, Int h)
+{
+    //改变画布大小
+    //原来的画布会以左上角对齐的形式
+    //复制到新的画布来
+    width_ = w;
+    height_ = h;
+    cairo_surface_t *new_sf = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width_ + 2 * margin_w_, height_ + 2 * margin_h_);
+    cairo_t *new_cr = cairo_create(new_sf);
+    cairo_set_source_surface(sf_);
+    cairo_paint(new_cr);
+    cairo_surface_destroy(sf_);
+    cairo_destroy(new_cr);
+    sf_ = new_sf;
 }
 
 void AlgsDraw::line(Double x0, Double y0, Double x1, Double y1)

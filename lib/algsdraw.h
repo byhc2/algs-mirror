@@ -44,7 +44,7 @@ public:
     static Void setXscale(Double x0, Double x1);
     static Void setYscale(Double y0, Double y1);
     static Void setPenRadius(Double r);
-    static Void setPenColor(const Color &c);
+    static Void setPenColor(Color &&c);
     //static void setFont(Font f);
     static Void setCanvasSize(Int w=800, Int h=600);
     static Void clear(Color &c);
