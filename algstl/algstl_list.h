@@ -4,27 +4,34 @@
 //双向链表
 
 #include "algstl_memory.h"
+#include "algstl_iterator.h"
 
 namespace algstl
 {
 
-template<typename _Tp>
+template<typename _T>
 class ListNode
 {
 public:
-    ListNode<_Tp>(const _Tp &&val): data_(val) {}
-    ListNode<_Tp>(const _Tp &val): data_(val) {}
+    typedef _T ValueType;
 
-    ListNode<_Tp> *next_;
-    ListNode<_Tp> *prev_;
-    _Tp data_;
+    ListNode<ValueType>(const ValueType &&val): data_(val) {}
+    ListNode<ValueType>(const ValueType &val): data_(val) {}
+
+    ListNode<ValueType> *next_;
+    ListNode<ValueType> *prev_;
+    ValueType data_;
 };
 
-template<typename _Tp>
-class ListIterator
+//List类型，不具有DifferenceType，所以这里继承的三个参数为Void
+template<typename _T>
+class ListIterator: public Iterator<BidirectionalIteratorTag, _T, Void, _T*, _T&>
 {
 public:
-    typedef ListNode<_Tp> NodeType;
+    typedef _T  ValueType;
+    typedef _T& Reference;
+    typedef ListNode<ValueType> NodeType;
+
     ListIterator(NodeType *&p): p_(p) {}
     ListIterator &operator++() //前置自增，返回左值
     {
@@ -40,7 +47,7 @@ public:
         return tmp;
     }
 
-    _Tp &operator*()
+    Reference operator*()
     {
         return p_->data_;
     }
@@ -48,21 +55,22 @@ public:
     NodeType *p_;
 };
 
-template<typename _Tp>
-bool operator!=(const ListIterator<_Tp> &lhs, const ListIterator<_Tp> &rhs)
+template<typename _T>
+bool operator!=(const ListIterator<_T> &lhs, const ListIterator<_T> &rhs)
 {
     return lhs.p_ != rhs.p_;
 }
 
-template<typename _Tp, typename _Alloc=Allocator<_Tp>>
+template<typename _T, typename _Alloc=Allocator<_T>>
 class List
 {
 public:
-    typedef _Tp ValueType;
+    typedef _T ValueType;
     typedef _Alloc Allocator;
     typedef ListNode<ValueType> NodeType;
     typedef typename Allocator::template Rebind<NodeType>::Other NodeAllocator;
     typedef ListIterator<ValueType> Iterator;
+    //typedef Iterator<BidirectionalIteratorTag, _T, Void, _T*, _T&> Iterator;
 
     List()
     {
