@@ -25,7 +25,7 @@ public:
 
 //List类型，不具有DifferenceType，所以这里继承的三个参数为Void
 template<typename _T>
-class ListIterator: public Iterator<BidirectionalIteratorTag, _T, Void, _T*, _T&>
+class ListIterator
 {
 public:
     typedef _T  ValueType;
