@@ -1,5 +1,5 @@
-#ifndef __ALGS_STDRANDOM__
-#define __ALGS_STDRANDOM__
+#ifndef __ALGS_RANDOM__
+#define __ALGS_RANDOM__
 
 #include <cstring>
 #include "algs_type.h"
@@ -7,7 +7,7 @@
 namespace algs
 {
 
-class StdRandom
+class AlgsRandom
 {
 public:
     static   Void initialize(Long seed=0);
@@ -33,7 +33,7 @@ public:
         }
 
         //如果概率表的最大概率不为1，这里的乘号恰好起归一化作用
-        Double r = StdRandom::random() * b[n];
+        Double r = AlgsRandom::random() * b[n];
 
         for (auto i = 0; i < n; ++i)
         {
@@ -51,7 +51,7 @@ public:
         //Fisher-Yates算法
         for (int i = n - 1; i >= 0; --i)
         {
-            auto j = StdRandom::uniform(i + 1);
+            auto j = AlgsRandom::uniform(i + 1);
             Double tmp = a[i];
             a[i] = a[j];
             a[j] = tmp;

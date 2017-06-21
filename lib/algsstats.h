@@ -1,5 +1,5 @@
-#ifndef __ALGS_STDSTATS__
-#define __ALGS_STDSTATS__
+#ifndef __ALGS_STATS__
+#define __ALGS_STATS__
 
 #include <cassert>
 #include <cmath>
@@ -10,7 +10,7 @@
 namespace algs
 {
 
-class StdStats
+class AlgsStats
 {
 public:
     template<Int n>
@@ -60,7 +60,7 @@ public:
     {
         assert(n > 1);
 
-        auto mean = StdStats::mean(a);
+        auto mean = AlgsStats::mean(a);
         Double s = 0.0;
 
         for (auto x: a)
@@ -76,7 +76,7 @@ public:
     static Double stddev(Double (&a)[n])
     {
         assert(n > 1);
-        return sqrt(StdStats::var(a));
+        return sqrt(AlgsStats::var(a));
     }
 
     template<Int n>

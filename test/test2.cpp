@@ -1,13 +1,13 @@
 #include <iostream>
-#include "stdrandom.h"
+#include "algsrandom.h"
 
 using namespace std;
 using namespace algs;
 
 int main(int argc, char *argv[])
 {
-    StdRandom::initialize();
-    cout << StdRandom::uniform(1000) << endl;
+    AlgsRandom::initialize();
+    cout << AlgsRandom::uniform(1000) << endl;
 
     return 0;
 }

@@ -1,6 +1,7 @@
 set(algs_src
-        stdrandom.cpp
-        stdnum.cpp
+        algsrandom.cpp
+        algsnum.cpp
+        algsout.cpp
    )
 
 add_library(algs SHARED ${algs_src})

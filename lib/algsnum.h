@@ -2,7 +2,7 @@
 #define __ALGS_NUMBER__
 
 #include "algs_type.h"
-#include "stdstring.h"
+#include "algsstring.h"
 
 namespace algs
 {

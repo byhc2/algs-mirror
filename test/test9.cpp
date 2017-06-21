@@ -1,17 +1,17 @@
 #include <iostream>
-#include "stdrandom.h"
+#include "algsrandom.h"
 
 using namespace std;
 using namespace algs;
 
 int main(int argc, char *argv[])
 {
-    StdRandom::initialize();
+    AlgsRandom::initialize();
 
     int i = 0;
     while (i < 100)
     {
-        cout << StdRandom::gaussian() << endl;
+        cout << AlgsRandom::gaussian() << endl;
         ++i;
     }
     return 0;

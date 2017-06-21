@@ -1,6 +1,6 @@
 #include <iostream>
-#include "stdstring.h"
-#include "stdnum.h"
+#include "algsstring.h"
+#include "algsnum.h"
 
 using namespace algs;
 using namespace std;
@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
 
     cout << Num::toString(x + 2) << endl;
     cout << Num::toString(21.1) << endl;
+    cout << Num::toString(1.1111223122) << endl;
 
     return 0;
 }

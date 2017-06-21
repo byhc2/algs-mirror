@@ -1,6 +1,6 @@
 #include <cstdlib>
 #include <cmath>
-#include "stdnum.h"
+#include "algsnum.h"
 
 namespace algs
 {
@@ -69,10 +69,15 @@ String Num::toString(Double d, const Int precision, const Int ipart_precision)
         ret += "-";
     }
 
+    //以下代码未实现，先暂时使用snprintf
+    String lgstr = String("%.") + Num::toString(precision) + "lg";
+
     Int mag = static_cast<Int>(floorl(log10(d) + 1));
+    char buf[50];
     if (1 <= mag && mag < ipart_precision)
     {
         //正常整数部分
+#if 0
         Int int_part = static_cast<Int>(d);
         ret += Num::toString(int_part);
         ret += ".";
@@ -80,20 +85,26 @@ String Num::toString(Double d, const Int precision, const Int ipart_precision)
         d -= int_part;
         Int frac_part = static_cast<Int>(pow(10, precision) * d);
         ret += Num::toString(frac_part);
+#endif
+        snprintf(buf, 50, lgstr.c_str(), d);
     }
     else if (ipart_precision < mag)
     {
         //科学计数法
+        snprintf(buf, 50, "%e", d);
     }
     else if (-ipart_precision <= mag && mag < 0)
     {
         //小数部分填充0
+        snprintf(buf, 50, lgstr.c_str(), d);
     }
     else
     {
         //科学计数法
+        snprintf(buf, 50, "%e", d);
     }
 
+    ret = buf;
     return ret;
 }
 

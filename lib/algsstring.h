@@ -1,5 +1,5 @@
-#ifndef __ALGS_STDSTRING__
-#define __ALGS_STDSTRING__
+#ifndef __ALGS_STRING__
+#define __ALGS_STRING__
 
 #include <cassert>
 #include <cstring>
@@ -121,7 +121,6 @@ public:
     {
         sbuf_ = new BufferType(n);
         assert(sbuf_);
-        sbuf_->append("\0", 1);
         sbuf_->incr();
     }
 
@@ -132,18 +131,19 @@ public:
             return *this;
         }
 
-        if (!sbuf_.decr())
+        if (!sbuf_->decr())
         {
             delete sbuf_;
         }
 
         sbuf_ = rhs.sbuf_;
         sbuf_->incr();
+        return *this;
     }
 
     StringBase &operator=(const Char *rhs)
     {
-        if (!sbuf_.decr())
+        if (!sbuf_->decr())
         {
             delete sbuf_;
         }
@@ -153,6 +153,7 @@ public:
         assert(sbuf_);
         sbuf_->append(rhs, n);
         sbuf_->incr();
+        return *this;
     }
 
     ~StringBase()

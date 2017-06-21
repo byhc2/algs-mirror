@@ -3,12 +3,12 @@
 #include <unistd.h>
 #include <ctime>
 #include <cmath>
-#include "stdrandom.h"
+#include "algsrandom.h"
 
 namespace algs
 {
 
-Void StdRandom::initialize(long seed)
+Void AlgsRandom::initialize(long seed)
 {
     static char s[256]; //相当于用一个buffer来保存random的中间状态，所以这里需要用static
     getrandom(s, 256, 0);
@@ -16,40 +16,40 @@ Void StdRandom::initialize(long seed)
     return;
 }
 
-Double StdRandom::random()
+Double AlgsRandom::random()
 {
     return static_cast<double>(::random()) / RAND_MAX;
 }
 
-Int StdRandom::uniform(Int N)
+Int AlgsRandom::uniform(Int N)
 {
     return ::random() % N;
 }
 
-Int StdRandom::uniform(Int lo, Int hi)
+Int AlgsRandom::uniform(Int lo, Int hi)
 {
     return ::random() % (hi - lo) + lo;
 }
 
-Double StdRandom::uniform(Double lo, Double hi)
+Double AlgsRandom::uniform(Double lo, Double hi)
 {
-    return StdRandom::random() * (hi - lo) + lo;
+    return AlgsRandom::random() * (hi - lo) + lo;
 }
 
-Bool StdRandom::bernoulli(Double p)
+Bool AlgsRandom::bernoulli(Double p)
 {
-    return StdRandom::random() < p ? true : false;
+    return AlgsRandom::random() < p ? true : false;
 }
 
 //采用极坐标形式的Box-Muller变换
-Double StdRandom::gaussian()
+Double AlgsRandom::gaussian()
 {
     double x, y, r;
 
     do
     {
-        x = StdRandom::random() * 2 - 1;
-        y = StdRandom::random() * 2 - 1;
+        x = AlgsRandom::random() * 2 - 1;
+        y = AlgsRandom::random() * 2 - 1;
         r = x * x + y * y;
     }
     while (r > 1.0 || r == 0); //去掉不合理的随机点
@@ -57,9 +57,9 @@ Double StdRandom::gaussian()
     return x * sqrt(-2.0 * log(r) / r);
 }
 
-Double StdRandom::gaussian(Double m, Double s)
+Double AlgsRandom::gaussian(Double m, Double s)
 {
-    return StdRandom::gaussian() * s + m;
+    return AlgsRandom::gaussian() * s + m;
 }
 
 }

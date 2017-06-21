@@ -1,16 +1,16 @@
 #include <iostream>
-#include "stdrandom.h"
+#include "algsrandom.h"
 
 using namespace std;
 using namespace algs;
 
 int main(int argc, char *argv[])
 {
-    StdRandom::initialize();
+    AlgsRandom::initialize();
 
     Double table[] = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6};
 
-    StdRandom::shuffle(table);
+    AlgsRandom::shuffle(table);
 
     for (auto r: table)
     {
