@@ -23,7 +23,7 @@ class AlgsOut
 public:
     template<typename _InputIterator>
     void write(_InputIterator begin, _InputIterator end, const String &name="");
-}
+};
 
 }
 

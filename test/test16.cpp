@@ -1,10 +1,9 @@
-#include "algsout.h"
+#include "algsdraw.h"
 
 using namespace algs;
 
 int main(int argc, char *argv[])
 {
-    AlgsOut::print("Hello");
-
+    AlgsDraw::init();
     return 0;
 }
