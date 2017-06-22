@@ -75,6 +75,10 @@ public:
 
         void append(const Char *buf, SizeType n)
         {
+            if (!buf)
+            {
+                return;
+            }
             assert(size() + n < capacity());
             assert(buf_);
             mend_ = static_cast<Char *>(mempcpy(mend_, buf, n));
@@ -103,7 +107,7 @@ public:
 
     StringBase(const Char *rhs)
     {
-        SizeType n = strlen(rhs);
+        SizeType n = rhs ? strlen(rhs) : 1;
         sbuf_ = new BufferType(n);
         assert(sbuf_);
         sbuf_->append(rhs, n);
@@ -148,7 +152,7 @@ public:
             delete sbuf_;
         }
 
-        SizeType n = strlen(rhs);
+        SizeType n = rhs ? strlen(rhs) : 1;
         sbuf_ = new BufferType(n);
         assert(sbuf_);
         sbuf_->append(rhs, n);

@@ -5,6 +5,16 @@ namespace algs
 {
 
 Bool AlgsDraw::inited_ = false;
+Int AlgsDraw::width_;
+Int AlgsDraw::height_;
+Int AlgsDraw::margin_h_;
+Int AlgsDraw::margin_w_;
+cairo_surface_t *AlgsDraw::sf_;
+cairo_surface_t *AlgsDraw::x11_sf_;
+cairo_t *AlgsDraw::cr_;
+cairo_t *AlgsDraw::x11_cr_;
+Drawable AlgsDraw::drawable_;
+Display *AlgsDraw::display_;
 
 void AlgsDraw::init()
 {
@@ -51,7 +61,8 @@ void AlgsDraw::show()
     drawable_ = XCreateSimpleWindow(display_, RootWindow(display_, DefaultScreen(display_)), 0, 0,
             width_, height_, 0, BlackPixel(display_, DefaultScreen(display_)), WhitePixel(display_, DefaultScreen(display_)));
 
-    XSelectInput(display_, drawable_, ExposureMask);
+    //远程的x客户端在本地运行的时候，似乎不会触发resize事件
+    XSelectInput(display_, drawable_, ExposureMask | ResizeRedirectMask | SubstructureRedirectMask);
     XMapWindow(display_, drawable_);
     XFlush(display_);
     XSync(display_, True);
@@ -72,6 +83,20 @@ void AlgsDraw::show()
             //获取当前窗口的宽和高
             width = evt.xexpose.width;
             height = evt.xexpose.height;
+            printf("Real width: %d, height: %d\n", width, height);
+
+            x11_sf_ = cairo_xlib_surface_create(display_, drawable_, DefaultVisual(display_, DefaultScreen(display_)), width, height);
+            x11_cr_ = cairo_create(x11_sf_);
+            cairo_scale(x11_cr_, double(width) / width_, double(height) / height_);
+            cairo_set_source_surface(x11_cr_, sf_, 0, 0);
+            cairo_paint(x11_cr_);
+            cairo_surface_destroy(x11_sf_);
+            cairo_destroy(x11_cr_);
+            break;
+        case ConfigureNotify:
+            //获取当前窗口的宽和高
+            width = evt.xresizerequest.width;
+            height = evt.xresizerequest.height;
             printf("Real width: %d, height: %d\n", width, height);
 
             x11_sf_ = cairo_xlib_surface_create(display_, drawable_, DefaultVisual(display_, DefaultScreen(display_)), width, height);
