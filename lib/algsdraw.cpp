@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <iostream>
 #include "algsdraw.h"
 
 namespace algs
@@ -15,6 +16,11 @@ cairo_t *AlgsDraw::cr_;
 cairo_t *AlgsDraw::x11_cr_;
 Drawable AlgsDraw::drawable_;
 Display *AlgsDraw::display_;
+Double AlgsDraw::max_x_; //x轴左端点
+Double AlgsDraw::min_x_; //x轴右端点
+Double AlgsDraw::max_y_; //y轴上端点
+Double AlgsDraw::min_y_; //y轴下端点
+Double AlgsDraw::pen_radius_;
 
 void AlgsDraw::init()
 {
@@ -28,16 +34,66 @@ void AlgsDraw::init()
     width_ = 800;
     height_ = 600;
 
-    sf_ = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width_, height_);
+    //设置坐标范围
+    min_x_ = -10;
+    max_x_ = 10;
+    min_y_ = -10;
+    max_y_ = 10;
+
+    pen_radius_ = 1.0;
+
+    sf_ = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width_ + 2 * margin_w_, height_ + 2 * margin_h_);
     cr_ = cairo_create(sf_);
 
-    cairo_scale(cr_, width_, height_);
-    cairo_set_source_rgb(cr_, 1.0, 0.0, 0.0);
-    cairo_rectangle(cr_, 0.0, 0.0, 1.0, 1.0);
+    cairo_set_source_rgb(cr_, 1.0, 1.0, 1.0);
+    cairo_rectangle(cr_, margin_w_, margin_h_, width_, height_);
     cairo_fill(cr_);
-    cairo_save(cr_);
+    cairo_destroy(cr_);
 
     inited_ = true;
+}
+
+void AlgsDraw::setPenColor(Color &&c)
+{
+    pen_color_ = c;
+}
+
+void AlgsDraw::line(Double x0, Double y0, Double x1, Double y1)
+{
+    std::cout << "in " << __FUNCTION__ << std::endl;
+
+    init();
+
+    //计算出图像坐标
+    auto real_x0 = (x0 - min_x_) * width_ / (max_x_ - min_x_) + margin_w_;
+    auto real_x1 = (x1 - min_x_) * width_ / (max_x_ - min_x_) + margin_w_;
+    auto real_y0 = -(y0 - max_y_) * height_ / (max_y_ - min_y_) + margin_h_;
+    auto real_y1 = -(y1 - max_y_) * height_ / (max_y_ - min_y_) + margin_h_;
+
+    cr_ = cairo_create(sf_);
+    cairo_set_line_width(cr_, pen_radius_);
+    cairo_set_source_rgb(cr_, 0.0, 0.0, 0.0);
+    cairo_move_to(cr_, real_x0, real_y0);
+    cairo_line_to(cr_, real_x1, real_y1);
+    cairo_stroke(cr_);
+    cairo_destroy(cr_);
+}
+
+void AlgsDraw::setXscale(Double x0, Double x1)
+{
+    min_x_ = x0;
+    max_x_ = x1;
+}
+
+void AlgsDraw::setYscale(Double y0, Double y1)
+{
+    min_y_ = y0;
+    max_y_ = y1;
+}
+
+void AlgsDraw::setPenRadius(double r)
+{
+    pen_radius_ = r;
 }
 
 void AlgsDraw::show()
@@ -87,7 +143,7 @@ void AlgsDraw::show()
 
             x11_sf_ = cairo_xlib_surface_create(display_, drawable_, DefaultVisual(display_, DefaultScreen(display_)), width, height);
             x11_cr_ = cairo_create(x11_sf_);
-            cairo_scale(x11_cr_, double(width) / width_, double(height) / height_);
+            cairo_scale(x11_cr_, double(width) / (width_ + 2 * margin_w_), double(height) / (height_ + 2 * margin_h_));
             cairo_set_source_surface(x11_cr_, sf_, 0, 0);
             cairo_paint(x11_cr_);
             cairo_surface_destroy(x11_sf_);
@@ -155,6 +211,7 @@ String AlgsDraw::event2str(Int type)
     IF_RETURN(MappingNotify);
     IF_RETURN(GenericEvent);
 #undef IF_RETURN
+    return "";
 }
 
 const String AlgsDraw::err_msg(cairo_status_t s)

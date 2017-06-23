@@ -4,7 +4,7 @@ using namespace algs;
 
 int main(int argc, char *argv[])
 {
-    AlgsDraw::init();
+    AlgsDraw::line(0, 0, 10, 10);
     AlgsDraw::show();
     return 0;
 }
