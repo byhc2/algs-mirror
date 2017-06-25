@@ -22,8 +22,9 @@ Double AlgsDraw::max_y_; //y轴上端点
 Double AlgsDraw::min_y_; //y轴下端点
 Double AlgsDraw::pen_radius_;
 AlgsDraw::Color AlgsDraw::pen_color_;
+String AlgsDraw::font_;
 
-void AlgsDraw::init()
+Void AlgsDraw::init()
 {
     if (AlgsDraw::inited_)
     {
@@ -54,13 +55,33 @@ void AlgsDraw::init()
     inited_ = true;
 }
 
-void AlgsDraw::setPenColor(Color &&c)
+Void AlgsDraw::drawInit()
 {
+    cr_ = cairo_create(sf_);
+    cairo_set_source_rgb(cr_, pen_color_.r_, pen_color_.g_, pen_color_.b_);
+    cairo_set_line_width(cr_, pen_radius_);
+}
+
+Void AlgsDraw::drawFinish()
+{
+    cairo_destroy(cr_);
+}
+
+Void AlgsDraw::setPenColor(const Color &c)
+{
+    init();
     pen_color_ = c;
 }
 
-void AlgsDraw::setCanvasSize(Int w, Int h)
+Void AlgsDraw::setFont(const String &f)
 {
+    init();
+    font_ = f;
+}
+
+Void AlgsDraw::setCanvasSize(Int w, Int h)
+{
+    init();
     //改变画布大小
     //原来的画布会以左上角对齐的形式
     //复制到新的画布来
@@ -68,18 +89,29 @@ void AlgsDraw::setCanvasSize(Int w, Int h)
     height_ = h;
     cairo_surface_t *new_sf = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width_ + 2 * margin_w_, height_ + 2 * margin_h_);
     cairo_t *new_cr = cairo_create(new_sf);
-    cairo_set_source_surface(sf_);
+    cairo_set_source_surface(new_cr, sf_, 0, 0);
     cairo_paint(new_cr);
     cairo_surface_destroy(sf_);
     cairo_destroy(new_cr);
     sf_ = new_sf;
 }
 
-void AlgsDraw::line(Double x0, Double y0, Double x1, Double y1)
+Void AlgsDraw::clear(const Color &c)
+{
+    init();
+    drawInit();
+    cairo_set_source_rgb(cr_, c.r_, c.g_, c.b_);
+    cairo_rectangle(cr_, margin_w_, margin_h_, width_, height_);
+    cairo_fill(cr_);
+    drawFinish();
+}
+
+Void AlgsDraw::line(Double x0, Double y0, Double x1, Double y1)
 {
     std::cout << "in " << __FUNCTION__ << std::endl;
 
     init();
+    drawInit();
 
     //计算出图像坐标
     auto real_x0 = (x0 - min_x_) * width_ / (max_x_ - min_x_) + margin_w_;
@@ -87,34 +119,47 @@ void AlgsDraw::line(Double x0, Double y0, Double x1, Double y1)
     auto real_y0 = -(y0 - max_y_) * height_ / (max_y_ - min_y_) + margin_h_;
     auto real_y1 = -(y1 - max_y_) * height_ / (max_y_ - min_y_) + margin_h_;
 
-    cr_ = cairo_create(sf_);
-    cairo_set_line_width(cr_, pen_radius_);
-    cairo_set_source_rgb(cr_, 0.0, 0.0, 0.0);
     cairo_move_to(cr_, real_x0, real_y0);
     cairo_line_to(cr_, real_x1, real_y1);
     cairo_stroke(cr_);
-    cairo_destroy(cr_);
+    drawFinish();
 }
 
-void AlgsDraw::setXscale(Double x0, Double x1)
+Void AlgsDraw::point(Double x, Double y)
 {
+    init();
+    drawInit();
+
+    cairo_move_to(cr_, x, y);
+    cairo_line_to(cr_, x, y);
+    cairo_stroke(cr_);
+
+    drawFinish();
+}
+
+Void AlgsDraw::setXscale(Double x0, Double x1)
+{
+    init();
     min_x_ = x0;
     max_x_ = x1;
 }
 
-void AlgsDraw::setYscale(Double y0, Double y1)
+Void AlgsDraw::setYscale(Double y0, Double y1)
 {
+    init();
     min_y_ = y0;
     max_y_ = y1;
 }
 
-void AlgsDraw::setPenRadius(double r)
+Void AlgsDraw::setPenRadius(double r)
 {
+    init();
     pen_radius_ = r;
 }
 
-void AlgsDraw::show()
+Void AlgsDraw::show()
 {
+    init();
     String str_disp = getenv("DISPLAY");
     if (str_disp.size() == 0)
     {
@@ -181,7 +226,7 @@ void AlgsDraw::show()
             cairo_destroy(x11_cr_);
             break;
         case ClientMessage:
-            if (evt.xclient.data.l[0] == wmDeleteMessage)
+            if (evt.xclient.data.l[0] == static_cast<Int>(wmDeleteMessage))
             {
                 running = false;
             }

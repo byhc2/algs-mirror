@@ -40,17 +40,21 @@ public:
     };
 
     static Void line(Double x0, Double y0, Double x1, Double y1);
+    static Void point(Double x, Double y);
 
     static Void setXscale(Double x0, Double x1);
     static Void setYscale(Double y0, Double y1);
     static Void setPenRadius(Double r);
-    static Void setPenColor(Color &&c);
-    //static void setFont(Font f);
+    static Void setPenColor(const Color &c);
+    static Void setFont(const String &f);
     static Void setCanvasSize(Int w=800, Int h=600);
-    static Void clear(Color &c);
+    static Void clear(const Color &c=Color(1.0, 1.0, 1.0));
     static Void show();
     static Void init();
 private:
+    static Void drawInit();
+    static Void drawFinish();
+
     static Bool inited_;
     static Int width_;
     static Int height_;
@@ -68,6 +72,7 @@ private:
     static Double min_y_; //y轴下端点
     static Double pen_radius_;
     static Color pen_color_;
+    static String font_;
 
 private:
     static String event2str(Int type);
