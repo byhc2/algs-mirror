@@ -43,6 +43,7 @@ public:
     static Void point(Double x, Double y);
     static Void text(Double x, Double y, const String &s);
     static Void circle(Double x, Double y, Double r);
+    static Void filledCircle(Double x, Double y, Double r);
 
     static Void setXscale(Double x0, Double x1);
     static Void setYscale(Double y0, Double y1);
@@ -81,6 +82,7 @@ private:
     static const String err_msg(cairo_status_t s);
     static Double c2sX(Double x);
     static Double c2sY(Double y);
+    static Double l2s(Double l);
 };
 
 }

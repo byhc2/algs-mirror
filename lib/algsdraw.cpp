@@ -34,8 +34,8 @@ Void AlgsDraw::init()
 
     margin_h_ = 10;
     margin_w_ = 10;
-    width_ = 800;
-    height_ = 600;
+    width_ = 1000;
+    height_ = 1000;
 
     //设置坐标范围
     min_x_ = -10;
@@ -45,11 +45,11 @@ Void AlgsDraw::init()
 
     pen_radius_ = 1.0;
 
-    sf_ = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width_ + 2 * margin_w_, height_ + 2 * margin_h_);
+    sf_ = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width_, height_);
     cr_ = cairo_create(sf_);
 
     cairo_set_source_rgb(cr_, 1.0, 1.0, 1.0);
-    cairo_rectangle(cr_, margin_w_, margin_h_, width_, height_);
+    cairo_rectangle(cr_, 0, 0, width_, height_);
     cairo_fill(cr_);
     cairo_destroy(cr_);
 
@@ -88,7 +88,7 @@ Void AlgsDraw::setCanvasSize(Int w, Int h)
     //复制到新的画布来
     width_ = w;
     height_ = h;
-    cairo_surface_t *new_sf = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width_ + 2 * margin_w_, height_ + 2 * margin_h_);
+    cairo_surface_t *new_sf = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width_, height_);
     cairo_t *new_cr = cairo_create(new_sf);
     cairo_set_source_surface(new_cr, sf_, 0, 0);
     cairo_paint(new_cr);
@@ -102,7 +102,7 @@ Void AlgsDraw::clear(const Color &c)
     init();
     drawInit();
     cairo_set_source_rgb(cr_, c.r_, c.g_, c.b_);
-    cairo_rectangle(cr_, margin_w_, margin_h_, width_, height_);
+    cairo_rectangle(cr_, 0, 0, width_, height_);
     cairo_fill(cr_);
     drawFinish();
 }
@@ -123,12 +123,18 @@ Void AlgsDraw::line(Double x0, Double y0, Double x1, Double y1)
 //将笛卡尔坐标(cartesian)，转换为屏幕坐标(screen)
 Double AlgsDraw::c2sX(Double x)
 {
-    return (x - min_x_) * width_ / (max_x_ - min_x_) + margin_w_;
+    return (x - min_x_) * width_ / (max_x_ - min_x_);
 }
 
 Double AlgsDraw::c2sY(Double y)
 {
-    return -(y - max_y_) * height_ / (max_y_ - min_y_) + margin_h_;
+    return -(y - max_y_) * height_ / (max_y_ - min_y_);
+}
+
+//将笛卡尔长度变成屏幕长度
+Double AlgsDraw::l2s(Double l)
+{
+    return width_ / (max_x_ - min_x_) * l;
 }
 
 Void AlgsDraw::point(Double x, Double y)
@@ -167,8 +173,21 @@ Void AlgsDraw::circle(Double x, Double y, Double r)
     init();
     drawInit();
 
-    cairo_arc(cr_, c2sX(x), c2sY(y), r, 0, 2 * M_PI);
+    cairo_arc(cr_, c2sX(x), c2sY(y), l2s(r), 0, 2 * M_PI);
     cairo_stroke(cr_);
+
+    drawFinish();
+}
+
+Void AlgsDraw::filledCircle(Double x, Double y, Double r)
+{
+    std::cout << "in " << __FUNCTION__ << std::endl;
+
+    init();
+    drawInit();
+
+    cairo_arc(cr_, c2sX(x), c2sY(y), l2s(r), 0, 2 * M_PI);
+    cairo_fill(cr_);
 
     drawFinish();
 }
@@ -242,7 +261,7 @@ Void AlgsDraw::show()
             x11_sf_ = cairo_xlib_surface_create(display_, drawable_, DefaultVisual(display_, DefaultScreen(display_)), width, height);
             x11_cr_ = cairo_create(x11_sf_);
             cairo_scale(x11_cr_, double(width) / (width_ + 2 * margin_w_), double(height) / (height_ + 2 * margin_h_));
-            cairo_set_source_surface(x11_cr_, sf_, 0, 0);
+            cairo_set_source_surface(x11_cr_, sf_, margin_w_, margin_h_);
             cairo_paint(x11_cr_);
             cairo_surface_destroy(x11_sf_);
             cairo_destroy(x11_cr_);
