@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include <iostream>
+#include <cmath>
 #include "algsdraw.h"
 
 namespace algs
@@ -113,25 +114,60 @@ Void AlgsDraw::line(Double x0, Double y0, Double x1, Double y1)
     init();
     drawInit();
 
-    //计算出图像坐标
-    auto real_x0 = (x0 - min_x_) * width_ / (max_x_ - min_x_) + margin_w_;
-    auto real_x1 = (x1 - min_x_) * width_ / (max_x_ - min_x_) + margin_w_;
-    auto real_y0 = -(y0 - max_y_) * height_ / (max_y_ - min_y_) + margin_h_;
-    auto real_y1 = -(y1 - max_y_) * height_ / (max_y_ - min_y_) + margin_h_;
-
-    cairo_move_to(cr_, real_x0, real_y0);
-    cairo_line_to(cr_, real_x1, real_y1);
+    cairo_move_to(cr_, c2sX(x0), c2sY(y0));
+    cairo_line_to(cr_, c2sX(x1), c2sY(y1));
     cairo_stroke(cr_);
     drawFinish();
 }
 
+//将笛卡尔坐标(cartesian)，转换为屏幕坐标(screen)
+Double AlgsDraw::c2sX(Double x)
+{
+    return (x - min_x_) * width_ / (max_x_ - min_x_) + margin_w_;
+}
+
+Double AlgsDraw::c2sY(Double y)
+{
+    return -(y - max_y_) * height_ / (max_y_ - min_y_) + margin_h_;
+}
+
 Void AlgsDraw::point(Double x, Double y)
+{
+    std::cout << "in " << __FUNCTION__ << std::endl;
+    init();
+    drawInit();
+
+    cairo_set_line_width(cr_, 2 * pen_radius_);
+    cairo_set_line_cap(cr_, CAIRO_LINE_CAP_ROUND);
+    cairo_move_to(cr_, c2sX(x), c2sY(y));
+    cairo_line_to(cr_, c2sX(x), c2sY(y));
+    cairo_stroke(cr_);
+
+    drawFinish();
+}
+
+//关于字体显示，先暂时这样，等有需要时再改进
+Void AlgsDraw::text(Double x, Double y, const String &s)
 {
     init();
     drawInit();
 
-    cairo_move_to(cr_, x, y);
-    cairo_line_to(cr_, x, y);
+    cairo_select_font_face(cr_, font_.c_str(), CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+    cairo_set_font_size(cr_, 14);
+    cairo_move_to(cr_, c2sX(x), c2sY(y));
+    cairo_show_text(cr_, s.c_str());
+
+    drawFinish();
+}
+
+Void AlgsDraw::circle(Double x, Double y, Double r)
+{
+    std::cout << "in " << __FUNCTION__ << std::endl;
+
+    init();
+    drawInit();
+
+    cairo_arc(cr_, c2sX(x), c2sY(y), r, 0, 2 * M_PI);
     cairo_stroke(cr_);
 
     drawFinish();
