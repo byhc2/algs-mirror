@@ -1,5 +1,6 @@
 #include "algsout.h"
 #include <iostream>
+#include <cstdarg>
 
 namespace algs
 {
@@ -19,10 +20,21 @@ void AlgsStdOut::println()
     std::cout << std::endl;
 }
 
+#if 0
 template<typename... _Args>
 void AlgsStdOut::printf(String f, const _Args &... args)
 {
     return; //TODO 未实现
+}
+#endif
+
+//先暂时这样实现
+void AlgsStdOut::printf(const String &f, ...)
+{
+    va_list args;
+    va_start(args, f);
+    vprintf(f.c_str(), args);
+    va_end(args);
 }
 
 template<typename _InputIterator>

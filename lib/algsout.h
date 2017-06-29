@@ -14,8 +14,11 @@ public:
     static void print(const String &s);
     static void println(const String &s);
     static void println();
+#if 0
     template<typename... _Args>
     static void printf(String f, const _Args &... args);
+#endif
+    static void printf(const String &f, ...);
 };
 
 class AlgsOut
