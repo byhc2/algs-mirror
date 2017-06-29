@@ -11,3 +11,4 @@ include_directories(AFTER ${CMAKE_SOURCE_DIR}/lib)
 
 add_subdirectory(lib)
 add_subdirectory(test)
+add_subdirectory(practice)
