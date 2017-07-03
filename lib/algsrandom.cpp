@@ -54,7 +54,7 @@ Double AlgsRandom::gaussian()
     }
     while (r > 1.0 || r == 0); //去掉不合理的随机点
 
-    return x * sqrt(-2.0 * log(r) / r);
+    return x * ::sqrt(-2.0 * ::log(r) / r);
 }
 
 Double AlgsRandom::gaussian(Double m, Double s)

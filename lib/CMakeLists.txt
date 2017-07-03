@@ -3,6 +3,7 @@ set(algs_src
         algsnum.cpp
         algsout.cpp
         algsdraw.cpp
+        algsmath.cpp
    )
 
 add_library(algs SHARED ${algs_src})
