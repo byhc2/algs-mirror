@@ -1,5 +1,5 @@
-#ifndef __ALGSTL_LIST_H__
-#define __ALGSTL_LIST_H__
+#ifndef __ALGSTL_LIST__
+#define __ALGSTL_LIST__
 
 //双向链表
 

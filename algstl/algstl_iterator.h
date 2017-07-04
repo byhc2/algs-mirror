@@ -1,5 +1,5 @@
-#ifndef __ALGSTL_ITERATOR_H__
-#define __ALGSTL_ITERATOR_H__
+#ifndef __ALGSTL_ITERATOR__
+#define __ALGSTL_ITERATOR__
 
 namespace algstl
 {

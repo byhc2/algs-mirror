@@ -1,5 +1,5 @@
-#ifndef __ALGSTL_MEMORY_H__
-#define __ALGSTL_MEMORY_H__
+#ifndef __ALGSTL_MEMORY__
+#define __ALGSTL_MEMORY__
 
 #include <new>
 #include <cstddef>
@@ -88,6 +88,12 @@ public:
         p->~ValueType();
     }
 };
+
+template<typename InputIterator, typename ForwardIterator>
+void uninitialized_copy(InputIterator first, InputIterator last,
+        ForwardIterator dest)
+{
+}
 
 }
 
