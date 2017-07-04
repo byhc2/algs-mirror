@@ -44,6 +44,9 @@ public:
     static Void text(Double x, Double y, const String &s);
     static Void circle(Double x, Double y, Double r);
     static Void filledCircle(Double x, Double y, Double r);
+    //x,y是矩形中心点的位置，rw和rh是矩形的宽和高
+    static Void rectangle(Double x, Double y, Double rw, Double rh);
+    static Void filledRectangle(Double x, Double y, Double rw, Double rh);
 
     static Void setXscale(Double x0, Double x1);
     static Void setYscale(Double y0, Double y1);

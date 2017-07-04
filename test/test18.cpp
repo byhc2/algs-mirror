@@ -1,5 +1,5 @@
 #include "algsdraw.h"
-#include "algsmath.h"
+#include "algsrandom.h"
 
 using namespace algs;
 
@@ -9,23 +9,21 @@ int main(int argc, char *argv[])
 
     Double a[N];
 
+    AlgsRandom::initialize();
     for (auto i = 0; i < N; ++i)
     {
         a[i] = AlgsRandom::random();
     }
 
     AlgsDraw::setXscale(0, 1);
+    AlgsDraw::setYscale(0, 1);
     for (auto i = 0; i < N; ++i)
     {
-    }
-
-    AlgsDraw::setPenRadius(1);
-
-    for (int i = 1; i <= N; ++i)
-    {
-        AlgsDraw::point(i, i);
-        AlgsDraw::point(i, i * i);
-        AlgsDraw::point(i, AlgsMath::log(i));
+        Double x = 1.0 * i / N;
+        Double y = a[i] / 2.0;
+        Double rw = 0.5 / N;
+        Double rh = a[i];
+        AlgsDraw::filledRectangle(x + rw, y, rw, rh);
     }
 
     AlgsDraw::show();

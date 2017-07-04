@@ -45,3 +45,6 @@ target_link_libraries(test16 algs)
 
 add_executable(test17 test17.cpp)
 target_link_libraries(test17 algs)
+
+add_executable(test18 test18.cpp)
+target_link_libraries(test18 algs)

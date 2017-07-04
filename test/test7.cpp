@@ -17,5 +17,10 @@ int main(int argc, char *argv[])
         cout << *it << endl;
     }
 
+    for (auto it = lst1->rbegin(); it != lst1->rend(); ++it)
+    {
+        cout << *it << endl;
+    }
+
     return 0;
 }

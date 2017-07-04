@@ -23,13 +23,16 @@ public:
     ValueType data_;
 };
 
-//List类型，不具有DifferenceType，所以这里继承的三个参数为Void
 template<typename _T>
 class ListIterator
 {
 public:
     typedef _T  ValueType;
     typedef _T& Reference;
+    typedef BidirectionalIteratorTag IteratorCategory;
+    typedef _T* Pointer;
+    typedef Void DifferenceType; //List没有DifferenceType;
+
     typedef ListNode<ValueType> NodeType;
 
     ListIterator(NodeType *&p): p_(p) {}
@@ -43,6 +46,20 @@ public:
     {
         NodeType *tmp = p_;
         p_ = p_->next;
+
+        return tmp;
+    }
+
+    ListIterator &operator--() //前置自减，返回左值
+    {
+        p_ = p_->prev_;
+        return *this;
+    }
+
+    ListIterator operator--(int) //后置自减，返回右值
+    {
+        NodeType *tmp = p_;
+        p_ = p_->prev_;
 
         return tmp;
     }
@@ -70,7 +87,7 @@ public:
     typedef ListNode<ValueType> NodeType;
     typedef typename Allocator::template Rebind<NodeType>::Other NodeAllocator;
     typedef ListIterator<ValueType> Iterator;
-    //typedef Iterator<BidirectionalIteratorTag, _T, Void, _T*, _T&> Iterator;
+    typedef typename algstl::ReverseIterator<Iterator> ReverseIterator;
 
     List()
     {
@@ -104,6 +121,16 @@ public:
     Iterator end()
     {
         return head_;
+    }
+
+    ReverseIterator rbegin()
+    {
+        return ReverseIterator(end());
+    }
+
+    ReverseIterator rend()
+    {
+        return ReverseIterator(begin());
     }
 
     void pushBack(const ValueType &val)

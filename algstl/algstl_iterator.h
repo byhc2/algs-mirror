@@ -102,6 +102,7 @@ struct IteratorTraits<const _Tp*>
 template<typename _Iterator>
 class ReverseIterator
 {
+template<typename _T> friend bool operator!=(const ReverseIterator<_T> &lhs, const ReverseIterator<_T> &rhs);
 public:
     typedef _Iterator IteratorType;
     typedef typename IteratorTraits<IteratorType>::ValueType ValueType; //必须使用IteratorTraits
@@ -139,9 +140,21 @@ public:
         return tmp;
     }
 
+    Reference operator*()
+    {
+        IteratorType tmp = current_;
+        return *--tmp;
+    }
+
 private:
     IteratorType current_;
 };
+
+template<typename _T>
+bool operator!=(const ReverseIterator<_T> &lhs, const ReverseIterator<_T> &rhs)
+{
+    return lhs.current_ != rhs.current_;
+}
 
 }
 

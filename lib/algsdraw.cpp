@@ -179,6 +179,38 @@ Void AlgsDraw::circle(Double x, Double y, Double r)
     drawFinish();
 }
 
+Void AlgsDraw::rectangle(Double x, Double y, Double rw, Double rh)
+{
+    std::cout << "in " << __FUNCTION__ << std::endl;
+
+    init();
+    drawInit();
+
+    cairo_rectangle(cr_,
+            c2sX(x) - l2s(rw) / 2.0,
+            c2sY(y) - l2s(rh) / 2.0,
+            l2s(rw), l2s(rh));
+    cairo_stroke(cr_);
+
+    drawFinish();
+}
+
+Void AlgsDraw::filledRectangle(Double x, Double y, Double rw, Double rh)
+{
+    std::cout << "in " << __FUNCTION__ << std::endl;
+
+    init();
+    drawInit();
+
+    cairo_rectangle(cr_,
+            c2sX(x) - l2s(rw) / 2.0,
+            c2sY(y) - l2s(rh) / 2.0,
+            l2s(rw), l2s(rh));
+    cairo_fill(cr_);
+
+    drawFinish();
+}
+
 Void AlgsDraw::filledCircle(Double x, Double y, Double r)
 {
     std::cout << "in " << __FUNCTION__ << std::endl;
@@ -232,7 +264,7 @@ Void AlgsDraw::show()
     }
 
     drawable_ = XCreateSimpleWindow(display_, RootWindow(display_, DefaultScreen(display_)), 0, 0,
-            width_, height_, 0, BlackPixel(display_, DefaultScreen(display_)), WhitePixel(display_, DefaultScreen(display_)));
+            800, 800, 0, BlackPixel(display_, DefaultScreen(display_)), WhitePixel(display_, DefaultScreen(display_)));
 
     //远程的x客户端在本地运行的时候，似乎不会触发resize事件
     XSelectInput(display_, drawable_, ExposureMask | ResizeRedirectMask | SubstructureRedirectMask);

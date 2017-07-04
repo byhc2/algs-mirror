@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
     AlgsDraw::circle(0, 0, 10);
     AlgsDraw::circle(0, 0, 10);
     AlgsDraw::filledCircle(0, 5, 3);
+    AlgsDraw::rectangle(0, 0, 3, 4);
     AlgsDraw::show();
     return 0;
 }
