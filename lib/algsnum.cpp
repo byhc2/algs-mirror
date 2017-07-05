@@ -108,41 +108,4 @@ String Num::toString(Double d, const Int precision, const Int ipart_precision)
     return ret;
 }
 
-String Num::toString(Int i)
-{
-    const Char cbuf[] = "0123456789";
-    const Int BUFSIZE = 16;
-    Char buf[BUFSIZE] = {0};
-
-    Int index = 15;
-    bool neg = false;
-    if (i < 0)
-    {
-        neg = true;
-        i = -i;
-    }
-
-    while (i > 0)
-    {
-        assert(index > 0);
-        buf[index--] = cbuf[i % 10];
-        i /= 10;
-    }
-
-    assert(index >= 0);
-
-    if (neg)
-    {
-        buf[index] = '-';
-    }
-
-    index = 0;
-    while (buf[index] == 0)
-    {
-        ++index;
-    }
-
-    return String(buf + index, BUFSIZE - index);
-}
-
 }

@@ -15,4 +15,23 @@ typedef unsigned char Uchar;
 typedef unsigned long Ulong;
 typedef     ptrdiff_t PtrDiff;
 
+#if 0
+namespace algs
+{
+
+template<typename T>
+String toString(const T &v)
+{
+    return v.toString();
+}
+
+template<>
+String toString(const Char v)
+{
+    String(&v, 1);
+}
+
+}
+#endif
+
 #endif

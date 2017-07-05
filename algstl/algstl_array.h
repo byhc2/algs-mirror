@@ -4,10 +4,13 @@
 //动态数组，基本同stl中vector
 
 #include <iostream>
+#include <cassert>
 #include "algs_type.h"
 #include "algstl_memory.h"
 #include "algstl_iterator.h"
 #include "algstl_algobase.h"
+#include "algsstring.h"
+#include "__tostring.h"
 
 namespace algstl
 {
@@ -33,6 +36,13 @@ public:
         cap_ = nullptr;
     }
 
+    Array(SizeType n)
+    {
+        start_ = alloc_.allocate(n);
+        end_ = start_ + n;
+        cap_ = end_;
+    }
+
     //复制构造函数，显示调用
     explicit Array(const Array &rhs)
     {
@@ -43,13 +53,40 @@ public:
         cap_ = end_;
     }
 
+    algs::String toString() const
+    {
+        algs::String tmp = algs::toString(size()) + " [";
+        SizeType width = tmp.size();
+        for (auto it = begin(); it != end(); ++it)
+        {
+            auto ex = algs::toString(*it);
+            tmp += ex;
+            if (width > 80) //看看是否可以动态获取到屏幕宽度 TODO
+            {
+                tmp += "\n";
+                width = 0;
+            }
+            else
+            {
+                tmp += "    ";
+                width += ex.size();
+            }
+        }
+
+        tmp += "]";
+
+        return tmp;
+    }
+
     Reference operator[](SizeType i)
     {
+        assert(i < size());
         return *(start_ + i);
     }
 
     ConstReference operator[](SizeType i) const
     {
+        assert(i < size());
         return *(start_ + i);
     }
 
