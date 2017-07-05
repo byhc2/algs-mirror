@@ -92,9 +92,9 @@ public:
     }
 };
 
-template<typename InputIterator, typename ForwardIterator>
-void uninitialized_copy(InputIterator first, InputIterator last,
-        ForwardIterator dest)
+template<typename _InputIterator, typename _ForwardIterator>
+void uninitialized_copy(_InputIterator first, _InputIterator last,
+        _ForwardIterator dest)
 {
     try
     {
@@ -108,6 +108,38 @@ void uninitialized_copy(InputIterator first, InputIterator last,
     catch (std::exception &e)
     {
         throw std::runtime_error(e.what());
+    }
+}
+
+template<typename _InputIterator, typename _SizeType typename _ForwardIterator>
+void uninitialized_copy_n(InputIterator first, InputIterator last,
+        _ForwardIterator dest, _SizeType n)
+{
+    _SizeType c = 0;
+    try
+    {
+        while (first != last && c < n)
+        {
+            new (&*dest) typename IteratorTraits<ForwardIterator>::ValueType(*first);
+            ++dest;
+            ++first;
+            ++c;
+        }
+    }
+    catch (std::exception &e)
+    {
+        throw std::runtime_error(e.what());
+    }
+}
+
+//析构一个序列的内容
+template<typename _ForwardIterator>
+void _destroy(_ForwardIterator first, _ForwardIterator last)
+{
+    while (first != last)
+    {
+        _doDestroy(*first);
+        ++first;
     }
 }
 

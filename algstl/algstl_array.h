@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <cassert>
+#include <initializer_list>
 #include "algs_type.h"
 #include "algstl_memory.h"
 #include "algstl_iterator.h"
@@ -36,11 +37,9 @@ public:
         cap_ = nullptr;
     }
 
-    Array(SizeType n)
+    explicit Array(SizeType n)
     {
-        start_ = alloc_.allocate(n);
-        end_ = start_ + n;
-        cap_ = end_;
+        resize(n);
     }
 
     //复制构造函数，显示调用
@@ -51,6 +50,21 @@ public:
         uninitialized_copy(rhs.begin(), rhs.end(), start_);
         end_ = start_ + s;
         cap_ = end_;
+    }
+
+    //因为编译器会固定把{xx, xx}这样的列表
+    //解释为initializer_list
+    //所以这里没办法只能使用
+    Array(constexpr std::initializer_list<ValueType> &lst)
+    {
+        //预分配空间
+        resize(lst.size());
+    }
+
+    void resize(SizeType n)
+    {
+        decltype(start_) tmp = alloc_.allocate(n);
+        uninitialized_copy_n(start_, end_, tmp, n);
     }
 
     algs::String toString() const
