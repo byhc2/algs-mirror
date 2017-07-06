@@ -4,7 +4,10 @@
 #include <new>
 #include <cstddef>
 #include <cstdlib>
+#include <exception>
+#include <stdexcept>
 #include "algs_type.h"
+#include "algstl_iterator.h"
 
 //负责处理内存分配、构造、析构等事宜
 
@@ -93,6 +96,19 @@ template<typename InputIterator, typename ForwardIterator>
 void uninitialized_copy(InputIterator first, InputIterator last,
         ForwardIterator dest)
 {
+    try
+    {
+        while (first != last)
+        {
+            new (&*dest) typename IteratorTraits<ForwardIterator>::ValueType(*first);
+            ++dest;
+            ++first;
+        }
+    }
+    catch (std::exception &e)
+    {
+        throw std::runtime_error(e.what());
+    }
 }
 
 }

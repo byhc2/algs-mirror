@@ -106,7 +106,7 @@ public:
             cur = cur->next_;
 
             alloc_.deconstruct(tmp);
-            alloc_.deallocate(tmp);
+            alloc_.deallocate(tmp, 1);
         }
 
         alloc_.deconstruct(head_);
