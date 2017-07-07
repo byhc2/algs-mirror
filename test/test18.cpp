@@ -1,19 +1,23 @@
 #include "algsdraw.h"
 #include "algsrandom.h"
+#include "algstl_array.h"
 
 using namespace algs;
+using namespace algstl;
 
 int main(int argc, char *argv[])
 {
     const Int N = 50;
 
-    Double a[N];
+    Array<Double> a;
 
     AlgsRandom::initialize();
     for (auto i = 0; i < N; ++i)
     {
-        a[i] = AlgsRandom::random();
+        a += AlgsRandom::random();
     }
+
+    a.sort([](const Double &a, const Double &b) {return a < b;});
 
     AlgsDraw::setXscale(0, 1);
     AlgsDraw::setYscale(0, 1);
