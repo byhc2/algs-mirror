@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
 
     AlgsDraw::setXscale(0, 1);
     AlgsDraw::setYscale(0, 1);
+    AlgsDraw::setPenColor(AlgsDraw::Color(1, 0, 0));
     for (auto i = 0; i < N; ++i)
     {
         Double x = 1.0 * i / N;
