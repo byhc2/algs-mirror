@@ -13,6 +13,7 @@ class AlgsStdOut
 public:
     static void print(const String &s);
     static void println(const String &s);
+    static void println(const Char c);
     static void println();
 #if 0
     template<typename... _Args>

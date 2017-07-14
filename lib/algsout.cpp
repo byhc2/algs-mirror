@@ -1,6 +1,6 @@
-#include "algsout.h"
 #include <iostream>
 #include <cstdarg>
+#include "algsout.h"
 
 namespace algs
 {
@@ -13,6 +13,11 @@ void AlgsStdOut::print(const String &s)
 void AlgsStdOut::println(const String &s)
 {
     std::cout << s << std::endl;
+}
+
+void AlgsStdOut::println(const Char c)
+{
+    std::cout << c << std::endl;
 }
 
 void AlgsStdOut::println()

@@ -45,5 +45,11 @@ int main(int argc, char *argv[])
 
     }
 
+    {
+        AlgsStdOut::println('b');
+        AlgsStdOut::println('b' + 'c');
+        AlgsStdOut::println((char)('b' + 4));
+    }
+
     return 0;
 }
