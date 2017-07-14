@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include "algs_type.h"
 #include "algstl_array.h"
 
@@ -33,19 +34,22 @@ Int rank2(Int key, const Array<Int> &a)
 
 int main(int argc, char *argv[])
 {
+    ifstream r(argv[1]);
+    ifstream t(argv[2]);
     Int x;
     Array<Int> arr;
-    while (cin >> x)
+    while (r >> x)
     {
         arr += x;
     }
 
     cin.clear();
+
     cout << "start sort" << endl;
-
     arr.sort([](const Int a, const Int b) {return a < b;});
+    cout << "finish sort" << endl;
 
-    while (cin >> x)
+    while (t >> x)
     {
         if (rank2(x, arr) < 0)
         {

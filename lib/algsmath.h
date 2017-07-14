@@ -10,6 +10,10 @@ class AlgsMath
 {
 public:
     static Double log(Double i);
+    inline static Double abs(Double v)
+    {
+        return v >= 0 ? v : -v;
+    }
 };
 
 }
