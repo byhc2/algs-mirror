@@ -42,6 +42,12 @@ public:
         resize(n);
     }
 
+    //初始化长度为n的数组，每个值都由v构造
+    Array(const ValueType &v, SizeType n)
+    {
+        resize(n);
+    }
+
     //复制构造函数，显示调用
     explicit Array(const Array &rhs): Array()
     {
