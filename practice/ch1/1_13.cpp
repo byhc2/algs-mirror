@@ -7,18 +7,18 @@ using namespace algstl;
 
 int main(int argc, char *argv[])
 {
-    Array<Array<Bool>> a(
+    Array<Array<Int>> a(
     {
-        {true, false, true},
-        {false, true, false},
-        {true, false, true}
+        {6, 1, 8},
+        {7, 5, 3},
+        {2, 9, 4},
     });
 
-    for (auto &i: a)
+    for (decltype(a.size()) i = 0; i < a.size(); ++i)
     {
-        for (auto &j: i)
+        for (decltype(a.size()) j = 0; j < a[i].size(); ++j)
         {
-            cout << (j ? "*" : " ") << "  ";
+            cout << a[j][i] << "  ";
         }
         cout << endl;
     }

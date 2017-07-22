@@ -100,7 +100,7 @@ void uninitialized_copy(_InputIterator first, _InputIterator last,
     {
         while (first != last)
         {
-            new (&*dest) typename IteratorTraits<ForwardIterator>::ValueType(*first);
+            new (&*dest) typename IteratorTraits<_ForwardIterator>::ValueType(*first);
             ++dest;
             ++first;
         }
@@ -111,8 +111,8 @@ void uninitialized_copy(_InputIterator first, _InputIterator last,
     }
 }
 
-template<typename _InputIterator, typename _SizeType typename _ForwardIterator>
-void uninitialized_copy_n(InputIterator first, InputIterator last,
+template<typename _InputIterator, typename _SizeType, typename _ForwardIterator>
+void uninitialized_copy_n(_InputIterator first, _InputIterator last,
         _ForwardIterator dest, _SizeType n)
 {
     _SizeType c = 0;
@@ -120,7 +120,7 @@ void uninitialized_copy_n(InputIterator first, InputIterator last,
     {
         while (first != last && c < n)
         {
-            new (&*dest) typename IteratorTraits<ForwardIterator>::ValueType(*first);
+            new (&*dest) typename IteratorTraits<_ForwardIterator>::ValueType(*first);
             ++dest;
             ++first;
             ++c;
@@ -130,6 +130,12 @@ void uninitialized_copy_n(InputIterator first, InputIterator last,
     {
         throw std::runtime_error(e.what());
     }
+}
+
+template<typename _T>
+void _doDestroy(_T &v)
+{
+    v.~_T();
 }
 
 //析构一个序列的内容

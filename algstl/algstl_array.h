@@ -37,13 +37,13 @@ public:
         cap_ = nullptr;
     }
 
-    explicit Array(SizeType n)
+    explicit Array(SizeType n): Array()
     {
         resize(n);
     }
 
     //复制构造函数，显示调用
-    explicit Array(const Array &rhs)
+    explicit Array(const Array &rhs): Array()
     {
         auto s = rhs.size();
         start_ = alloc_.allocate(s);
@@ -55,16 +55,38 @@ public:
     //因为编译器会固定把{xx, xx}这样的列表
     //解释为initializer_list
     //所以这里没办法只能使用
-    Array(constexpr std::initializer_list<ValueType> &lst)
+    Array(const std::initializer_list<ValueType> &lst): Array()
     {
         //预分配空间
         resize(lst.size());
+        uninitialized_copy(lst.begin(), lst.end(), start_);
     }
 
     void resize(SizeType n)
     {
-        decltype(start_) tmp = alloc_.allocate(n);
-        uninitialized_copy_n(start_, end_, tmp, n);
+        if (start_ + n < end_)
+        {
+            //空间足够大，需要析构n到end_之间的元素
+            _destroy(start_ + n, end_);
+            end_ = start_ + n;
+        }
+        else if (start_ + n < cap_)
+        {
+            //空间足够大，不需要析构
+            end_ = start_ + n;
+        }
+        else
+        {
+            decltype(start_) tmp = alloc_.allocate(n);
+            assert(tmp);
+            uninitialized_copy_n(start_, end_, tmp, n);
+            //析构销毁之前的内存
+            _destroy(start_, end_);
+            alloc_.deallocate(start_, size());
+            start_ = tmp;
+            cap_ = start_ + n;
+            end_ = cap_;
+        }
     }
 
     algs::String toString() const
@@ -140,11 +162,7 @@ public:
 
     ~Array()
     {
-        auto cur = start_;
-        while (cur != end_)
-        {
-            alloc_.deconstruct(cur++);
-        }
+        _destroy(start_, end_);
         alloc_.deallocate(start_, size());
         start_ = nullptr;
         end_ = nullptr;
