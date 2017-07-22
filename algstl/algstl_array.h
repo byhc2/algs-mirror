@@ -43,13 +43,19 @@ public:
     }
 
     //初始化长度为n的数组，每个值都由v构造
-    Array(const ValueType &v, SizeType n)
+    Array(const ValueType &v, SizeType n): Array()
     {
         resize(n);
+        auto it = start_;
+        while (it != end_)
+        {
+            alloc_.construct(it, v);
+            ++it;
+        }
     }
 
-    //复制构造函数，显示调用
-    explicit Array(const Array &rhs): Array()
+    //复制构造函数
+    Array(const Array &rhs): Array()
     {
         auto s = rhs.size();
         start_ = alloc_.allocate(s);
@@ -111,7 +117,7 @@ public:
             else
             {
                 tmp += "    ";
-                width += ex.size();
+                width += ex.size() + sizeof("    ");
             }
         }
 
