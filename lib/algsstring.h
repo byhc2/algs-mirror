@@ -20,6 +20,7 @@ template<typename _A> friend StringBase<_A> operator+(const StringBase<_A> &lhs,
 template<typename _A> friend StringBase<_A> operator+(const StringBase<_A> &lhs, const StringBase<_A> &rhs);
 
 template<typename _A> friend std::ostream &operator<<(std::ostream &os, const StringBase<_A> &rhs);
+template<typename _A> friend std::ostream &operator>>(std::ostream &os, const StringBase<_A> &rhs);
 
 public:
     //实际存储字符串的缓冲区类
@@ -179,11 +180,6 @@ public:
         return sbuf_->size();
     }
 
-    void append(const Char *rhs, SizeType n)
-    {
-        sbuf_->append(rhs, n);
-    }
-
     StringBase &operator+=(const StringBase &rhs)
     {
         auto p = new BufferType(size() + rhs.size());
@@ -200,6 +196,12 @@ public:
         sbuf_->incr();
 
         return *this;
+    }
+
+protected:
+    void append(const Char *rhs, SizeType n)
+    {
+        sbuf_->append(rhs, n);
     }
 
 private:
@@ -243,6 +245,17 @@ template<typename _A>
 std::ostream &operator<<(std::ostream &os, const StringBase<_A> &rhs)
 {
     os << rhs.c_str();
+    return os;
+}
+
+template<typename _A>
+std::ostream &operator>>(std::istream &is, const StringBase<_A> &rhs)
+{
+    rhs = ""; //先清空自身数据
+
+    auto buf = is.rdbuf();
+    auto csize = buf->in_avail(); //获取buf中目前可读的字符数
+
     return os;
 }
 
