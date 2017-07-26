@@ -66,7 +66,7 @@ public:
         StringBuf(SizeType n=1)
         {
             n += 8; //本来8字节圆整只需要加7，但是考虑到c_str方法一定要多留出一个字节的空间放结束符，所以这里多分配点
-            n &= 0xfffffff8; //8字节圆整对齐
+            n &= SizeType(-1) ^ 0x7; //8字节圆整对齐
             buf_ = buf_allocator.allocate(n);
             mstart_ = buf_;
             mend_ = mstart_;
@@ -84,7 +84,7 @@ public:
             mend_ = static_cast<Char *>(mempcpy(mend_, buf, n));
         }
 
-        private:
+    private:
         Allocator buf_allocator;
     };
 

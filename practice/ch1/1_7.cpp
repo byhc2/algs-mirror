@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
 
     }
 
+    //1.8
     {
         AlgsStdOut::println('b');
         AlgsStdOut::println('b' + 'c');

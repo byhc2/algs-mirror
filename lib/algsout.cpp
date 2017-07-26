@@ -26,13 +26,28 @@ void AlgsStdOut::println()
 }
 
 #if 0
+//简单的实现，仅支持%d和%s两种形式
 template<typename... _Args>
-void AlgsStdOut::printf(String f, const _Args &... args)
+void AlgsStdOut::printf(String f, const Int &v, const _Args &... args)
 {
-    return; //TODO 未实现
+    String buffer = "";
+    Char *p = f.c_str();
+    while (p != '\0')
+    {
+        if (*p == "%")
+        {
+            if (*(p + 1) == 'd')
+            {
+                buffer
+            }
+        }
+        else
+        {
+        }
+    }
 }
-#endif
 
+#else
 //先暂时这样实现
 void AlgsStdOut::printf(const String &f, ...)
 {
@@ -41,6 +56,7 @@ void AlgsStdOut::printf(const String &f, ...)
     vprintf(f.c_str(), args);
     va_end(args);
 }
+#endif
 
 template<typename _InputIterator>
 void AlgsOut::write(_InputIterator begin, _InputIterator end, const String &name)
