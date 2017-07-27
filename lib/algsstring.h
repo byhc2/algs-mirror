@@ -249,14 +249,30 @@ std::ostream &operator<<(std::ostream &os, const StringBase<_A> &rhs)
 }
 
 template<typename _A>
-std::ostream &operator>>(std::istream &is, const StringBase<_A> &rhs)
+std::istream &operator>>(std::istream &is, StringBase<_A> &rhs)
 {
     rhs = ""; //先清空自身数据
 
     auto buf = is.rdbuf();
     auto csize = buf->in_avail(); //获取buf中目前可读的字符数
 
-    return os;
+    if (csize == -1)
+    {
+        return is;
+    }
+
+    Char *p = new Char[csize];
+    auto q = 0;
+    while (buf->sgetc() != EOF)
+    {
+        p[q++] = buf->sbumpc();
+    }
+
+    p[q] = '\0';
+
+    rhs = p;
+
+    return is;
 }
 
 }
