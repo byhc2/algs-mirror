@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cassert>
 #include <initializer_list>
+#include <algorithm>
 #include "algs_type.h"
 #include "algstl_memory.h"
 #include "algstl_iterator.h"
@@ -307,18 +308,9 @@ Void Array<_T, _Alloc>::sort(_Comp f)
     {
         return;
     }
-    //略去对f的二元算子检查
-    //
-    for (auto cur = end_ - 1; cur > start_; --cur)
-    {
-        for (auto flag = start_; flag < cur; ++flag)
-        {
-            if (not f(*flag, *(flag + 1)))
-            {
-                swap(*flag, *(flag + 1));
-            }
-        }
-    }
+
+    //这里先使用标准库的快排
+    std::sort(begin(), end(), f);
 }
 
 }
