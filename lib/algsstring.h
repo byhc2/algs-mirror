@@ -82,11 +82,7 @@ public:
             }
             assert(size() + n < capacity());
             assert(buf_);
-            //std::cout << "start: " << std::hex << (void *)buf_ << std::endl;
-            //std::cout << "end: " << std::hex << (void *)mend_ << std::endl;
-            //std::cout << "copy " << n << std::endl;
             mend_ = static_cast<Char *>(mempcpy(mend_, buf, n));
-            //std::cout << "end: " << std::hex << (void *)mend_ << std::endl;
         }
 
     private:
@@ -98,8 +94,6 @@ public:
 
     StringBase(): sbuf_(nullptr)
     {
-        static Int x = 9;
-        std::cout << "in default ctor " << x++ << std::endl;
         sbuf_ = new BufferType(1);
         assert(sbuf_); //暂时如此
         sbuf_->append("\0", 1);
@@ -160,7 +154,6 @@ public:
         }
 
         SizeType n = rhs ? strlen(rhs) : 1;
-        //std::cout << "rhs.size " << n << std::endl;
         sbuf_ = new BufferType(n);
         assert(sbuf_);
         sbuf_->append(rhs, n);

@@ -308,7 +308,7 @@ Void Array<_T, _Alloc>::sort(_Comp f)
         return;
     }
     //略去对f的二元算子检查
-    //先用最简单的冒泡吧
+    //
     for (auto cur = end_ - 1; cur > start_; --cur)
     {
         for (auto flag = start_; flag < cur; ++flag)
