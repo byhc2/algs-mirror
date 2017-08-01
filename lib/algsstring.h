@@ -85,6 +85,14 @@ public:
             mend_ = static_cast<Char *>(mempcpy(mend_, buf, n));
         }
 
+        void fill(SizeType n, Char c)
+        {
+            assert(n < capacity());
+            assert(buf_);
+            memset(buf_, c, n);
+            mend_ += n;
+        }
+
     private:
         Allocator buf_allocator;
     };
@@ -120,6 +128,16 @@ public:
         sbuf_ = new BufferType(n);
         assert(sbuf_);
         sbuf_->append(rhs, n);
+        sbuf_->incr();
+    }
+
+    //由n个c组成的字符串
+    StringBase(SizeType n, Char c)
+    {
+        sbuf_ = new BufferType(n);
+        assert(sbuf_);
+        sbuf_->fill(n, c);
+        sbuf_->incr();
     }
 
     StringBase(SizeType n)
