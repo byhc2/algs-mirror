@@ -47,9 +47,7 @@ int main(int argc, char *argv[])
 
     cin.clear();
 
-    cout << "start sort" << endl;
     arr.sort([](const Int a, const Int b) {return a < b;});
-    cout << "finish sort" << endl;
 
     //cout << arr.toString() << endl;
 

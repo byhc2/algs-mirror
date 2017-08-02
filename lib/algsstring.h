@@ -260,6 +260,24 @@ StringBase<_A> operator+(const Char *lhs, const StringBase<_A> &rhs)
 }
 
 template<typename _A>
+bool operator==(const StringBase<_A> &lhs, const StringBase<_A> &rhs)
+{
+    return !strncmp(lhs.c_str(), rhs.c_str(), lhs.size());
+}
+
+template<typename _A>
+bool operator==(const StringBase<_A> &lhs, const Char *rhs)
+{
+    return !strncmp(lhs.c_str(), rhs, lhs.size());
+}
+
+template<typename _A>
+bool operator==(const Char *lhs, const StringBase<_A> &rhs)
+{
+    return !strncmp(lhs, rhs.c_str(), rhs.size());
+}
+
+template<typename _A>
 std::ostream &operator<<(std::ostream &os, const StringBase<_A> &rhs)
 {
     os << rhs.c_str();
