@@ -8,30 +8,8 @@ using namespace std;
 using namespace algs;
 using namespace algstl;
 
-//rank与标准库中某个类型重名
-Int rank2(Int key, const Array<Int> &a)
-{
-    Array<Int>::SizeType lo = 0;
-    Array<Int>::SizeType hi = a.size() - 1;
-    while (lo <= hi)
-    {
-        auto mid = (lo + hi) / 2;
-        if (key < a[mid])
-        {
-            hi = mid - 1;
-        }
-        else if (a[mid] < key)
-        {
-            lo = mid + 1;
-        }
-        else
-        {
-            return mid;
-        }
-    }
-
-    return -1;
-}
+//暂时不太懂删除重复元素和二分查找有什么关系
+//这里做一个普通的删除重复元素的问题来处理
 
 int main(int argc, char *argv[])
 {
@@ -51,16 +29,20 @@ int main(int argc, char *argv[])
 
     arr.sort([](const Int a, const Int b) {return a < b;});
 
-    while (t >> x)
+    if (arr.size() == 0)
     {
-        auto ret = rank2(x, arr);
-        if (flag == "+" && ret < 0)
+        return 0; //至少有一个元素
+    }
+
+    decltype(arr) newarr;
+    decltype(arr)::SizeType pos = 0;
+    for (decltype(arr)::SizeType i = 0; i < arr.size() - 1; ++i)
+    {
+        if (arr[i] != arr[i + 1])
         {
-            cout << x << endl;
-        }
-        else if (flag == "-" && ret >= 0)
-        {
-            cout << x << endl;
+            newarr[pos++] = arr[i];
         }
     }
+
+    cout << newarr.toString() << endl;
 }
