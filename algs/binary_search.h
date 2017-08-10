@@ -11,6 +11,10 @@ class BinarySearch
     template<typename _T>
     static algstl::Array<_T>::SizeType rank(const _T &key, const algstl::Array<_T> &a)
     {
+        if (a.size() == 0)
+        {
+            return -1; //坚决防止数组大小为0的情况
+        }
         Array<_T>::SizeType lo = 0;
         Array<_T>::SizeType hi = a.size() - 1;
         while (lo <= hi)
@@ -30,7 +34,20 @@ class BinarySearch
             }
         }
 
-        return -1;
+        return Array<_T>::npos;
+    }
+
+    //返回有序数组中，比key小的元素的个数
+    template<typename _T>
+    static algstl::Array<_T>::SizeType countLess(const _T &key, const algstl::Array<_T> &a)
+    {
+        if (a.size() == 0)
+        {
+            return 0;
+        }
+
+        Array<_T>::SizeType lo = 0;
+        Array<_T>::SizeType hi = a.size() - 1;
     }
 };
 

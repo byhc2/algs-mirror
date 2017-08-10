@@ -3,6 +3,7 @@
 #include "algs_type.h"
 #include "algstl_array.h"
 #include "algsstring.h"
+#include "binary_search.h"
 
 using namespace std;
 using namespace algs;

@@ -31,6 +31,8 @@ public:
     typedef typename algstl::ReverseIterator<Iterator> ReverseIterator;
     typedef Uint SizeType;
 
+    static constexpr SizeType npos = -1;
+
     Array()
     {
         start_ = nullptr;
