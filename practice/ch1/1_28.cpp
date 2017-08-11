@@ -35,13 +35,17 @@ int main(int argc, char *argv[])
     }
 
     decltype(arr) newarr;
-    decltype(arr)::SizeType pos = 0;
     for (decltype(arr)::SizeType i = 0; i < arr.size() - 1; ++i)
     {
         if (arr[i] != arr[i + 1])
         {
-            newarr[pos++] = arr[i];
+            newarr += arr[i];
         }
+    }
+    //特殊处理最后一个元素
+    if (arr[arr.size() - 1] != newarr[newarr.size() - 1])
+    {
+        newarr += arr[arr.size() - 1];
     }
 
     cout << newarr.toString() << endl;

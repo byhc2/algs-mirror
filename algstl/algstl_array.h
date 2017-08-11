@@ -29,6 +29,7 @@ public:
     typedef const _T* ConstIterator;
     typedef _T* Pointer;
     typedef typename algstl::ReverseIterator<Iterator> ReverseIterator;
+    typedef typename algstl::ReverseIterator<ConstIterator> ConstReverseIterator;
     typedef Uint SizeType;
 
     static constexpr SizeType npos = -1;
@@ -163,6 +164,26 @@ public:
     Iterator end()
     {
         return end_;
+    }
+
+    ReverseIterator rbegin()
+    {
+        return end_;
+    }
+
+    ReverseIterator rend()
+    {
+        return start_;
+    }
+
+    ConstReverseIterator rbegin() const
+    {
+        return end_;
+    }
+
+    ConstReverseIterator rend() const
+    {
+        return start_;
     }
 
     ConstIterator begin() const
