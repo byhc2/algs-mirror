@@ -168,22 +168,22 @@ public:
 
     ReverseIterator rbegin()
     {
-        return end_;
+        return ReverseIterator(end());
     }
 
     ReverseIterator rend()
     {
-        return start_;
+        return ReverseIterator(begin());
     }
 
     ConstReverseIterator rbegin() const
     {
-        return end_;
+        return ConstReverseIterator(end());
     }
 
     ConstReverseIterator rend() const
     {
-        return start_;
+        return ConstReverseIterator(begin());
     }
 
     ConstIterator begin() const
