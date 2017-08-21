@@ -85,7 +85,8 @@ private:
     static const String err_msg(cairo_status_t s);
     static Double c2sX(Double x);
     static Double c2sY(Double y);
-    static Double l2s(Double l);
+    static Double l2sX(Double l);
+    static Double l2sY(Double l);
 };
 
 }
