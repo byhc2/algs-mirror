@@ -1,28 +1,23 @@
 #ifndef __ALGSTL_TUPLE__
 #define __ALGSTL_TUPLE__
-        //015994943709
 
-namespace algs
+namespace algstl
 {
 
-template<typename... _T>
-class Tuple;
-typedef Uint Tuple::SizeType;
-
-template<Tuple::SizeType idx, typename... _T>
-struct TupleImpl;
-
-template<Tuple::SizeType idx, typename... _T>
-struct TupleImpl: public TupleImpl<idx + 1, typename... _T>
+//因为不懂元编程，这里只能写一个简陋版本的元组实现
+//只支持二元组
+template<typename _T, typename _U>
+class Tuple
 {
 public:
-    TupleImpl()
-};
+    typedef Uint SizeType;
 
-template<typename... _T>
-class Tuple: public TupleImpl<0, _T>
-{
-public:
+    Tuple(const _T &t, const _U &u): t_(t), u_(u) {}
+    Tuple(): t_(_T()), u_(_U()) {}
+
+private:
+    _T t_;
+    _U u_;
 };
 
 }
