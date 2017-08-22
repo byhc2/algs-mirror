@@ -3,6 +3,7 @@
 
 #include <cstring>
 #include "algs_type.h"
+#include "algstl_array.h"
 
 namespace algs
 {
@@ -45,11 +46,24 @@ public:
         return -1; //应该不会到这里
     }
 
-    template<Int n>
-    static void shuffle(Double (&a)[n])
+    template<typename T, Int n>
+    static void shuffle(T (&a)[n])
     {
         //Fisher-Yates算法
         for (int i = n - 1; i >= 0; --i)
+        {
+            auto j = AlgsRandom::uniform(i + 1);
+            Double tmp = a[i];
+            a[i] = a[j];
+            a[j] = tmp;
+        }
+    }
+
+    template<typename T>
+    static void shuffle(algstl::Array<T> &a)
+    {
+        //Fisher-Yates算法
+        for (int i = a.size() - 1; i >= 0; --i)
         {
             auto j = AlgsRandom::uniform(i + 1);
             Double tmp = a[i];
