@@ -128,13 +128,18 @@ Double AlgsDraw::c2sX(Double x)
 
 Double AlgsDraw::c2sY(Double y)
 {
-    return -(y - max_y_) * height_ / (max_y_ - min_y_);
+    return height_ - (y - min_y_) / (max_y_ - min_y_) * height_;
 }
 
 //将笛卡尔长度变成屏幕长度
-Double AlgsDraw::l2s(Double l)
+Double AlgsDraw::l2sX(Double l)
 {
     return width_ / (max_x_ - min_x_) * l;
+}
+
+Double AlgsDraw::l2sY(Double l)
+{
+    return height_ / (max_y_ - min_y_) * l;
 }
 
 Void AlgsDraw::point(Double x, Double y)
@@ -173,7 +178,7 @@ Void AlgsDraw::circle(Double x, Double y, Double r)
     init();
     drawInit();
 
-    cairo_arc(cr_, c2sX(x), c2sY(y), l2s(r), 0, 2 * M_PI);
+    cairo_arc(cr_, c2sX(x), c2sY(y), l2sX(r), 0, 2 * M_PI);
     cairo_stroke(cr_);
 
     drawFinish();
@@ -187,9 +192,9 @@ Void AlgsDraw::rectangle(Double x, Double y, Double rw, Double rh)
     drawInit();
 
     cairo_rectangle(cr_,
-            c2sX(x) - l2s(rw) / 2.0,
-            c2sY(y) - l2s(rh) / 2.0,
-            l2s(rw), l2s(rh));
+            c2sX(x - rw / 2.0),
+            c2sY(y + rh / 2.0),
+            l2sX(rw), l2sY(rh));
     cairo_stroke(cr_);
 
     drawFinish();
@@ -203,9 +208,9 @@ Void AlgsDraw::filledRectangle(Double x, Double y, Double rw, Double rh)
     drawInit();
 
     cairo_rectangle(cr_,
-            c2sX(x) - l2s(rw) / 2.0,
-            c2sY(y) - l2s(rh) / 2.0,
-            l2s(rw), l2s(rh));
+            c2sX(x - rw / 2.0),
+            c2sY(y + rh / 2.0),
+            l2sX(rw), l2sY(rh));
     cairo_fill(cr_);
 
     drawFinish();
@@ -218,7 +223,7 @@ Void AlgsDraw::filledCircle(Double x, Double y, Double r)
     init();
     drawInit();
 
-    cairo_arc(cr_, c2sX(x), c2sY(y), l2s(r), 0, 2 * M_PI);
+    cairo_arc(cr_, c2sX(x), c2sY(y), l2sX(r), 0, 2 * M_PI);
     cairo_fill(cr_);
 
     drawFinish();

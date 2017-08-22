@@ -20,6 +20,7 @@ set(target
     test19
     test20
     test21
+    test22
     )
 
 foreach(one ${target})
