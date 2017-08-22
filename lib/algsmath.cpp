@@ -19,4 +19,9 @@ Double AlgsMath::cos(Double a)
     return ::cos(a);
 }
 
+Double AlgsMath::pow(Double x, Double y)
+{
+    return ::pow(x, y);
+}
+
 }
