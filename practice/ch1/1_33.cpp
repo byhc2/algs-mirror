@@ -62,11 +62,36 @@ public:
         return result;
     }
 
-    static Array<Array<Double>> mult(const Array<Array<Double>> &a,
+    static Array<Double> mult(const Array<Array<Double>> &a,
             const Array<Double> &b)
     {
         assert(a.size() > 0 && a[0].size() == b.size());
-        Array<Array<Double>>
+        Array<Double> prod(0, a.size());
+
+        for (auto i = 0u; i < a.size(); ++i)
+        {
+            for (auto j = 0u; j < a[i].size(); ++j)
+            {
+                prod[i] += a[i][j] * b[j];
+            }
+        }
+        return  prod;
+    }
+
+    static Array<Double> mult(const Array<Double> &a,
+            const Array<Array<Double>> &b)
+    {
+        assert(a.size() > 0 && b.size() == a.size());
+        Array<Double> prod(0, b[0].size());
+
+        for (auto i = 0u; i < a.size(); ++i)
+        {
+            for (auto j = 0u; j < b[i].size(); ++j)
+            {
+                prod[j] += a[i] * b[i][j];
+            }
+        }
+        return  prod;
     }
 };
 
@@ -79,6 +104,18 @@ int main(int argc, char *argv[])
     cout << Matrix::dot(x, x) << endl;
     cout << Matrix::mult(y, z).toString() << endl;
     cout << Matrix::transpose(y).toString() << endl;
+    cout << Matrix::mult(y, {1, 2, 3}).toString() << endl;
+    cout << Matrix::mult({1, 2, 3}, z).toString() << endl;
 
     return 0;
 }
+
+//1.34
+//不需要保存，只使用三个变量
+//需要保存
+//不需要保存，只需要使用一个大小为k的数组
+//不需要保存，只使用两个变量
+//不需要保存，只使用两个变量
+//需要保存
+//需要保存
+//需要保存

@@ -18,10 +18,10 @@ Double Num::parseDouble(const String &s)
 String Num::toString(Double d, const Int precision, const Int ipart_precision)
 {
     //分离出符号位，指数位和位数位
-    Ulong ud = static_cast<Ulong>(d);
-    Int sign = (ud & 0x8000000000000000) >> 63;
-    int exp =  (ud & 0x7ff0000000000000) >> 52;
-    int frac = ud & 0x000fffffffffffff;
+    Ulong *ud = (Ulong*)(&d);
+    Int sign = (*ud & 0x8000000000000000) >> 63;
+    int exp =  (*ud & 0x7ff0000000000000) >> 52;
+    int frac = *ud & 0x000fffffffffffff;
 
     //判断几类特殊数字
     if (exp == 0 && frac == 0)
