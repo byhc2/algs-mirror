@@ -6,8 +6,10 @@ set(algs_src
         algsmath.cpp
    )
 
-add_library(algs SHARED ${algs_src})
+add_library(algs SHARED ${algs_src} ../algs/${custom_algs_src})
 target_link_libraries(algs m)
+
+message(STATUS ../algs/${custom_algs_src})
 
 find_package(PkgConfig)
 pkg_search_module(CAIRO REQUIRED cairo)
