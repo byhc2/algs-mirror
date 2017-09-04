@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <cmath>
+#include <iostream>
 #include "algsnum.h"
 
 namespace algs
@@ -74,7 +75,7 @@ String Num::toString(Double d, const Int precision, const Int ipart_precision)
 
     Int mag = static_cast<Int>(floorl(log10(d) + 1));
     char buf[50];
-    if (1 <= mag && mag < ipart_precision)
+    if (0 <= mag && mag < ipart_precision)
     {
         //正常整数部分
 #if 0
