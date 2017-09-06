@@ -28,7 +28,7 @@ Int fun(Int n)
     }
 
     a.sort([](const Int a, const Int b) {return a < b;});
-    cout << b.size() << endl;
+
     for (auto i = 0u; i < b.size(); ++i)
     {
         if (BinarySearch::rank(b[i], a) != -1)
@@ -43,6 +43,7 @@ Int fun(Int n)
 int main(int argc, char *argv[])
 {
     auto t = Num::parseInt(argv[1]);
+    AlgsRandom::initialize();
 
     for (auto i = 3; i <= 6; ++i)
     {
@@ -53,7 +54,7 @@ int main(int argc, char *argv[])
             sum += fun(n);
         }
 
-        cout << i << ": " << sum / t << endl;
+        cout << i << ": " << sum / static_cast<Double>(t) << endl;
     }
 
     return 0;

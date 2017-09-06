@@ -1,3 +1,6 @@
+#ifndef __BINARY_SEARCH__
+#define __BINARY_SEARCH__
+
 #include <iostream>
 #include <fstream>
 #include "algs_type.h"
@@ -20,7 +23,7 @@ public:
         typename algstl::Array<_T>::SizeType hi = a.size() - 1;
         while (lo <= hi)
         {
-            auto mid = (lo + hi) / 2;
+            auto mid = lo + (hi - lo) / 2;
             if (key < a[mid])
             {
                 hi = mid - 1;
@@ -155,3 +158,5 @@ public:
 };
 
 }
+
+#endif

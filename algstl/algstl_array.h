@@ -30,7 +30,7 @@ public:
     typedef _T* Pointer;
     typedef typename algstl::ReverseIterator<Iterator> ReverseIterator;
     typedef typename algstl::ReverseIterator<ConstIterator> ConstReverseIterator;
-    typedef Uint SizeType;
+    typedef Int SizeType;
 
     static constexpr SizeType npos = -1;
 
@@ -138,7 +138,6 @@ public:
 
     ConstReference operator[](SizeType i) const
     {
-        std::cout << i << std::endl;
         assert(i < size());
         return *(start_ + i);
     }
