@@ -138,6 +138,7 @@ public:
 
     ConstReference operator[](SizeType i) const
     {
+        std::cout << i << std::endl;
         assert(i < size());
         return *(start_ + i);
     }
