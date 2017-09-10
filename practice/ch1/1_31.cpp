@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 
     //随机连接
     AlgsDraw::setPenRadius(0.1);
-    for (auto i = 0u; i < points.size(); ++i)
+    for (auto i = 0; i < points.size(); ++i)
     {
         for (auto j = i; j < points.size(); ++j)
         {

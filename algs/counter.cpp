@@ -1,4 +1,5 @@
 #include "counter.h"
+#include "algsnum.h"
 
 namespace algs
 {
@@ -14,7 +15,7 @@ Int Counter::tally()
     return count_;
 }
 
-algs::String toString()
+algs::String Counter::toString()
 {
     return id_ + ": " + Num::toString(count_);
 }
@@ -25,7 +26,7 @@ Counter &Counter::operator++()
     return *this;
 }
 
-Counter Counter::operator++(int)
+Counter Counter::operator++(Int)
 {
     auto tmp = *this;
     ++count_;
@@ -36,6 +37,19 @@ std::ostream &operator<<(std::ostream &os, const Counter &rhs)
 {
     os << rhs.count_;
     return os;
+}
+
+Counter &operator=(const Counter &rhs)
+{
+    if (this == $rhs)
+    {
+        return *this;
+    }
+
+    id_ = rhs.id_;
+    count_ = rhs.count_;
+
+    return *this;
 }
 
 }

@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     //直方图
     AlgsDraw::setXscale(-0.5, arr.size() + 0.5);
     AlgsDraw::setYscale(0, max + 1);
-    for (auto i = 0u; i < arr.size(); ++i)
+    for (auto i = 0; i < arr.size(); ++i)
     {
         Double x = i;
         Double y = arr[i] / 2.0;

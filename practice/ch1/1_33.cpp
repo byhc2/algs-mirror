@@ -14,7 +14,7 @@ public:
         Double prod = 0.0;
         assert(x.size() == y.size());
 
-        for (auto i = 0u; i < x.size(); ++i)
+        for (auto i = 0; i < x.size(); ++i)
         {
             prod += x[i] * y[i];
         }
@@ -33,11 +33,11 @@ public:
         cout << prod.size() << endl;
         cout << prod[0].size() << endl;
 
-        for (auto i = 0u; i < a.size(); ++i)
+        for (auto i = 0; i < a.size(); ++i)
         {
-            for (auto j = 0u; j < a[i].size(); ++j)
+            for (auto j = 0; j < a[i].size(); ++j)
             {
-                for (auto k = 0u; k < b[0].size(); ++k)
+                for (auto k = 0; k < b[0].size(); ++k)
                 {
                     prod[i][k] += a[i][j] * b[j][k];
                 }
@@ -51,9 +51,9 @@ public:
     {
         Array<Array<Double>> result(Array<Double>(0, a.size()), a[0].size());
 
-        for (auto i = 0u; i < a.size(); ++i)
+        for (auto i = 0; i < a.size(); ++i)
         {
-            for (auto j = 0u; j < a[i].size(); ++j)
+            for (auto j = 0; j < a[i].size(); ++j)
             {
                 result[j][i] = a[i][j];
             }
@@ -68,9 +68,9 @@ public:
         assert(a.size() > 0 && a[0].size() == b.size());
         Array<Double> prod(0, a.size());
 
-        for (auto i = 0u; i < a.size(); ++i)
+        for (auto i = 0; i < a.size(); ++i)
         {
-            for (auto j = 0u; j < a[i].size(); ++j)
+            for (auto j = 0; j < a[i].size(); ++j)
             {
                 prod[i] += a[i][j] * b[j];
             }
@@ -84,9 +84,9 @@ public:
         assert(a.size() > 0 && b.size() == a.size());
         Array<Double> prod(0, b[0].size());
 
-        for (auto i = 0u; i < a.size(); ++i)
+        for (auto i = 0; i < a.size(); ++i)
         {
-            for (auto j = 0u; j < b[i].size(); ++j)
+            for (auto j = 0; j < b[i].size(); ++j)
             {
                 prod[j] += a[i] * b[i][j];
             }

@@ -13,7 +13,7 @@ using namespace algstl;
 template<typename _T>
 typename algstl::Array<_T>::SizeType brouteForceSearch(const _T &key, const algstl::Array<_T> &a)
 {
-    for (size_t i = 0; i < a.size(); ++i)
+    for (auto i = 0; i < a.size(); ++i)
     {
         if (a[i] == key)
         {

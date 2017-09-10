@@ -29,7 +29,7 @@ Int fun(Int n)
 
     a.sort([](const Int a, const Int b) {return a < b;});
 
-    for (auto i = 0u; i < b.size(); ++i)
+    for (auto i = 0; i < b.size(); ++i)
     {
         if (BinarySearch::rank(b[i], a) != -1)
         {

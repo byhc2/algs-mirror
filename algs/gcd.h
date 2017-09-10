@@ -1,5 +1,5 @@
-#ifndef __ALGS_GCD__
-#define __ALGS_GCD__
+#ifndef __UTILALGS_GCD__
+#define __UTILALGS_GCD__
 
 namespace algs
 {

@@ -27,4 +27,5 @@ set(target
 foreach(one ${target})
     add_executable(${one} ${one}.cpp)
     target_link_libraries(${one} algs)
+    target_link_libraries(${one} utilalgs)
 endforeach()

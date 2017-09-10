@@ -40,6 +40,7 @@ string(REPLACE " " "_" basename ${basename})
 foreach(one ${target})
     add_executable(${one} ${one}.cpp)
     target_link_libraries(${one} algs)
+    target_link_libraries(${one} utilalgs)
     set_target_properties(${one}
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${basename}

@@ -1,5 +1,5 @@
-#ifndef __BINARY_SEARCH__
-#define __BINARY_SEARCH__
+#ifndef __UTILALGS_BINARY_SEARCH__
+#define __UTILALGS_BINARY_SEARCH__
 
 #include <iostream>
 #include <fstream>

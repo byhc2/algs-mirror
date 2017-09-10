@@ -24,7 +24,7 @@ void shuffle(algstl::Array<T> &a)
 template<typename T>
 void shuffle2(algstl::Array<T> &a)
 {
-    for (auto i = 0u; i < a.size(); ++i)
+    for (auto i = 0; i < a.size(); ++i)
     {
         auto j = AlgsRandom::uniform((Int)a.size());
         Double tmp = a[i];
