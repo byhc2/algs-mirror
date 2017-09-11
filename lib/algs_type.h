@@ -6,6 +6,7 @@
 //为满足类型命名一致性而定义
 typedef           int Int;
 typedef        double Double;
+typedef   long double Ldouble;
 typedef          long Long;
 typedef          void Void;
 typedef          bool Bool;

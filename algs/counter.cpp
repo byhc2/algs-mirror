@@ -39,9 +39,9 @@ std::ostream &operator<<(std::ostream &os, const Counter &rhs)
     return os;
 }
 
-Counter &operator=(const Counter &rhs)
+Counter &Counter::operator=(const Counter &rhs)
 {
-    if (this == $rhs)
+    if (this == &rhs)
     {
         return *this;
     }
