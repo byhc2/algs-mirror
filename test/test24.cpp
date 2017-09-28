@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     cout << p.x_ << endl;
 
     Point2D p2(33.0_r, 10.0);
-    cout << p.x_ << endl;
+    cout << p2.theta_ << endl;
 
     return 0;
 }

@@ -9,7 +9,7 @@ Point2D::Point2D(Double x, Double y): x_(x), y_(y)
 {
 }
 
-Point2D::Point2D(Point2D::Theta t, Double r): theta_(0.0), r_(r)
+Point2D::Point2D(Point2D::Theta t, Double r): theta_(t.t_), r_(r)
 {
 }
 
