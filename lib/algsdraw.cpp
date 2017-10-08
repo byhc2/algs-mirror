@@ -144,7 +144,6 @@ Double AlgsDraw::l2sY(Double l)
 
 Void AlgsDraw::point(Double x, Double y)
 {
-    std::cout << "in " << __FUNCTION__ << std::endl;
     init();
     drawInit();
 

@@ -12,8 +12,5 @@ int main(int argc, char *argv[])
     p.setX(10);
     cout << p.x_ << endl;
 
-    Point2D p2(33.0_r, 10.0);
-    cout << p2.theta_ << endl;
-
     return 0;
 }

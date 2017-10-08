@@ -6,50 +6,12 @@
 namespace algs
 {
 
-//对外只读的属性声明
-template<typename _Class, typename _MemberType>
-class ReadOnly
-{
-friend _Class;
-private:
-    _MemberType m_;
-    _MemberType &operator=(const _MemberType &arg)
-    {
-        m_ = arg;
-        return m_;
-    }
-public:
-    ReadOnly(const _MemberType &m)
-    {
-        m_ = m;
-    }
-
-    ReadOnly()
-    {
-        m_ = _MemberType();
-    }
-
-    operator const _MemberType&() const
-    {
-        return m_;
-    }
-};
-
 //二维平面上的点
 class Point2D
 {
 public:
-    //一下两个类是为了区分构造函数的类
-    class Theta
-    {
-    public:
-        Theta(): t_(0) {}
-        Double t_;
-    };
-
     Point2D();
     Point2D(Double x, Double y);
-    Point2D(Theta t, Double r);
 
     Void setX(Double x)
     {
@@ -61,18 +23,90 @@ public:
         y_ = y;
     }
 
-    ReadOnly<Point2D, Double> x_;
-    ReadOnly<Point2D, Double> y_;
-    ReadOnly<Point2D, Double> theta_;
-    ReadOnly<Point2D, Double> r_;
+    Double x_;
+    Double y_;
 };
 
-Point2D::Theta operator""_r(Ldouble t)
+class Interval1D
 {
-    Point2D::Theta ret;
-    ret.t_ = t;
-    return ret;
-}
+public:
+    Interval1D(Double x, Double y):
+        lo_(x < y ? x : y), hi_(x < y ? y : x) {}
+
+    Interval1D(): lo_(0), hi_(0) {}
+
+    Interval1D(const Interval1D &rhs)
+    {
+    }
+
+    Double length() const
+    {
+        return hi_ - lo_;
+    }
+
+    //如果p位于包含端点的x_和y_区间内，返回1
+    Bool contains(Double p) const
+    {
+        return (lo_ <= p) && (p <= hi_);
+    }
+
+    Bool intersect(const Interval1D &rhs) const
+    {
+        const Interval1D *i1, *i2;
+        if (lo_ < rhs.lo_)
+        {
+            i1 = this;
+            i2 = &rhs;
+        }
+        else
+        {
+            i1 = &rhs;
+            i2 = this;
+        }
+
+        if (i2->lo_ <= i1->hi_)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    Double lo_;
+    Double hi_;
+};
+
+class Interval2D
+{
+public:
+    Interval2D(const Interval1D &x, const Interval1D &y):
+        x_(x), y_(y) {}
+
+    Double area() const
+    {
+        return x_.length() * y_.length();
+    }
+
+    Bool contains(const Point2D &rhs) const
+    {
+        return x_.contains(rhs.x_) && y_.contains(rhs.y_);
+    }
+
+    Bool contains(Double x, Double y) const
+    {
+        return y_.contains(x) && y_.contains(y);
+    }
+
+    Bool intersect(const Interval2D &rhs) const
+    {
+        return x_.intersect(rhs.x_) && y_.intersect(rhs.y_);
+    }
+
+    Interval1D x_;
+    Interval1D y_;
+};
 
 }
 
