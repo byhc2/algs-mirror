@@ -37,6 +37,21 @@ public:
 
     Interval1D(const Interval1D &rhs)
     {
+        lo_ = rhs.lo_;
+        hi_ = rhs.hi_;
+    }
+
+    Interval1D &operator=(const Interval1D &rhs)
+    {
+        if (this == &rhs)
+        {
+            return *this;
+        }
+
+        lo_ = rhs.lo_;
+        hi_ = rhs.hi_;
+
+        return *this;
     }
 
     Double length() const
@@ -83,6 +98,25 @@ class Interval2D
 public:
     Interval2D(const Interval1D &x, const Interval1D &y):
         x_(x), y_(y) {}
+
+    Interval2D(const Interval2D &rhs)
+    {
+        x_ = rhs.x_;
+        y_ = rhs.y_;
+    }
+
+    Interval2D &operator=(const Interval2D &rhs)
+    {
+        if (this == &rhs)
+        {
+            return *this;
+        }
+
+        x_ = rhs.x_;
+        y_ = rhs.y_;
+
+        return *this;
+    }
 
     Double area() const
     {
