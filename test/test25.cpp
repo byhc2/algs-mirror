@@ -10,10 +10,10 @@ using namespace algs;
 
 int main(int argc, char *argv[])
 {
-    Double xlo = Num::parseInt(argv[1]);
-    Double xhi = Num::parseInt(argv[2]);
-    Double ylo = Num::parseInt(argv[3]);
-    Double yhi = Num::parseInt(argv[4]);
+    Double xlo = Num::parseDouble(argv[1]);
+    Double xhi = Num::parseDouble(argv[2]);
+    Double ylo = Num::parseDouble(argv[3]);
+    Double yhi = Num::parseDouble(argv[4]);
     Int c = Num::parseInt(argv[5]);
 
     AlgsRandom::initialize();
@@ -23,16 +23,10 @@ int main(int argc, char *argv[])
     AlgsDraw::setXscale(0, 1);
     AlgsDraw::setYscale(0, 1);
 
-    cout << a.x_.lo_ << endl;
-    cout << a.x_.hi_ << endl;
-    cout << a.y_.lo_ << endl;
-    cout << a.y_.hi_ << endl;
-
     auto x = (a.x_.lo_ + a.x_.hi_) / 2.0;
     auto y = (a.y_.lo_ + a.y_.hi_) / 2.0;
     auto rw = a.x_.hi_ - a.x_.lo_;
     auto rh = a.y_.hi_ - a.y_.lo_;
-    cout << x << " " << y << " " << rw << " " << rh << endl;
     AlgsDraw::setPenRadius(2.0);
     AlgsDraw::rectangle(x, y, rw, rh);
 
@@ -49,6 +43,7 @@ int main(int argc, char *argv[])
             AlgsDraw::point(p.x_, p.y_);
         }
     }
+    cout << hits.tally() / static_cast<Double>(c) << endl;
     AlgsDraw::show();
 
     return 0;

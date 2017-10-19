@@ -41,6 +41,14 @@ public:
         hi_ = rhs.hi_;
     }
 
+    Interval1D &operator=(Interval1D &&rhs)
+    {
+        lo_ = rhs.lo_;
+        hi_ = rhs.hi_;
+
+        return *this;
+    }
+
     Interval1D &operator=(const Interval1D &rhs)
     {
         if (this == &rhs)
