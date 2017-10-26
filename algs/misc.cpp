@@ -2,5 +2,5 @@
 
 std::ostream &operator<<(std::ostream &os, const Accumulator &rhs)
 {
-    return (os << rhs.v_ << "(mean: " << rhs.mean() << ")");
+    return (os << rhs.mean() << "(" << rhs.v_ << "/" << rhs.c_ << ")");
 }

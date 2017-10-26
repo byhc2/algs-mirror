@@ -28,9 +28,7 @@ public:
             a_ = c.a_;
         }
 
-        Color(): r_(0), g_(0), b_(0), a_(1.0) {}
-
-        Color(Double r, Double g, Double b):
+        Color(Double r=0, Double g=0, Double b=0):
             r_(r), g_(g), b_(b), a_(1.0) {}
 
         double r_;

@@ -10,6 +10,7 @@ using namespace algs;
 
 int main(int argc, char *argv[])
 {
+    assert(argc == 5);
     Double xlo = Num::parseDouble(argv[1]);
     Double xhi = Num::parseDouble(argv[2]);
     Double ylo = Num::parseDouble(argv[3]);

@@ -1,6 +1,7 @@
 #ifndef __UTILALGS_MISC__
 #define __UTILALGS_MISC__
 
+#include <iostream>
 #include "algs_type.h"
 
 class Date
@@ -15,7 +16,7 @@ class Transaction
 
 class Accumulator
 {
-friend std::ostream &operator<<(std::ostream &os, const Counter &rhs);
+friend std::ostream &operator<<(std::ostream &os, const Accumulator &rhs);
 public:
     Accumulator(): v_(0), c_(0) {}
     Accumulator(const Accumulator &a): v_(a.v_), c_(a.c_) {}
@@ -37,7 +38,7 @@ public:
         return *this;
     }
 
-    Double mean()
+    Double mean() const
     {
         return v_ / (c_ == 0 ? 1 : c_);
     }
