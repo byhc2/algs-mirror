@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 
     for (auto &r: intervals)
     {
-        cout << r.() << endl;
+        cout << r.lo_ << endl;
     }
 
     return 0;
