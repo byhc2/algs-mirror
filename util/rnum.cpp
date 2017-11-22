@@ -31,6 +31,8 @@ int init(int argc, char *argv[])
         {0, 0, 0, 0},
     };
 
+    memset(config, 0, sizeof(config));
+
     while (1)
     {
         int longindex;
@@ -43,10 +45,26 @@ int init(int argc, char *argv[])
         switch (c)
         {
         case 'i':
-            config.type_ = 1;
+            if (config.type_ == 0)
+            {
+                config.type_ = 1;
+            }
+            else
+            {
+                fprintf(stderr, "conflict option: %c", c);
+                exit(-1);
+            }
             break;
         case 'd':
-            config.type_ = 2;
+            if (config.type_ == 0)
+            {
+                config.type_ = 2;
+            }
+            else
+            {
+                fprintf(stderr, "conflict option: %c", c);
+                exit(-1);
+            }
             break;
         case 'l':
         }
