@@ -26,7 +26,7 @@ int init(int argc, char *argv[])
         {"double", no_argument, 0, 'd'},
         {"low", required_argument, 0, 'l'},
         {"high", required_argument, 0, 'h'},
-        {"num", optional_argument, 0, 'n'},
+        {"group-num", optional_argument, 0, 'n'},
         {"count", required_argument, 0, 'c'},
         {0, 0, 0, 0},
     };
