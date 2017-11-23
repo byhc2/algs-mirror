@@ -42,7 +42,13 @@ int init(int argc, char *argv[])
         }
         switch (c)
         {
-        case 
+        case 'i':
+            config.type_ = 1;
+            break;
+        case 'd':
+            config.type_ = 2;
+            break;
+        case 'l':
         }
     }
 }
