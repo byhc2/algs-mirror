@@ -30,6 +30,12 @@ String toString(const Double &v)
     return algs::Num::toString(v);
 }
 
+template<>
+String toString(const Bool &v)
+{
+    return v ? "T" : "F";
+}
+
 }
 
 #endif

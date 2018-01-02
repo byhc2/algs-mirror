@@ -28,9 +28,7 @@ public:
             a_ = c.a_;
         }
 
-        Color(): r_(0), g_(0), b_(0), a_(1.0) {}
-
-        Color(Double r, Double g, Double b):
+        Color(Double r=0, Double g=0, Double b=0):
             r_(r), g_(g), b_(b), a_(1.0) {}
 
         double r_;
@@ -85,7 +83,8 @@ private:
     static const String err_msg(cairo_status_t s);
     static Double c2sX(Double x);
     static Double c2sY(Double y);
-    static Double l2s(Double l);
+    static Double l2sX(Double l);
+    static Double l2sY(Double l);
 };
 
 }

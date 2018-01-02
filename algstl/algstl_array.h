@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cassert>
 #include <initializer_list>
+#include <algorithm>
 #include "algs_type.h"
 #include "algstl_memory.h"
 #include "algstl_iterator.h"
@@ -28,7 +29,10 @@ public:
     typedef const _T* ConstIterator;
     typedef _T* Pointer;
     typedef typename algstl::ReverseIterator<Iterator> ReverseIterator;
-    typedef Uint SizeType;
+    typedef typename algstl::ReverseIterator<ConstIterator> ConstReverseIterator;
+    typedef Int SizeType;
+
+    static constexpr SizeType npos = -1;
 
     Array()
     {
@@ -43,13 +47,19 @@ public:
     }
 
     //初始化长度为n的数组，每个值都由v构造
-    Array(const ValueType &v, SizeType n)
+    Array(const ValueType &v, SizeType n): Array()
     {
         resize(n);
+        auto it = start_;
+        while (it != end_)
+        {
+            alloc_.construct(it, v);
+            ++it;
+        }
     }
 
-    //复制构造函数，显示调用
-    explicit Array(const Array &rhs): Array()
+    //复制构造函数
+    Array(const Array &rhs): Array()
     {
         auto s = rhs.size();
         start_ = alloc_.allocate(s);
@@ -111,7 +121,7 @@ public:
             else
             {
                 tmp += "    ";
-                width += ex.size();
+                width += ex.size() + sizeof("    ");
             }
         }
 
@@ -154,6 +164,26 @@ public:
     Iterator end()
     {
         return end_;
+    }
+
+    ReverseIterator rbegin()
+    {
+        return ReverseIterator(end());
+    }
+
+    ReverseIterator rend()
+    {
+        return ReverseIterator(begin());
+    }
+
+    ConstReverseIterator rbegin() const
+    {
+        return ConstReverseIterator(end());
+    }
+
+    ConstReverseIterator rend() const
+    {
+        return ConstReverseIterator(begin());
     }
 
     ConstIterator begin() const
@@ -301,18 +331,9 @@ Void Array<_T, _Alloc>::sort(_Comp f)
     {
         return;
     }
-    //略去对f的二元算子检查
-    //先用最简单的冒泡吧
-    for (auto cur = end_ - 1; cur > start_; --cur)
-    {
-        for (auto flag = start_; flag < cur; ++flag)
-        {
-            if (not f(*flag, *(flag + 1)))
-            {
-                swap(*flag, *(flag + 1));
-            }
-        }
-    }
+
+    //这里先使用标准库的快排
+    std::sort(begin(), end(), f);
 }
 
 }

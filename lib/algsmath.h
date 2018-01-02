@@ -14,6 +14,13 @@ public:
     {
         return v >= 0 ? v : -v;
     }
+
+    static Double sin(Double a);
+    static Double cos(Double a);
+    static Double pow(Double x, Double y);
+
+    static constexpr Double pi_ = 3.1415926;
+
 };
 
 }

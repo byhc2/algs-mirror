@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
     std::cout << (0 + 15) / 2 << std::endl; //a
     std::cout << 2.0e-6 * 100000000.1 << std::endl; //b
     //c题编译器会提示&&运算符两边加括号
-    std::cout << (true && false || true && true) << std::endl; //c
+    std::cout << ((true && false) || (true && true)) << std::endl; //c
 
     //1.2
     std::cout << (1 + 2.236) / 2 << std::endl; //a

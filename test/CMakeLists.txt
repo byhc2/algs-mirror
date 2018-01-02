@@ -19,9 +19,16 @@ set(target
     test18
     test19
     test20
+    test21
+    test22
+    test23
+    test24
+    test25
+    test26
     )
 
 foreach(one ${target})
     add_executable(${one} ${one}.cpp)
     target_link_libraries(${one} algs)
+    target_link_libraries(${one} utilalgs)
 endforeach()

@@ -11,22 +11,22 @@ namespace algs
 class AlgsStdOut
 {
 public:
-    static void print(const String &s);
-    static void println(const String &s);
-    static void println(const Char c);
-    static void println();
+    static Void print(const String &s);
+    static Void println(const String &s);
+    static Void println(const Char c);
+    static Void println();
 #if 0
     template<typename... _Args>
     static void printf(String f, const _Args &... args);
 #endif
-    static void printf(const String &f, ...);
+    static Void printf(const String &f, ...);
 };
 
 class AlgsOut
 {
 public:
     template<typename _InputIterator>
-    void write(_InputIterator begin, _InputIterator end, const String &name="");
+    Void write(_InputIterator begin, _InputIterator end, const String &name="");
 };
 
 }

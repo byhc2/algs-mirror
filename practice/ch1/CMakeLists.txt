@@ -10,6 +10,28 @@ set(target
     1_12
     1_13
     1_14
+    1_15
+    1_16
+    1_18
+    1_19
+    1_20
+    1_21
+    1_22
+    1_23
+    1_24
+    1_27
+    1_28
+    1_29
+    1_30
+    1_31
+    1_32
+    1_33
+    1_35
+    1_36
+    1_38
+    1_39
+    2_1
+    2_2
     )
 
 # 获取当前源文件路径的名字
@@ -20,6 +42,7 @@ string(REPLACE " " "_" basename ${basename})
 foreach(one ${target})
     add_executable(${one} ${one}.cpp)
     target_link_libraries(${one} algs)
+    target_link_libraries(${one} utilalgs)
     set_target_properties(${one}
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${basename}

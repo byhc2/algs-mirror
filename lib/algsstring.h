@@ -20,6 +20,7 @@ template<typename _A> friend StringBase<_A> operator+(const StringBase<_A> &lhs,
 template<typename _A> friend StringBase<_A> operator+(const StringBase<_A> &lhs, const StringBase<_A> &rhs);
 
 template<typename _A> friend std::ostream &operator<<(std::ostream &os, const StringBase<_A> &rhs);
+template<typename _A> friend std::ostream &operator>>(std::ostream &os, const StringBase<_A> &rhs);
 
 public:
     //实际存储字符串的缓冲区类
@@ -66,7 +67,7 @@ public:
         StringBuf(SizeType n=1)
         {
             n += 8; //本来8字节圆整只需要加7，但是考虑到c_str方法一定要多留出一个字节的空间放结束符，所以这里多分配点
-            n &= 0xfffffff8; //8字节圆整对齐
+            n &= SizeType(-1) ^ 0x7; //8字节圆整对齐
             buf_ = buf_allocator.allocate(n);
             mstart_ = buf_;
             mend_ = mstart_;
@@ -84,7 +85,15 @@ public:
             mend_ = static_cast<Char *>(mempcpy(mend_, buf, n));
         }
 
-        private:
+        void fill(SizeType n, Char c)
+        {
+            assert(n < capacity());
+            assert(buf_);
+            memset(buf_, c, n);
+            mend_ += n;
+        }
+
+    private:
         Allocator buf_allocator;
     };
 
@@ -119,6 +128,16 @@ public:
         sbuf_ = new BufferType(n);
         assert(sbuf_);
         sbuf_->append(rhs, n);
+        sbuf_->incr();
+    }
+
+    //由n个c组成的字符串
+    StringBase(SizeType n, Char c)
+    {
+        sbuf_ = new BufferType(n);
+        assert(sbuf_);
+        sbuf_->fill(n, c);
+        sbuf_->incr();
     }
 
     StringBase(SizeType n)
@@ -179,11 +198,6 @@ public:
         return sbuf_->size();
     }
 
-    void append(const Char *rhs, SizeType n)
-    {
-        sbuf_->append(rhs, n);
-    }
-
     StringBase &operator+=(const StringBase &rhs)
     {
         auto p = new BufferType(size() + rhs.size());
@@ -200,6 +214,12 @@ public:
         sbuf_->incr();
 
         return *this;
+    }
+
+protected:
+    void append(const Char *rhs, SizeType n)
+    {
+        sbuf_->append(rhs, n);
     }
 
 private:
@@ -240,10 +260,69 @@ StringBase<_A> operator+(const Char *lhs, const StringBase<_A> &rhs)
 }
 
 template<typename _A>
+bool operator==(const StringBase<_A> &lhs, const StringBase<_A> &rhs)
+{
+    return !strncmp(lhs.c_str(), rhs.c_str(), lhs.size());
+}
+
+template<typename _A>
+bool operator==(const StringBase<_A> &lhs, const Char *rhs)
+{
+    return !strncmp(lhs.c_str(), rhs, lhs.size());
+}
+
+template<typename _A>
+bool operator==(const Char *lhs, const StringBase<_A> &rhs)
+{
+    return !strncmp(lhs, rhs.c_str(), rhs.size());
+}
+
+template<typename _A>
 std::ostream &operator<<(std::ostream &os, const StringBase<_A> &rhs)
 {
     os << rhs.c_str();
     return os;
+}
+
+template<typename _A>
+std::istream &operator>>(std::istream &is, StringBase<_A> &rhs)
+{
+    rhs = ""; //先清空自身数据
+
+    auto buf = is.rdbuf();
+    auto csize = buf->in_avail(); //获取buf中目前可读的字符数
+
+    if (csize == -1)
+    {
+        return is;
+    }
+
+    Char *p = new Char[csize];
+    auto q = 0;
+    assert(p);
+
+    while (isspace(buf->sgetc()))
+    {
+        buf->sbumpc();
+    }
+
+    while (buf->sgetc() != EOF)
+    {
+        auto c = buf->sbumpc();
+        if (isspace(c))
+        {
+            break;
+        }
+        p[q++] = c;
+    }
+
+    p[q] = '\0';
+
+    rhs = p;
+
+    delete[] p;
+
+    return is;
 }
 
 }

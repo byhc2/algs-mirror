@@ -2,9 +2,10 @@
 #include <fstream>
 #include "algs_type.h"
 #include "algstl_array.h"
+#include "algsstring.h"
 
 using namespace std;
-//using namespace algs;
+using namespace algs;
 using namespace algstl;
 
 //rank与标准库中某个类型重名
@@ -36,6 +37,9 @@ int main(int argc, char *argv[])
 {
     ifstream r(argv[1]);
     ifstream t(argv[2]);
+
+    String flag = argv[3];
+
     Int x;
     Array<Int> arr;
     while (r >> x)
@@ -45,13 +49,16 @@ int main(int argc, char *argv[])
 
     cin.clear();
 
-    cout << "start sort" << endl;
     arr.sort([](const Int a, const Int b) {return a < b;});
-    cout << "finish sort" << endl;
 
     while (t >> x)
     {
-        if (rank2(x, arr) < 0)
+        auto ret = rank2(x, arr);
+        if (flag == "+" && ret < 0)
+        {
+            cout << x << endl;
+        }
+        else if (flag == "-" && ret >= 0)
         {
             cout << x << endl;
         }
