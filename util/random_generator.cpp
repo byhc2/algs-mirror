@@ -12,9 +12,9 @@ void usage(int status)
     else
     {
         fprintf(stdout, _("用法：%s [选项] <数量>\n"));
-        fprintf(stdout, _("  -m<value>,--min=<value> 随机序列的最小值\n"));
-        fprintf(stdout, _("  -M<value>,--max=<value> 随机序列的最大值\n"));
-        fprintf(stdout, _("  -t<value>,--type=<value> 类型，i 整型，d 浮点\n"));
+        fprintf(stdout, _("  -m<value>,--min=<value> 随机序列最小值\n"));
+        fprintf(stdout, _("  -M<value>,--max=<value> 随机序列最大值\n"));
+        fprintf(stdout, _("  -t<value>,--type=<value> 类型，i整型，d浮点\n"));
         fprintf(stdout, _("  -h,--help 输出帮助信息\n"));
     }
     return;
@@ -91,20 +91,38 @@ int parseOpt(int argc, char *argv[])
             };
             break;
         case 't':
-            if(string(optarg)=="i")
+            typearg = string(optarg);
+            if (typearg == "i")
             {
-                config.type=INT_TYPE;
+                config.type = INT_TYPE;
+                optind      = 1;
             }
-            else if(string(optarg)=="d")
+            else if (typearg == "d")
             {
-                config.type=FLOAT_TYPE;
+                config.type = FLOAT_TYPE;
+                optind      = 1;
             }
-            if(config.type==UNDEFINED_TYPE)
+            if (config.type == UNDEFINED_TYPE)
             {
+                cerr << _("类型参数" + typearg + "未定义") << endl;
+                usage(argc, argv);
+                return -1;
             }
+            break;
+        default:
+            usage(argc, argv);
+            return -1;
             break;
         };
     }
+
+    if (config.type == UNDEFINED_TYPE)
+    {
+        cerr << _("缺少-t类型参数") << endl;
+        usage(argc, argv);
+        return -1;
+    }
+    return 0;
 }
 
 int main(int argc, char *argv[])
