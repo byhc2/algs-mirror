@@ -1,21 +1,29 @@
+#include <getopt.h>
 #include <libintl.h>
 #include <unistd.h>
 #include <cstdio>
+#include <cstdlib>
+#include <string>
+#include <iostream>
 #include "algsrandom.h"
+
+using namespace std;
+
+const char *program_name = "rg";
 
 void usage(int status)
 {
     if (status)
     {
-        fprintf(stderr, _("%s --help 获取帮助信息\n"), program_name);
+        fprintf(stderr, "%s --help 获取帮助信息\n", program_name);
     }
     else
     {
-        fprintf(stdout, _("用法：%s [选项] <数量>\n"));
-        fprintf(stdout, _("  -m<value>,--min=<value> 随机序列最小值\n"));
-        fprintf(stdout, _("  -M<value>,--max=<value> 随机序列最大值\n"));
-        fprintf(stdout, _("  -t<value>,--type=<value> 类型，i整型，d浮点\n"));
-        fprintf(stdout, _("  -h,--help 输出帮助信息\n"));
+        fprintf(stdout, "用法：%s [选项] <数量>\n", program_name);
+        fprintf(stdout, "  -m<value>,--min=<value> 随机序列最小值\n");
+        fprintf(stdout, "  -M<value>,--max=<value> 随机序列最大值\n");
+        fprintf(stdout, "  -t<value>,--type=<value> 类型，i整型，d浮点\n");
+        fprintf(stdout, "  -h,--help 输出帮助信息\n");
     }
     return;
 }
@@ -41,16 +49,13 @@ struct Config
     {}
     int has_min;
     int has_max;
-    union min
+    union Value
     {
         int i;
         double d;
     };
-    union max
-    {
-        int i;
-        double d;
-    };
+    Value min;
+    Value max;
     GenType type;
 } config;
 
@@ -58,7 +63,8 @@ int parseOpt(int argc, char *argv[])
 {
     int c;
     int optidx;
-    while ((c = getopt_long(argc, argv, optstr, option, &optidx)) != -1)
+    string typearg;
+    while ((c = getopt_long(argc, argv, optstr, long_options, &optidx)) != -1)
     {
         switch (c)
         {
@@ -104,13 +110,13 @@ int parseOpt(int argc, char *argv[])
             }
             if (config.type == UNDEFINED_TYPE)
             {
-                cerr << _("类型参数" + typearg + "未定义") << endl;
-                usage(argc, argv);
+                cerr << "类型参数" + typearg + "未定义" << endl;
+                usage(0);
                 return -1;
             }
             break;
         default:
-            usage(argc, argv);
+            usage(1);
             return -1;
             break;
         };
@@ -118,8 +124,8 @@ int parseOpt(int argc, char *argv[])
 
     if (config.type == UNDEFINED_TYPE)
     {
-        cerr << _("缺少-t类型参数") << endl;
-        usage(argc, argv);
+        cerr << "缺少-t类型参数" << endl;
+        usage(0);
         return -1;
     }
     return 0;
