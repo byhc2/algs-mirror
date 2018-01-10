@@ -1,23 +1,23 @@
 #ifndef __UTILALGS_BINARY_SEARCH__
 #define __UTILALGS_BINARY_SEARCH__
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include "algs_type.h"
 #include "algstl_array.h"
 
 namespace algs
 {
-
 class BinarySearch
 {
-public:
+    public:
     template<typename _T>
-    static typename algstl::Array<_T>::SizeType rank(const _T &key, const algstl::Array<_T> &a)
+    static typename algstl::Array<_T>::SizeType rank(const _T &key,
+                                                     const algstl::Array<_T> &a)
     {
         if (a.size() == 0)
         {
-            return -1; //坚决防止数组大小为0的情况
+            return -1;  //坚决防止数组大小为0的情况
         }
         typename algstl::Array<_T>::SizeType lo = 0;
         typename algstl::Array<_T>::SizeType hi = a.size() - 1;
@@ -43,7 +43,8 @@ public:
 
     //返回有序数组中，比key小的元素的个数
     template<typename _T>
-    static typename algstl::Array<_T>::SizeType countLess(const _T &key, const algstl::Array<_T> &a)
+    static typename algstl::Array<_T>::SizeType countLess(
+        const _T &key, const algstl::Array<_T> &a)
     {
         if (a.size() == 0)
         {
@@ -70,7 +71,7 @@ public:
                 }
                 lo = mid + 1;
             }
-            else //*mid > key
+            else  //*mid > key
             {
                 if (mid != lo && *(mid - 1) <= key)
                 {
@@ -85,7 +86,7 @@ public:
         {
             return 0;
         }
-        
+
         if (*a.rbegin() <= key)
         {
             return a.size();
@@ -97,7 +98,8 @@ public:
 
     //返回有序数组中，比key大的元素的个数
     template<typename _T>
-    static typename algstl::Array<_T>::SizeType countLarger(const _T &key, const algstl::Array<_T> &a)
+    static typename algstl::Array<_T>::SizeType countLarger(
+        const _T &key, const algstl::Array<_T> &a)
     {
         if (a.size() == 0)
         {
@@ -124,7 +126,7 @@ public:
                 }
                 lo = mid + 1;
             }
-            else //*mid > key
+            else  //*mid > key
             {
                 if (mid != lo && *(mid - 1) <= key)
                 {
@@ -134,13 +136,12 @@ public:
             }
         }
 
-
         //尾部处理，此时a中所有元素均大于等于key或均小于等于key
         if (*a.rbegin() <= key)
         {
             return 0;
         }
-        
+
         if (*a.begin() > key)
         {
             return a.size();
@@ -151,12 +152,13 @@ public:
     }
 
     template<typename _T>
-    static typename algstl::Array<_T>::SizeType count(const _T &key, const algstl::Array<_T> &a)
+    static typename algstl::Array<_T>::SizeType count(
+        const _T &key, const algstl::Array<_T> &a)
     {
-        return a.size() - BinarySearch::countLess(key, a) - BinarySearch::countLarger(key, a);
+        return a.size() - BinarySearch::countLess(key, a)
+               - BinarySearch::countLarger(key, a);
     }
 };
-
 }
 
 #endif
