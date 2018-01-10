@@ -1,10 +1,10 @@
 #include <getopt.h>
-#include <libintl.h>
+//#include <libintl.h>
 #include <unistd.h>
 #include <cstdio>
 #include <cstdlib>
-#include <string>
 #include <iostream>
+#include <string>
 #include "algsrandom.h"
 
 using namespace std;
