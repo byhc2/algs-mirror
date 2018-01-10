@@ -1,1 +1,3 @@
---target=x86_64-pc-linux-gnu
+-std=c++11
+-I/home/dsh/code/algs/lib
+-I/home/dsh/code/algs/algstl/

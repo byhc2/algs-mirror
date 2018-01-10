@@ -7,21 +7,20 @@
 
 namespace algs
 {
-
 class AlgsRandom
 {
-public:
-    static   Void initialize(Long seed=0);
-    static Double random(); //返回[0, 1)之间的浮点数
-    static    Int uniform(Int N); //[0, N - 1]之间的整数，N < 2^31
-    static    Int uniform(Int lo, Int hi); //[lo, hi - 1]之间的数，hi < 2^31
-    static Double uniform(Double lo, Double hi); //[lo, hi]之间的浮点数
-    static   Bool bernoulli(Double p); //以p的概率返回true
-    static Double gaussian(); //返回N(0, 1)分布的浮点数
+    public:
+    static Void initialize(Long seed = 0);
+    static Double random();              //返回[0, 1)之间的浮点数
+    static Int uniform(Int N);           //[0, N - 1]之间的整数，N < 2^31
+    static Int uniform(Int lo, Int hi);  //[lo, hi - 1]之间的数，hi < 2^31
+    static Double uniform(Double lo, Double hi);  //[lo, hi]之间的浮点数
+    static Bool bernoulli(Double p);              //以p的概率返回true
+    static Double gaussian();  //返回N(0, 1)分布的浮点数
     static Double gaussian(Double m, Double s);
 
     //因为discrete函数不能保存状态，因此这里使用线性探查法而非别名方法（Alias
-    //method），在n较小时性能问题不大
+    // method），在n较小时性能问题不大
     template<Int n>
     static Int discrete(Double (&a)[n])
     {
@@ -43,38 +42,37 @@ public:
                 return i;
             }
         }
-        return -1; //应该不会到这里
+        return -1;  //应该不会到这里
     }
 
     template<typename T, Int n>
     static void shuffle(T (&a)[n])
     {
-        //Fisher-Yates算法
+        // Fisher-Yates算法
         for (int i = n - 1; i >= 0; --i)
         {
-            auto j = AlgsRandom::uniform(i + 1);
+            auto j     = AlgsRandom::uniform(i + 1);
             Double tmp = a[i];
-            a[i] = a[j];
-            a[j] = tmp;
+            a[i]       = a[j];
+            a[j]       = tmp;
         }
     }
 
     template<typename T>
     static void shuffle(algstl::Array<T> &a)
     {
-        //Fisher-Yates算法
+        // Fisher-Yates算法
         for (int i = a.size() - 1; i >= 0; --i)
         {
-            auto j = AlgsRandom::uniform(i + 1);
+            auto j     = AlgsRandom::uniform(i + 1);
             Double tmp = a[i];
-            a[i] = a[j];
-            a[j] = tmp;
+            a[i]       = a[j];
+            a[j]       = tmp;
         }
     }
 
-private:
+    private:
 };
-
 }
 
 #endif
