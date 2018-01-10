@@ -1,11 +1,10 @@
-#include <stdexcept>
-#include <iostream>
-#include <cmath>
 #include "algsdraw.h"
+#include <cmath>
+#include <iostream>
+#include <stdexcept>
 
 namespace algs
 {
-
 Bool AlgsDraw::inited_ = false;
 Int AlgsDraw::width_;
 Int AlgsDraw::height_;
@@ -17,10 +16,10 @@ cairo_t *AlgsDraw::cr_;
 cairo_t *AlgsDraw::x11_cr_;
 Drawable AlgsDraw::drawable_;
 Display *AlgsDraw::display_;
-Double AlgsDraw::max_x_; //x轴左端点
-Double AlgsDraw::min_x_; //x轴右端点
-Double AlgsDraw::max_y_; //y轴上端点
-Double AlgsDraw::min_y_; //y轴下端点
+Double AlgsDraw::max_x_;  // x轴左端点
+Double AlgsDraw::min_x_;  // x轴右端点
+Double AlgsDraw::max_y_;  // y轴上端点
+Double AlgsDraw::min_y_;  // y轴下端点
 Double AlgsDraw::pen_radius_;
 AlgsDraw::Color AlgsDraw::pen_color_;
 String AlgsDraw::font_;
@@ -34,8 +33,8 @@ Void AlgsDraw::init()
 
     margin_h_ = 10;
     margin_w_ = 10;
-    width_ = 1000;
-    height_ = 1000;
+    width_    = 1000;
+    height_   = 1000;
 
     //设置坐标范围
     min_x_ = -10;
@@ -74,6 +73,12 @@ Void AlgsDraw::setPenColor(const Color &c)
     pen_color_ = c;
 }
 
+AlgsDraw::Color AlgsDraw::getPenColor()
+{
+    init();
+    return pen_color_;
+}
+
 Void AlgsDraw::setFont(const String &f)
 {
     init();
@@ -86,9 +91,10 @@ Void AlgsDraw::setCanvasSize(Int w, Int h)
     //改变画布大小
     //原来的画布会以左上角对齐的形式
     //复制到新的画布来
-    width_ = w;
+    width_  = w;
     height_ = h;
-    cairo_surface_t *new_sf = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width_, height_);
+    cairo_surface_t *new_sf
+        = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width_, height_);
     cairo_t *new_cr = cairo_create(new_sf);
     cairo_set_source_surface(new_cr, sf_, 0, 0);
     cairo_paint(new_cr);
@@ -162,7 +168,8 @@ Void AlgsDraw::text(Double x, Double y, const String &s)
     init();
     drawInit();
 
-    cairo_select_font_face(cr_, font_.c_str(), CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+    cairo_select_font_face(cr_, font_.c_str(), CAIRO_FONT_SLANT_NORMAL,
+                           CAIRO_FONT_WEIGHT_NORMAL);
     cairo_set_font_size(cr_, 14);
     cairo_move_to(cr_, c2sX(x), c2sY(y));
     cairo_show_text(cr_, s.c_str());
@@ -190,10 +197,8 @@ Void AlgsDraw::rectangle(Double x, Double y, Double rw, Double rh)
     init();
     drawInit();
 
-    cairo_rectangle(cr_,
-            c2sX(x - rw / 2.0),
-            c2sY(y + rh / 2.0),
-            l2sX(rw), l2sY(rh));
+    cairo_rectangle(cr_, c2sX(x - rw / 2.0), c2sY(y + rh / 2.0), l2sX(rw),
+                    l2sY(rh));
     cairo_stroke(cr_);
 
     drawFinish();
@@ -206,10 +211,8 @@ Void AlgsDraw::filledRectangle(Double x, Double y, Double rw, Double rh)
     init();
     drawInit();
 
-    cairo_rectangle(cr_,
-            c2sX(x - rw / 2.0),
-            c2sY(y + rh / 2.0),
-            l2sX(rw), l2sY(rh));
+    cairo_rectangle(cr_, c2sX(x - rw / 2.0), c2sY(y + rh / 2.0), l2sX(rw),
+                    l2sY(rh));
     cairo_fill(cr_);
 
     drawFinish();
@@ -263,15 +266,19 @@ Void AlgsDraw::show()
 
     if (display_ == NULL)
     {
-        throw std::runtime_error(("Cannot open DISPLAY " + str_disp + ".").c_str());
+        throw std::runtime_error(
+            ("Cannot open DISPLAY " + str_disp + ".").c_str());
         return;
     }
 
-    drawable_ = XCreateSimpleWindow(display_, RootWindow(display_, DefaultScreen(display_)), 0, 0,
-            800, 800, 0, BlackPixel(display_, DefaultScreen(display_)), WhitePixel(display_, DefaultScreen(display_)));
+    drawable_ = XCreateSimpleWindow(
+        display_, RootWindow(display_, DefaultScreen(display_)), 0, 0, 800, 800,
+        0, BlackPixel(display_, DefaultScreen(display_)),
+        WhitePixel(display_, DefaultScreen(display_)));
 
     //远程的x客户端在本地运行的时候，似乎不会触发resize事件
-    XSelectInput(display_, drawable_, ExposureMask | ResizeRedirectMask | SubstructureRedirectMask);
+    XSelectInput(display_, drawable_,
+                 ExposureMask | ResizeRedirectMask | SubstructureRedirectMask);
     XMapWindow(display_, drawable_);
     XFlush(display_);
     XSync(display_, True);
@@ -290,13 +297,17 @@ Void AlgsDraw::show()
         {
         case Expose:
             //获取当前窗口的宽和高
-            width = evt.xexpose.width;
+            width  = evt.xexpose.width;
             height = evt.xexpose.height;
             printf("Real width: %d, height: %d\n", width, height);
 
-            x11_sf_ = cairo_xlib_surface_create(display_, drawable_, DefaultVisual(display_, DefaultScreen(display_)), width, height);
+            x11_sf_ = cairo_xlib_surface_create(
+                display_, drawable_,
+                DefaultVisual(display_, DefaultScreen(display_)), width,
+                height);
             x11_cr_ = cairo_create(x11_sf_);
-            cairo_scale(x11_cr_, double(width) / (width_ + 2 * margin_w_), double(height) / (height_ + 2 * margin_h_));
+            cairo_scale(x11_cr_, double(width) / (width_ + 2 * margin_w_),
+                        double(height) / (height_ + 2 * margin_h_));
             cairo_set_source_surface(x11_cr_, sf_, margin_w_, margin_h_);
             cairo_paint(x11_cr_);
             cairo_surface_destroy(x11_sf_);
@@ -304,13 +315,17 @@ Void AlgsDraw::show()
             break;
         case ConfigureNotify:
             //获取当前窗口的宽和高
-            width = evt.xresizerequest.width;
+            width  = evt.xresizerequest.width;
             height = evt.xresizerequest.height;
             printf("Real width: %d, height: %d\n", width, height);
 
-            x11_sf_ = cairo_xlib_surface_create(display_, drawable_, DefaultVisual(display_, DefaultScreen(display_)), width, height);
+            x11_sf_ = cairo_xlib_surface_create(
+                display_, drawable_,
+                DefaultVisual(display_, DefaultScreen(display_)), width,
+                height);
             x11_cr_ = cairo_create(x11_sf_);
-            cairo_scale(x11_cr_, double(width) / width_, double(height) / height_);
+            cairo_scale(x11_cr_, double(width) / width_,
+                        double(height) / height_);
             cairo_set_source_surface(x11_cr_, sf_, 0, 0);
             cairo_paint(x11_cr_);
             cairo_surface_destroy(x11_sf_);
@@ -328,7 +343,9 @@ Void AlgsDraw::show()
 
 String AlgsDraw::event2str(Int type)
 {
-#define IF_RETURN(arg) if (type == arg) return #arg
+#define IF_RETURN(arg) \
+    if (type == arg)   \
+    return #arg
     IF_RETURN(KeyPress);
     IF_RETURN(KeyRelease);
     IF_RETURN(ButtonPress);
@@ -370,7 +387,9 @@ String AlgsDraw::event2str(Int type)
 const String AlgsDraw::err_msg(cairo_status_t s)
 {
     assert(s < CAIRO_STATUS_LAST_STATUS);
-#define ERR_MSG(arg) if (s == arg) return #arg
+#define ERR_MSG(arg) \
+    if (s == arg)    \
+    return #arg
     ERR_MSG(CAIRO_STATUS_SUCCESS);
     ERR_MSG(CAIRO_STATUS_NO_MEMORY);
     ERR_MSG(CAIRO_STATUS_INVALID_RESTORE);
@@ -413,5 +432,4 @@ const String AlgsDraw::err_msg(cairo_status_t s)
 #undef ERR_MSG
     return "";
 }
-
 }

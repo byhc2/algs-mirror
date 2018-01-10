@@ -4,7 +4,7 @@
 #include <cairo-xlib.h>
 #include <cairo.h>
 
-//X11/Xlib.h中定义了宏 #define Bool int
+// X11/Xlib.h中定义了宏 #define Bool int
 #ifdef Bool
 #undef Bool
 #endif
@@ -13,13 +13,12 @@
 
 namespace algs
 {
-
 class AlgsDraw
 {
-public:
+    public:
     class Color
     {
-    public:
+        public:
         Color(const Color &c)
         {
             r_ = c.r_;
@@ -28,8 +27,9 @@ public:
             a_ = c.a_;
         }
 
-        Color(Double r=0, Double g=0, Double b=0):
-            r_(r), g_(g), b_(b), a_(1.0) {}
+        Color(Double r = 0, Double g = 0, Double b = 0)
+            : r_(r), g_(g), b_(b), a_(1.0)
+        {}
 
         double r_;
         double g_;
@@ -42,7 +42,7 @@ public:
     static Void text(Double x, Double y, const String &s);
     static Void circle(Double x, Double y, Double r);
     static Void filledCircle(Double x, Double y, Double r);
-    //x,y是矩形中心点的位置，rw和rh是矩形的宽和高
+    // x,y是矩形中心点的位置，rw和rh是矩形的宽和高
     static Void rectangle(Double x, Double y, Double rw, Double rh);
     static Void filledRectangle(Double x, Double y, Double rw, Double rh);
 
@@ -50,12 +50,14 @@ public:
     static Void setYscale(Double y0, Double y1);
     static Void setPenRadius(Double r);
     static Void setPenColor(const Color &c);
+    static Color getPenColor();
     static Void setFont(const String &f);
-    static Void setCanvasSize(Int w=800, Int h=600);
-    static Void clear(const Color &c=Color(1.0, 1.0, 1.0));
+    static Void setCanvasSize(Int w = 800, Int h = 600);
+    static Void clear(const Color &c = Color(1.0, 1.0, 1.0));
     static Void show();
     static Void init();
-private:
+
+    private:
     static Void drawInit();
     static Void drawFinish();
 
@@ -70,15 +72,15 @@ private:
     static cairo_t *x11_cr_;
     static Drawable drawable_;
     static Display *display_;
-    static Double max_x_; //x轴左端点
-    static Double min_x_; //x轴右端点
-    static Double max_y_; //y轴上端点
-    static Double min_y_; //y轴下端点
+    static Double max_x_;  // x轴左端点
+    static Double min_x_;  // x轴右端点
+    static Double max_y_;  // y轴上端点
+    static Double min_y_;  // y轴下端点
     static Double pen_radius_;
     static Color pen_color_;
     static String font_;
 
-private:
+    private:
     static String event2str(Int type);
     static const String err_msg(cairo_status_t s);
     static Double c2sX(Double x);
@@ -86,7 +88,6 @@ private:
     static Double l2sX(Double l);
     static Double l2sY(Double l);
 };
-
 }
 
 #endif

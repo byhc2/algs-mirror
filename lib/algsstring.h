@@ -11,18 +11,25 @@
 
 namespace algs
 {
-
-template<typename _Alloc=algstl::Allocator<Char>>
+template<typename _Alloc = algstl::Allocator<Char>>
 class StringBase
 {
-template<typename _A> friend StringBase<_A> operator+(const Char *lhs, const StringBase<_A> &rhs);
-template<typename _A> friend StringBase<_A> operator+(const StringBase<_A> &lhs, const Char *rhs);
-template<typename _A> friend StringBase<_A> operator+(const StringBase<_A> &lhs, const StringBase<_A> &rhs);
+    template<typename _A>
+    friend StringBase<_A> operator+(const Char *lhs, const StringBase<_A> &rhs);
+    template<typename _A>
+    friend StringBase<_A> operator+(const StringBase<_A> &lhs, const Char *rhs);
+    template<typename _A>
+    friend StringBase<_A> operator+(const StringBase<_A> &lhs,
+                                    const StringBase<_A> &rhs);
 
-template<typename _A> friend std::ostream &operator<<(std::ostream &os, const StringBase<_A> &rhs);
-template<typename _A> friend std::ostream &operator>>(std::ostream &os, const StringBase<_A> &rhs);
+    template<typename _A>
+    friend std::ostream &operator<<(std::ostream &os,
+                                    const StringBase<_A> &rhs);
+    template<typename _A>
+    friend std::ostream &operator>>(std::ostream &os,
+                                    const StringBase<_A> &rhs);
 
-public:
+    public:
     //实际存储字符串的缓冲区类
     //维护引用计数等
     template<typename _BufAlloc>
@@ -64,13 +71,13 @@ public:
             }
         }
 
-        StringBuf(SizeType n=1)
+        StringBuf(SizeType n = 1)
         {
-            n += 8; //本来8字节圆整只需要加7，但是考虑到c_str方法一定要多留出一个字节的空间放结束符，所以这里多分配点
-            n &= SizeType(-1) ^ 0x7; //8字节圆整对齐
-            buf_ = buf_allocator.allocate(n);
-            mstart_ = buf_;
-            mend_ = mstart_;
+            n += 8;  //本来8字节圆整只需要加7，但是考虑到c_str方法一定要多留出一个字节的空间放结束符，所以这里多分配点
+            n &= SizeType(-1) ^ 0x7;  // 8字节圆整对齐
+            buf_       = buf_allocator.allocate(n);
+            mstart_    = buf_;
+            mend_      = mstart_;
             mcapacity_ = buf_ + n;
         }
 
@@ -93,17 +100,17 @@ public:
             mend_ += n;
         }
 
-    private:
+        private:
         Allocator buf_allocator;
     };
 
     typedef StringBuf<_Alloc> BufferType;
     typedef typename BufferType::SizeType SizeType;
 
-    StringBase(): sbuf_(nullptr)
+    StringBase() : sbuf_(nullptr)
     {
         sbuf_ = new BufferType(1);
-        assert(sbuf_); //暂时如此
+        assert(sbuf_);  //暂时如此
         sbuf_->append("\0", 1);
         sbuf_->incr();
     }
@@ -111,13 +118,13 @@ public:
     StringBase(const StringBase &rhs)
     {
         sbuf_ = rhs.sbuf_;
-        sbuf_->incr(); //增加引用计数
+        sbuf_->incr();  //增加引用计数
     }
 
     StringBase(const Char *rhs)
     {
         SizeType n = rhs ? strlen(rhs) : 1;
-        sbuf_ = new BufferType(n);
+        sbuf_      = new BufferType(n);
         assert(sbuf_);
         sbuf_->append(rhs, n);
         sbuf_->incr();
@@ -172,7 +179,7 @@ public:
         }
 
         SizeType n = rhs ? strlen(rhs) : 1;
-        sbuf_ = new BufferType(n);
+        sbuf_      = new BufferType(n);
         assert(sbuf_);
         sbuf_->append(rhs, n);
         sbuf_->incr();
@@ -216,13 +223,13 @@ public:
         return *this;
     }
 
-protected:
+    protected:
     void append(const Char *rhs, SizeType n)
     {
         sbuf_->append(rhs, n);
     }
 
-private:
+    private:
     BufferType *sbuf_;
 };
 typedef StringBase<> String;
@@ -287,10 +294,10 @@ std::ostream &operator<<(std::ostream &os, const StringBase<_A> &rhs)
 template<typename _A>
 std::istream &operator>>(std::istream &is, StringBase<_A> &rhs)
 {
-    rhs = ""; //先清空自身数据
+    rhs = "";  //先清空自身数据
 
-    auto buf = is.rdbuf();
-    auto csize = buf->in_avail(); //获取buf中目前可读的字符数
+    auto buf   = is.rdbuf();
+    auto csize = buf->in_avail();  //获取buf中目前可读的字符数
 
     if (csize == -1)
     {
@@ -298,7 +305,7 @@ std::istream &operator>>(std::istream &is, StringBase<_A> &rhs)
     }
 
     Char *p = new Char[csize];
-    auto q = 0;
+    auto q  = 0;
     assert(p);
 
     while (isspace(buf->sgetc()))
@@ -324,7 +331,6 @@ std::istream &operator>>(std::istream &is, StringBase<_A> &rhs)
 
     return is;
 }
-
 }
 
 #endif
