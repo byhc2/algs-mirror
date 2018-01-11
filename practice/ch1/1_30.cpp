@@ -4,6 +4,7 @@
 
 using namespace std;
 using namespace algs;
+using namespace algsutil;
 using namespace algstl;
 
 #define N 10

@@ -26,6 +26,8 @@ set(target
     test25
     test26
     test27
+    test28
+    test29
     )
 
 foreach(one ${target})

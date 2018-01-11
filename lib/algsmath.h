@@ -14,6 +14,10 @@ public:
     {
         return v >= 0 ? v : -v;
     }
+    inline static Long abs(Long v)
+    {
+        return v >= 0 ? v : -v;
+    }
 
     static Double sin(Double a);
     static Double cos(Double a);

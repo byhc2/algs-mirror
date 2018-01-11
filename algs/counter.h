@@ -28,20 +28,6 @@ class Counter
     Int count_;
 };
 
-class VisualCounter
-{
-    public:
-    VisualCounter();
-    VisualCounter &increment();
-    algs::String toString();
-    VisualCounter &operator++();
-    VisualCounter operator++(Int);
-    VisualCounter &operator=(const VisualCounter &rhs);
-
-    private:
-    String id_;
-    Int count_;
-};
 }
 
 #endif
