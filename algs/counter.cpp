@@ -52,4 +52,22 @@ Counter &Counter::operator=(const Counter &rhs)
     return *this;
 }
 
+VisualCounter &Counter::increment()
+{
+    ++count_;
+    return *this;
+}
+
+algs::String VisualCounter::toString()
+{
+    return id_ + ": " + Num::toString(count_);
+}
+
+Counter Counter::operator++(Int)
+{
+    auto tmp = *this;
+    ++count_;
+    return tmp;
+}
+
 }

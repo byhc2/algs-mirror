@@ -29,3 +29,5 @@ int main(int argc, char *argv[])
     cout << mystery(s1) << endl;
     return 0;
 }
+
+//2.8 略
