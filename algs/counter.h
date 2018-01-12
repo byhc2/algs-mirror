@@ -12,7 +12,7 @@ class Counter
     friend std::ostream &operator<<(std::ostream &os, const Counter &rhs);
 
     public:
-    Counter(const String &id = "anonymous") : id_(id), count_(0)
+    Counter(const algs::String &id = "anonymous") : id_(id), count_(0)
     {}
     Counter(const Counter &rhs) : id_(rhs.id_), count_(rhs.count_)
     {}
@@ -24,10 +24,9 @@ class Counter
     Counter &operator=(const Counter &rhs);
 
     private:
-    String id_;
+    algs::String id_;
     Int count_;
 };
-
 }
 
 #endif

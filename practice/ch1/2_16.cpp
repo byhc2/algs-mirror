@@ -12,7 +12,6 @@
 
 using namespace std;
 using namespace algs;
-using namespace algsutil;
 
 class Rational
 {

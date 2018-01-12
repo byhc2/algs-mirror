@@ -1,7 +1,7 @@
 #ifndef __UTILALGS_GCD__
 #define __UTILALGS_GCD__
 
-namespace algsutil
+namespace algs
 {
 
 template<typename _T>

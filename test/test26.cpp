@@ -1,5 +1,5 @@
 #include <iostream>
-#include "misc.h"
+#include "accumulator.h"
 #include "algsnum.h"
 #include "algsdraw.h"
 #include "algsrandom.h"

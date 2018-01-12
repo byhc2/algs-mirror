@@ -4,6 +4,7 @@
 #include "algsnum.h"
 
 using namespace std;
+using namespace algs;
 
 namespace algs
 {

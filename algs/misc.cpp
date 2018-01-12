@@ -1,6 +1,5 @@
 #include "misc.h"
 
-std::ostream &operator<<(std::ostream &os, const Accumulator &rhs)
+namespace algs
 {
-    return (os << rhs.mean() << "(" << rhs.v_ << "/" << rhs.c_ << ")");
 }

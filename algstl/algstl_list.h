@@ -3,20 +3,21 @@
 
 //双向链表
 
-#include "algstl_memory.h"
 #include "algstl_iterator.h"
+#include "algstl_memory.h"
 
 namespace algstl
 {
-
 template<typename _T>
 class ListNode
 {
-public:
+    public:
     typedef _T ValueType;
 
-    ListNode<ValueType>(const ValueType &&val): data_(val) {}
-    ListNode<ValueType>(const ValueType &val): data_(val) {}
+    ListNode<ValueType>(const ValueType &&val) : data_(val)
+    {}
+    ListNode<ValueType>(const ValueType &val) : data_(val)
+    {}
 
     ListNode<ValueType> *next_;
     ListNode<ValueType> *prev_;
@@ -26,40 +27,41 @@ public:
 template<typename _T>
 class ListIterator
 {
-public:
-    typedef _T  ValueType;
-    typedef _T& Reference;
+    public:
+    typedef _T ValueType;
+    typedef _T &Reference;
     typedef BidirectionalIteratorTag IteratorCategory;
-    typedef _T* Pointer;
-    typedef Void DifferenceType; //List没有DifferenceType;
+    typedef _T *Pointer;
+    typedef Void DifferenceType;  // List没有DifferenceType;
 
     typedef ListNode<ValueType> NodeType;
 
-    ListIterator(NodeType *&p): p_(p) {}
-    ListIterator &operator++() //前置自增，返回左值
+    ListIterator(NodeType *&p) : p_(p)
+    {}
+    ListIterator &operator++()  //前置自增，返回左值
     {
         p_ = p_->next_;
         return *this;
     }
 
-    ListIterator operator++(int) //后置自增，返回右值
+    ListIterator operator++(int)  //后置自增，返回右值
     {
         NodeType *tmp = p_;
-        p_ = p_->next;
+        p_            = p_->next;
 
         return tmp;
     }
 
-    ListIterator &operator--() //前置自减，返回左值
+    ListIterator &operator--()  //前置自减，返回左值
     {
         p_ = p_->prev_;
         return *this;
     }
 
-    ListIterator operator--(int) //后置自减，返回右值
+    ListIterator operator--(int)  //后置自减，返回右值
     {
         NodeType *tmp = p_;
-        p_ = p_->prev_;
+        p_            = p_->prev_;
 
         return tmp;
     }
@@ -78,10 +80,10 @@ bool operator!=(const ListIterator<_T> &lhs, const ListIterator<_T> &rhs)
     return lhs.p_ != rhs.p_;
 }
 
-template<typename _T, typename _Alloc=Allocator<_T>>
+template<typename _T, typename _Alloc = Allocator<_T>>
 class List
 {
-public:
+    public:
     typedef _T ValueType;
     typedef _Alloc Allocator;
     typedef ListNode<ValueType> NodeType;
@@ -91,7 +93,7 @@ public:
 
     List()
     {
-        head_ = alloc_.allocate(1);
+        head_        = alloc_.allocate(1);
         head_->next_ = head_;
         head_->prev_ = head_;
     }
@@ -103,7 +105,7 @@ public:
         {
             //摘出当前节点
             NodeType *tmp = cur;
-            cur = cur->next_;
+            cur           = cur->next_;
 
             alloc_.deconstruct(tmp);
             alloc_.deallocate(tmp, 1);
@@ -139,16 +141,16 @@ public:
         alloc_.construct(p, val);
         NodeType *prev = head_->prev_;
 
-        p->prev_ = prev;
-        p->next_ = head_;
+        p->prev_     = prev;
+        p->next_     = head_;
         head_->prev_ = p;
-        prev->next_ = p;
+        prev->next_  = p;
     }
-private:
-    NodeType *head_; //指向头节点的指针
+
+    private:
+    NodeType *head_;  //指向头节点的指针
     NodeAllocator alloc_;
 };
-
 }
 
 #endif
