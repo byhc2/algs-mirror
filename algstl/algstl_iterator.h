@@ -1,6 +1,8 @@
 #ifndef __ALGSTL_ITERATOR__
 #define __ALGSTL_ITERATOR__
 
+#include "algs_type.h"
+
 namespace algstl
 {
 

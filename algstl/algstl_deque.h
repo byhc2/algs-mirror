@@ -1,6 +1,8 @@
 #ifndef __ALGSTL_DEQUE__
 #define __ALGSTL_DEQUE__
 
+#include <sstream>
+#include "algsstring.h"
 #include "algstl_iterator.h"
 #include "algstl_memory.h"
 
@@ -16,13 +18,13 @@ namespace algstl
 const Int bufcnt = 512;
 //或为我实现之最复杂迭代器
 template<typename _T, typename _Alloc, Uint bufsize = 512 * sizeof(_T)>
-class DequeIterator
+struct DequeIterator
 {
-    public:
     typedef _T ValueType;
     typedef _T *Pointer;
     typedef _T &Reference;
     typedef _Alloc Allocator;
+    typedef PtrDiff DiffType;
     DequeIterator() : start_(0), end_(0), cur_(0)
     {}
 
@@ -71,7 +73,55 @@ class DequeIterator
         }
     }
 
-    private:
+    Bool operator==(const DequeIterator &rhs)
+    {
+        return cur_ == rhs.cur_;
+    }
+
+    Bool operator!=(const DequeIterator &rhs)
+    {
+        return cur_ != rhs.cur_;
+    }
+
+    Void resetMap(Pointer *n)
+    {
+        map_   = n;
+        start_ = *map_;
+        end_   = start_ + bufcnt;
+        cur_=0;
+    }
+
+    DequeIterator &operator+=(DiffType n)
+    {
+        //相对于当前缓冲区首的偏移
+        auto offset = n + (cur_ - start_);
+        if (offset > 0 && offset < bufcnt)
+        {
+            //当前缓冲区内
+            cur_ = offset;
+        }
+        else
+        {
+            auto nf = offset > 0 ? offset / bufcnt : -offset / bufcnt - 1;
+            resetMap(map_ + offset / bufcnt);
+            cur_ = offset > 0 ? offset % bufcnt : bufcnt - (-offset % bufcnt);
+        }
+        return *this;
+    }
+
+    DequeIterator &operator-=(DiffType n)
+    {
+        return *this += -n;
+    }
+
+    algs::String toString()
+    {
+        std::stringstream ss;
+        ss << "map:" << map_ << "|start:" << start_ << "|end:" << end_
+           << "|cur:" << cur_;
+        return ss.str().c_str();
+    }
+
     Pointer start_;
     Pointer end_;
     Pointer cur_;
@@ -87,11 +137,34 @@ class Deque
     typedef _T *Pointer;
     typedef _T &Reference;
     typedef _Alloc Allocator;
-    typedef Deque Deque()
+    typedef DequeIterator<ValueType, Allocator> Iterator;
+
+    Deque() : map_(0), map_size_(0), first_(), last_()
     {}
 
+    void pushBack(const ValueType &t)
+    {
+        if (last_.cur_ != last_.end_)
+        {
+            //最简单的情况，直接构造
+            alloc_.construct(last_.cur_, t);
+            ++last_.cur_;
+            return;
+        }
+        //扩展二级索引
+        extendMap();
+        auto oldfirst = first_.cur_-first_.map_;
+        first_.resetMap(map_);
+        first_.cur_=oldfirst;
+        last_.resetMap(map_ + map_size_);
+    }
+
     private:
-    Pointer *map_;  //二级索引的指针
+    Pointer *map_;       //二级索引的指针
+    SizeType map_size_;  //二级索引的大小
+    Iterator first_;
+    Iterator last_;
+    Allocator alloc_;
 };
 };
 
