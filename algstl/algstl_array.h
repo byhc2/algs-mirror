@@ -63,7 +63,7 @@ public:
     {
         auto s = rhs.size();
         start_ = alloc_.allocate(s);
-        uninitialized_copy(rhs.begin(), rhs.end(), start_);
+        uninitializedCopy(rhs.begin(), rhs.end(), start_);
         end_ = start_ + s;
         cap_ = end_;
     }
@@ -75,7 +75,7 @@ public:
     {
         //预分配空间
         resize(lst.size());
-        uninitialized_copy(lst.begin(), lst.end(), start_);
+        uninitializedCopy(lst.begin(), lst.end(), start_);
     }
 
     void resize(SizeType n)
@@ -83,7 +83,7 @@ public:
         if (start_ + n < end_)
         {
             //空间足够大，需要析构n到end_之间的元素
-            _destroy(start_ + n, end_);
+            destroy(start_ + n, end_);
             end_ = start_ + n;
         }
         else if (start_ + n < cap_)
@@ -95,9 +95,9 @@ public:
         {
             decltype(start_) tmp = alloc_.allocate(n);
             assert(tmp);
-            uninitialized_copy_n(start_, end_, tmp, n);
+            uninitializedCopyN(start_, end_, tmp, n);
             //析构销毁之前的内存
-            _destroy(start_, end_);
+            destroy(start_, end_);
             alloc_.deallocate(start_, size());
             start_ = tmp;
             cap_ = start_ + n;
@@ -198,7 +198,7 @@ public:
 
     ~Array()
     {
-        _destroy(start_, end_);
+        destroy(start_, end_);
         alloc_.deallocate(start_, size());
         start_ = nullptr;
         end_ = nullptr;
@@ -208,6 +208,14 @@ public:
     SizeType size() const
     {
         return end_ - start_;
+    }
+
+    Iterator erase(Iterator it)
+    {
+        destroy(*it);
+        algstl::move(it + 1, end(), it);
+        --end_;
+        return it;
     }
 
     Array<ValueType> &operator=(const Array<ValueType> &rhs)
@@ -227,7 +235,7 @@ public:
 
         //复制对方
         start_ = alloc_.allocate(rhs.size());
-        uninitialized_copy(rhs.begin(), rhs.end(), start_);
+        uninitializedCopy(rhs.begin(), rhs.end(), start_);
         end_ = start_ + rhs.size();
         cap_ = end_;
 
@@ -245,7 +253,7 @@ public:
             ValueType *tmp = alloc_.allocate(newsize);
 
             //拷贝数据
-            uninitialized_copy(start_, end_, tmp);
+            uninitializedCopy(start_, end_, tmp);
 
             //释放旧的内存
             auto cur = start_;
@@ -279,7 +287,7 @@ public:
             ValueType *tmp = alloc_.allocate(newsize);
 
             //拷贝数据
-            uninitialized_copy(start_, end_, tmp);
+            uninitializedCopy(start_, end_, tmp);
 
             //释放旧的内存
             auto cur = start_;
