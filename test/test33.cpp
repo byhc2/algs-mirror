@@ -8,33 +8,19 @@ int main(int argc, char *argv[])
 {
     Deque<Int> dq;
 
-    dq.pushBack(1);
-    dq.pushBack(2);
-    dq.pushBack(3);
-    dq.pushBack(4);
-    dq.pushBack(5);
-    dq.pushBack(1);
-    dq.pushBack(2);
-    dq.pushBack(3);
-    dq.pushBack(4);
-    dq.pushBack(5);
-    dq.pushBack(1);
-    dq.pushBack(2);
-    dq.pushBack(3);
-    dq.pushBack(4);
-    dq.pushBack(5);
-    dq.pushBack(1);
-    dq.pushBack(2);
-    dq.pushBack(3);
-    dq.pushBack(4);
-    dq.pushBack(5);
-    dq.pushBack(1);
-    dq.pushBack(2);
-    dq.pushBack(3);
-    dq.pushBack(4);
-    dq.pushBack(5);
+    for (auto i = 0; i < 1000; ++i)
+    {
+        if (i % 2)
+        {
+            dq.pushBack(i);
+        }
+        else
+        {
+            dq.pushFront(i);
+        }
+    }
 
-    for (auto it = dq.begin(); it != dq.end(); ++it)
+    for (auto it = dq.rbegin(); it != dq.rend(); ++it)
     {
         cout << *it << endl;
     }

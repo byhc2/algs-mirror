@@ -25,7 +25,9 @@ struct DequeIterator
     typedef _T *Pointer;
     typedef _T &Reference;
     typedef _Alloc Allocator;
-    typedef PtrDiff DiffType;
+    typedef PtrDiff DifferenceType;
+    typedef RandomAccessIteratorTag IteratorCategory;
+
     DequeIterator() : start_(0), end_(0), cur_(0), arr_(0)
     {}
 
@@ -79,12 +81,12 @@ struct DequeIterator
         }
     }
 
-    Bool operator==(const DequeIterator &rhs)
+    Bool operator==(const DequeIterator &rhs) const
     {
         return cur_ == rhs.cur_;
     }
 
-    Bool operator!=(const DequeIterator &rhs)
+    Bool operator!=(const DequeIterator &rhs) const
     {
         return cur_ != rhs.cur_;
     }
@@ -96,7 +98,7 @@ struct DequeIterator
         end_   = start_ + bufsize;
     }
 
-    DequeIterator &operator+=(DiffType n)
+    DequeIterator &operator+=(DifferenceType n)
     {
         //相对于当前缓冲区首的偏移
         auto offset = n + (cur_ - start_);
@@ -115,7 +117,7 @@ struct DequeIterator
         return *this;
     }
 
-    DequeIterator &operator-=(DiffType n)
+    DequeIterator &operator-=(DifferenceType n)
     {
         return *this += -n;
     }
@@ -144,29 +146,46 @@ class Deque
     typedef _Alloc Allocator;
     typedef typename Allocator::template Rebind<Pointer>::Other ArrAllocator;
     typedef DequeIterator<ValueType, Allocator> Iterator;
+    typedef typename algstl::ReverseIterator<Iterator> ReverseIterator;
 
     Deque() : arr_(0), arr_total_(0), first_(), last_()
     {
         initArr();
     }
 
-    void initArr(Uint n=1)
+    void initArr(Uint n = 1)
     {
-        n = this->round(n);
-        arr_ = arr_alloc_.allocate(8);
+        n          = this->round(n);
+        arr_       = arr_alloc_.allocate(8);
         arr_total_ = 8;
 
         arr_[4] = alloc_.allocate(bufsize);
 
-        first_.arr_ = &arr_[4];
+        first_.arr_   = &arr_[4];
         first_.start_ = arr_[4];
-        first_.end_ = first_.start_ + bufsize;
-        first_.cur_ = first_.start_;
+        first_.end_   = first_.start_ + bufsize;
+        first_.cur_   = first_.start_;
 
-        last_.arr_ = &arr_[4];
+        last_.arr_   = &arr_[4];
         last_.start_ = arr_[4];
-        last_.end_ = last_.start_ + bufsize;
-        last_.cur_ = last_.start_;
+        last_.end_   = last_.start_ + bufsize;
+        last_.cur_   = last_.start_;
+    }
+
+    Void pushFront(const ValueType &t)
+    {
+        if (first_.cur_ != first_.start_)
+        {
+            alloc_.construct(first_.cur_ - 1, t);
+            --first_.cur_;
+            return;
+        }
+        extendMap(1);
+        *(first_.arr_ - 1) = alloc_.allocate(bufsize);
+        first_.resetArr(first_.arr_ - 1);
+        first_.cur_ = first_.end_;
+        alloc_.construct(first_.cur_ - 1, t);
+        --first_.cur_;
     }
 
     Void pushBack(const ValueType &t)
@@ -182,7 +201,7 @@ class Deque
         extendMap(1);
         *(last_.arr_ + 1) = alloc_.allocate(bufsize);
         last_.resetArr(last_.arr_ + 1);
-        last_.cur_ = *last_.arr_;
+        last_.cur_ = last_.start_;
         alloc_.construct(last_.cur_, t);
         ++last_.cur_;
         return;
@@ -196,6 +215,16 @@ class Deque
     Iterator end()
     {
         return last_;
+    }
+
+    ReverseIterator rbegin()
+    {
+        return ReverseIterator(end());
+    }
+
+    ReverseIterator rend()
+    {
+        return ReverseIterator(begin());
     }
 
     // whence: 0首，1尾
