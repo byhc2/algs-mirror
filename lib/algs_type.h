@@ -15,7 +15,6 @@ typedef unsigned Uint;
 typedef unsigned char Uchar;
 typedef unsigned long Ulong;
 typedef ptrdiff_t PtrDiff;
-typedef Uint SizeType;
 
 #if 0
 namespace algs

@@ -27,13 +27,22 @@ struct DequeIterator
     typedef _Alloc Allocator;
     typedef PtrDiff DifferenceType;
     typedef RandomAccessIteratorTag IteratorCategory;
+    typedef Uint SizeType;
 
     DequeIterator() : start_(0), end_(0), cur_(0), arr_(0)
     {}
 
-    ValueType operator*()
+    Reference operator*()
     {
         return *cur_;
+    }
+
+    SizeType operator-(const DequeIterator &rhs) const
+    {
+        if (arr_ == rhs.arr_)
+        {
+            return static_cast<SizeType>(::abs(cur_ - rhs.cur_));
+        }
     }
 
     //以下二函数俱不检查边界
@@ -147,10 +156,27 @@ class Deque
     typedef typename Allocator::template Rebind<Pointer>::Other ArrAllocator;
     typedef DequeIterator<ValueType, Allocator> Iterator;
     typedef typename algstl::ReverseIterator<Iterator> ReverseIterator;
+    typedef typename Iterator::SizeType SizeType;
 
     Deque() : arr_(0), arr_total_(0), first_(), last_()
     {
         initArr();
+    }
+
+    Deque &operator=(const Deque &rhs)
+    {
+        if (this == &rhs)
+        {
+            return *this;
+        }
+        if (size() > rhs.size())
+        {
+        }
+        else
+        {
+        }
+
+        return *this;
     }
 
     void initArr(Uint n = 1)
@@ -238,7 +264,7 @@ class Deque
             //仅移动
             auto new_first = arr_ + (arr_total_ - old_arr_size - incr) / 2
                              + (whence ? incr : 0);
-            move(first_.arr_, last_.arr_, new_first);
+            uninitializedMove(first_.arr_, last_.arr_, new_first);
             first_.resetArr(new_first);
             last_.resetArr(new_first + old_arr_size);
         }
@@ -249,7 +275,7 @@ class Deque
             auto new_arr       = arr_alloc_.allocate(new_arr_total);
             auto new_first = new_arr + (new_arr_total - old_arr_size - incr) / 2
                              + (whence ? incr : 0);
-            move(first_.arr_, last_.arr_, new_first);
+            uninitializedMove(first_.arr_, last_.arr_, new_first);
             arr_       = new_arr;
             arr_total_ = new_arr_total;
             first_.resetArr(new_first);

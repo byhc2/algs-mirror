@@ -115,9 +115,9 @@ class Allocator
     }
 };
 
-//移动语义，旧数据会析构
+//移动，析构旧数据
 template<typename _InputIterator, typename _ForwardIterator>
-void move(_InputIterator first, _InputIterator last, _ForwardIterator dest)
+_ForwardIterator uninitializedMove(_InputIterator first, _InputIterator last, _ForwardIterator dest)
 {
     while (first != last)
     {
@@ -127,8 +127,23 @@ void move(_InputIterator first, _InputIterator last, _ForwardIterator dest)
         ++dest;
         ++first;
     }
+    return dest;
 }
 
+//普通复制
+template<typename _InputIterator, typename _ForwardIterator>
+_ForwardIterator copy(_InputIterator first, _InputIterator last, _ForwardIterator dest)
+{
+    while (first != last)
+    {
+        *dest = *first;
+        ++dest;
+        ++first;
+    }
+    return dest;
+}
+
+//将对象复制到原始内存中
 template<typename _InputIterator, typename _ForwardIterator>
 void uninitializedCopy(_InputIterator first, _InputIterator last,
                        _ForwardIterator dest)

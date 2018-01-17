@@ -3,33 +3,33 @@
 
 //动态数组，基本同stl中vector
 
-#include <iostream>
+#include <algorithm>
 #include <cassert>
 #include <initializer_list>
-#include <algorithm>
-#include "algs_type.h"
-#include "algstl_memory.h"
-#include "algstl_iterator.h"
-#include "algstl_algobase.h"
-#include "algsstring.h"
+#include <iostream>
 #include "__tostring.h"
+#include "algs_type.h"
+#include "algsstring.h"
+#include "algstl_algobase.h"
+#include "algstl_iterator.h"
+#include "algstl_memory.h"
 
 namespace algstl
 {
-
-template<typename _T, typename _Alloc=Allocator<_T>>
+template<typename _T, typename _Alloc = Allocator<_T>>
 class Array
 {
-public:
+    public:
     typedef _T ValueType;
-    typedef _T& Reference;
-    typedef const _T& ConstReference;
+    typedef _T &Reference;
+    typedef const _T &ConstReference;
     typedef _Alloc Allocator;
-    typedef _T* Iterator;
-    typedef const _T* ConstIterator;
-    typedef _T* Pointer;
+    typedef _T *Iterator;
+    typedef const _T *ConstIterator;
+    typedef _T *Pointer;
     typedef typename algstl::ReverseIterator<Iterator> ReverseIterator;
-    typedef typename algstl::ReverseIterator<ConstIterator> ConstReverseIterator;
+    typedef typename algstl::ReverseIterator<ConstIterator>
+        ConstReverseIterator;
     typedef Int SizeType;
 
     static constexpr SizeType npos = -1;
@@ -37,17 +37,17 @@ public:
     Array()
     {
         start_ = nullptr;
-        end_ = nullptr;
-        cap_ = nullptr;
+        end_   = nullptr;
+        cap_   = nullptr;
     }
 
-    explicit Array(SizeType n): Array()
+    explicit Array(SizeType n) : Array()
     {
         resize(n);
     }
 
     //初始化长度为n的数组，每个值都由v构造
-    Array(const ValueType &v, SizeType n): Array()
+    Array(const ValueType &v, SizeType n) : Array()
     {
         resize(n);
         auto it = start_;
@@ -59,7 +59,7 @@ public:
     }
 
     //复制构造函数
-    Array(const Array &rhs): Array()
+    Array(const Array &rhs) : Array()
     {
         auto s = rhs.size();
         start_ = alloc_.allocate(s);
@@ -71,7 +71,7 @@ public:
     //因为编译器会固定把{xx, xx}这样的列表
     //解释为initializer_list
     //所以这里没办法只能使用
-    Array(const std::initializer_list<ValueType> &lst): Array()
+    Array(const std::initializer_list<ValueType> &lst) : Array()
     {
         //预分配空间
         resize(lst.size());
@@ -100,20 +100,20 @@ public:
             destroy(start_, end_);
             alloc_.deallocate(start_, size());
             start_ = tmp;
-            cap_ = start_ + n;
-            end_ = cap_;
+            cap_   = start_ + n;
+            end_   = cap_;
         }
     }
 
     algs::String toString() const
     {
         algs::String tmp = algs::toString(size()) + " [";
-        SizeType width = tmp.size();
+        SizeType width   = tmp.size();
         for (auto it = begin(); it != end(); ++it)
         {
             auto ex = algs::toString(*it);
             tmp += ex;
-            if (width > 80) //看看是否可以动态获取到屏幕宽度 TODO
+            if (width > 80)  //看看是否可以动态获取到屏幕宽度 TODO
             {
                 tmp += "\n";
                 width = 0;
@@ -145,12 +145,12 @@ public:
     //右值构造函数
     explicit Array(const Array &&rhs)
     {
-        start_ = rhs.start_;
-        end_ = rhs.end_;
-        cap_ = rhs.cap_;
+        start_     = rhs.start_;
+        end_       = rhs.end_;
+        cap_       = rhs.cap_;
         rhs.start_ = nullptr;
-        rhs.end_ = nullptr;
-        rhs.cap_ = nullptr;
+        rhs.end_   = nullptr;
+        rhs.cap_   = nullptr;
     }
 
     template<typename _Comp>
@@ -201,8 +201,8 @@ public:
         destroy(start_, end_);
         alloc_.deallocate(start_, size());
         start_ = nullptr;
-        end_ = nullptr;
-        cap_ = nullptr;
+        end_   = nullptr;
+        cap_   = nullptr;
     }
 
     SizeType size() const
@@ -213,7 +213,7 @@ public:
     Iterator erase(Iterator it)
     {
         destroy(*it);
-        algstl::move(it + 1, end(), it);
+        algstl::uninitializedMove(it + 1, end(), it);
         --end_;
         return it;
     }
@@ -242,41 +242,6 @@ public:
         return *this;
     }
 
-#if 0
-    Array<ValueType> &operator+(const ValueType &rhs)
-    {
-        if (end_ == cap_)
-        {
-            SizeType oldsize = size();
-            //需要重新分配内存
-            SizeType newsize = (size() ? size() : 1) * incr_fact;
-            ValueType *tmp = alloc_.allocate(newsize);
-
-            //拷贝数据
-            uninitializedCopy(start_, end_, tmp);
-
-            //释放旧的内存
-            auto cur = start_;
-            while (cur != end_)
-            {
-                //析构
-                alloc_.deconstruct(cur);
-                ++cur;
-            }
-            cur = start_;
-            alloc_.deallocate(start_, cap_ - start_);
-
-            //指针指向新的地址
-            start_ = tmp;
-            end_ = start_ + oldsize;
-            cap_ = start_ + newsize;
-        }
-
-        alloc_.construct(end_++, rhs);
-        return *this;
-    }
-#endif
-
     Array<ValueType> &operator+=(const ValueType &rhs)
     {
         if (end_ == cap_)
@@ -284,7 +249,7 @@ public:
             SizeType oldsize = size();
             //需要重新分配内存
             SizeType newsize = (size() ? size() : 1) * incr_fact;
-            ValueType *tmp = alloc_.allocate(newsize);
+            ValueType *tmp   = alloc_.allocate(newsize);
 
             //拷贝数据
             uninitializedCopy(start_, end_, tmp);
@@ -302,15 +267,15 @@ public:
 
             //指针指向新的地址
             start_ = tmp;
-            end_ = start_ + oldsize;
-            cap_ = start_ + newsize;
+            end_   = start_ + oldsize;
+            cap_   = start_ + newsize;
         }
 
         alloc_.construct(end_++, rhs);
         return *this;
     }
 
-private:
+    private:
     ValueType *start_;
     ValueType *end_;
     ValueType *cap_;
@@ -332,7 +297,8 @@ inline Void swap(Array<_T, _Alloc> &lhs, Array<_T, _Alloc> &rhs)
 }
 
 //先临时写这么一个sort方法
-template<typename _T, typename _Alloc> template<typename _Comp>
+template<typename _T, typename _Alloc>
+template<typename _Comp>
 Void Array<_T, _Alloc>::sort(_Comp f)
 {
     if (size() == 0)
@@ -343,7 +309,6 @@ Void Array<_T, _Alloc>::sort(_Comp f)
     //这里先使用标准库的快排
     std::sort(begin(), end(), f);
 }
-
 }
 
 #endif

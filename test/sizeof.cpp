@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
     SIZEOF(bool);
     SIZEOF(double);
     SIZEOF(float);
+    SIZEOF(size_t);
 
     random_device rd;
     decltype(rd()) x;

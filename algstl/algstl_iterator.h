@@ -5,16 +5,20 @@
 
 namespace algstl
 {
-
-//IteratorTag的作用
+// IteratorTag的作用
 //当某个算法需要使用某种类型的Iterator时，需要检测迭代器的类型
 //比如某些算法需要随机访问的迭代器，某些则只需要前向迭代器
 //因此需要这个IteratorTag来表明迭代器的种类
-struct InputIteratorTag {};
-struct ForwardIteratorTag: public InputIteratorTag {};
-struct BidirectionalIteratorTag: public ForwardIteratorTag {};
-struct RandomAccessIteratorTag: public ForwardIteratorTag {};
-struct OutputIteratorTag {}; //单独的，不参与继承
+struct InputIteratorTag
+{};
+struct ForwardIteratorTag : public InputIteratorTag
+{};
+struct BidirectionalIteratorTag : public ForwardIteratorTag
+{};
+struct RandomAccessIteratorTag : public ForwardIteratorTag
+{};
+struct OutputIteratorTag
+{};  //单独的，不参与继承
 
 #if 0
 
@@ -73,48 +77,56 @@ template<typename _Iterator>
 struct IteratorTraits
 {
     typedef typename _Iterator::IteratorCategory IteratorCategory;
-    typedef typename _Iterator::ValueType        ValueType;
-    typedef typename _Iterator::DifferenceType   DifferenceType;
-    typedef typename _Iterator::Pointer          Pointer;
-    typedef typename _Iterator::Reference        Reference;
+    typedef typename _Iterator::ValueType ValueType;
+    typedef typename _Iterator::DifferenceType DifferenceType;
+    typedef typename _Iterator::Pointer Pointer;
+    typedef typename _Iterator::Reference Reference;
 };
 
 //偏特化给特定指针用
 //指针一定是可以随机访问的迭代器
 template<typename _Tp>
-struct IteratorTraits<_Tp*>
+struct IteratorTraits<_Tp *>
 {
     typedef RandomAccessIteratorTag IteratorCategory;
-    typedef _Tp                     ValueType;
-    typedef ptrdiff_t               DifferenceType;
-    typedef _Tp*                    Pointer;
-    typedef _Tp&                    Reference;
+    typedef _Tp ValueType;
+    typedef ptrdiff_t DifferenceType;
+    typedef _Tp *Pointer;
+    typedef _Tp &Reference;
 };
 
 template<typename _Tp>
-struct IteratorTraits<const _Tp*>
+struct IteratorTraits<const _Tp *>
 {
     typedef RandomAccessIteratorTag IteratorCategory;
-    typedef _Tp                     ValueType;
-    typedef ptrdiff_t               DifferenceType;
-    typedef const _Tp*              Pointer;
-    typedef const _Tp&              Reference;
+    typedef _Tp ValueType;
+    typedef ptrdiff_t DifferenceType;
+    typedef const _Tp *Pointer;
+    typedef const _Tp &Reference;
 };
 
 template<typename _Iterator>
 class ReverseIterator
 {
-template<typename _T> friend bool operator!=(const ReverseIterator<_T> &lhs, const ReverseIterator<_T> &rhs);
-public:
+    template<typename _T>
+    friend bool operator!=(const ReverseIterator<_T> &lhs,
+                           const ReverseIterator<_T> &rhs);
+
+    public:
     typedef _Iterator IteratorType;
-    typedef typename IteratorTraits<IteratorType>::ValueType ValueType; //必须使用IteratorTraits
-    typedef typename IteratorTraits<IteratorType>::IteratorCategory IteratorCategory;
-    typedef typename IteratorTraits<IteratorType>::DifferenceType DifferenceType;
+    typedef typename IteratorTraits<IteratorType>::ValueType
+        ValueType;  //必须用IteratorTraits
+    typedef typename IteratorTraits<IteratorType>::IteratorCategory
+        IteratorCategory;
+    typedef
+        typename IteratorTraits<IteratorType>::DifferenceType DifferenceType;
     typedef typename IteratorTraits<IteratorType>::Pointer Pointer;
     typedef typename IteratorTraits<IteratorType>::Reference Reference;
 
-    ReverseIterator() {}
-    explicit ReverseIterator(IteratorType it): current_(it) {}
+    ReverseIterator()
+    {}
+    explicit ReverseIterator(IteratorType it) : current_(it)
+    {}
 
     ReverseIterator &operator++()
     {
@@ -148,7 +160,7 @@ public:
         return *--tmp;
     }
 
-private:
+    private:
     IteratorType current_;
 };
 
@@ -157,7 +169,6 @@ bool operator!=(const ReverseIterator<_T> &lhs, const ReverseIterator<_T> &rhs)
 {
     return lhs.current_ != rhs.current_;
 }
-
 }
 
 #endif

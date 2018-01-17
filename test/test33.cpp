@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 {
     Deque<Int> dq;
 
-    for (auto i = 0; i < 1000; ++i)
+    for (auto i = 0; i < 10; ++i)
     {
         if (i % 2)
         {
@@ -19,6 +19,13 @@ int main(int argc, char *argv[])
             dq.pushFront(i);
         }
     }
+
+    for (auto it = dq.begin(); it != dq.end(); ++it)
+    {
+        cout << *it << endl;
+    }
+
+    cout << "==============================" << endl;
 
     for (auto it = dq.rbegin(); it != dq.rend(); ++it)
     {
