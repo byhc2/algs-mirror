@@ -115,6 +115,7 @@ class ListConstIterator
     public:
     typedef _T ValueType;
     typedef const _T &ConstReference;
+    typedef const _T &Reference;
     typedef BidirectionalIteratorTag IteratorCategory;
     typedef const _T *Pointer;
     typedef PtrDiff DifferenceType;
@@ -174,7 +175,7 @@ class ListConstIterator
         return tmp;
     }
 
-    Reference operator*()
+    ConstReference operator*()
     {
         return p_->data_;
     }
@@ -459,24 +460,24 @@ class List
         return SizeType(-1);
     }
 
-    Iterator::Reference front()
+    typename Iterator::Reference front()
     {
         return *begin();
     }
 
-    ConstIterator::ConstReference front() const
+    typename ConstIterator::ConstReference front() const
     {
         return *cbegin();
     }
 
-    Iterator::Reference back()
+    typename Iterator::Reference back()
     {
         auto tmp = end();
         --tmp;
         return *tmp;
     }
 
-    ConstIterator::ConstReference back() const
+    typename ConstIterator::ConstReference back() const
     {
         auto tmp = cend();
         --tmp;
