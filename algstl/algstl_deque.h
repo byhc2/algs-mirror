@@ -27,7 +27,6 @@ struct DequeIterator
     typedef _Alloc Allocator;
     typedef PtrDiff DifferenceType;
     typedef RandomAccessIteratorTag IteratorCategory;
-    typedef Uint SizeType;
 
     DequeIterator() : start_(0), end_(0), cur_(0), arr_(0)
     {}
@@ -37,12 +36,10 @@ struct DequeIterator
         return *cur_;
     }
 
-    SizeType operator-(const DequeIterator &rhs) const
+    DifferenceType operator-(const DequeIterator &rhs) const
     {
-        if (arr_ == rhs.arr_)
-        {
-            return static_cast<SizeType>(::abs(cur_ - rhs.cur_));
-        }
+        return DifferenceType(bufsize * (arr_ - rhs.arr_ - 1) + (cur_ - start_)
+                              + (rhs.end_ - rhs.cur_));
     }
 
     //以下二函数俱不检查边界
@@ -107,21 +104,34 @@ struct DequeIterator
         end_   = start_ + bufsize;
     }
 
+    DequeIterator operator+(DifferenceType n)
+    {
+        auto r = *this;
+        return r += n;
+    }
+
+    DequeIterator operator-(DifferenceType n)
+    {
+        auto r = *this;
+        return r -= n;
+    }
+
     DequeIterator &operator+=(DifferenceType n)
     {
         //相对于当前缓冲区首的偏移
         auto offset = n + (cur_ - start_);
-        if (offset > 0 && offset < bufsize)
+        if (offset >= 0 && offset < bufsize)
         {
             //当前缓冲区内
-            cur_ = offset;
+            cur_ = *arr_ + offset;
         }
         else
         {
-            auto nf = offset > 0 ? offset / bufsize : -offset / bufsize - 1;
-            resetArr(arr_ + offset / bufsize);
-            cur_
-                = offset > 0 ? offset % bufsize : bufsize - (-offset % bufsize);
+            resetArr(arr_
+                     + (offset > 0 ? offset / bufsize : -offset / bufsize - 1));
+            cur_ = *arr_
+                   + (offset > 0 ? offset % bufsize
+                                 : bufsize - (-offset % bufsize));
         }
         return *this;
     }
@@ -131,11 +141,11 @@ struct DequeIterator
         return *this += -n;
     }
 
-    algs::String toString()
+    algs::String toString() const
     {
         std::stringstream ss;
         ss << "arr:" << arr_ << "|start:" << start_ << "|end:" << end_
-           << "|cur:" << cur_;
+           << "|cur:" << cur_ - start_;
         return ss.str().c_str();
     }
 
@@ -156,7 +166,8 @@ class Deque
     typedef typename Allocator::template Rebind<Pointer>::Other ArrAllocator;
     typedef DequeIterator<ValueType, Allocator> Iterator;
     typedef typename algstl::ReverseIterator<Iterator> ReverseIterator;
-    typedef typename Iterator::SizeType SizeType;
+    typedef Uint SizeType;
+    typedef typename Iterator::DifferenceType DifferenceType;
 
     Deque() : arr_(0), arr_total_(0), first_(), last_()
     {
@@ -171,12 +182,72 @@ class Deque
         }
         if (size() > rhs.size())
         {
+            erase(copy(rhs.begin(), rhs.end(), begin()), end());
         }
         else
         {
+            resize(rhs.size());
+            copy(rhs.begin(), rhs.end());
         }
 
         return *this;
+    }
+
+    SizeType size()
+    {
+        return last_ - first_;
+    }
+
+    Iterator erase(Iterator first, Iterator last)
+    {
+        auto len = last - first;
+        destroy(first, last);  //先销毁
+        uninitializedMove(last, last_, first);
+        last_ -= len;
+        return first;
+    }
+
+    Iterator erase(Iterator p)
+    {
+        DifferenceType idx = p - first_;
+        if (idx < (this->size() >> 1))
+        {
+            algstl::copy(p + 1, last_, p);
+            popFront();
+        }
+        else
+        {
+            algstl::copy(first_, p, p);
+            popBack();
+        }
+    }
+
+    void popBack()
+    {
+        if (last_.cur_ != first_.first_)
+        {
+            destroy(first_.cur_);
+            ++first_.cur_;
+            return;
+        }
+        destroy(first_.cur_);
+        first_.gotoNext();
+        first_.cur_ = first_.start_;
+        return;
+    }
+
+    void popFront()
+    {
+        if (first_.cur_ + 1 != first_.end_)
+        {
+            destroy(first_.cur_);
+            ++first_.cur_;
+            return;
+        }
+        destroy(first_.cur_);
+        first_.gotoNext();
+        first_.cur_ = first_.start_;
+        return;
     }
 
     void initArr(Uint n = 1)
@@ -185,15 +256,15 @@ class Deque
         arr_       = arr_alloc_.allocate(8);
         arr_total_ = 8;
 
-        arr_[4] = alloc_.allocate(bufsize);
+        arr_[3] = alloc_.allocate(bufsize);
 
-        first_.arr_   = &arr_[4];
-        first_.start_ = arr_[4];
+        first_.arr_   = &arr_[3];
+        first_.start_ = arr_[3];
         first_.end_   = first_.start_ + bufsize;
         first_.cur_   = first_.start_;
 
-        last_.arr_   = &arr_[4];
-        last_.start_ = arr_[4];
+        last_.arr_   = &arr_[3];
+        last_.start_ = arr_[3];
         last_.end_   = last_.start_ + bufsize;
         last_.cur_   = last_.start_;
     }
@@ -206,7 +277,7 @@ class Deque
             --first_.cur_;
             return;
         }
-        extendMap(1);
+        _extendArr();
         *(first_.arr_ - 1) = alloc_.allocate(bufsize);
         first_.resetArr(first_.arr_ - 1);
         first_.cur_ = first_.end_;
@@ -224,7 +295,7 @@ class Deque
             return;
         }
         //扩展二级索引
-        extendMap(1);
+        _extendArr(1);
         *(last_.arr_ + 1) = alloc_.allocate(bufsize);
         last_.resetArr(last_.arr_ + 1);
         last_.cur_ = last_.start_;
@@ -253,11 +324,93 @@ class Deque
         return ReverseIterator(begin());
     }
 
+#if 0
+    void resize(SizeType n)
+    {
+        if (n <= this->size())
+        {
+            this->erase(first_ + n, last_);
+            last_-=n;
+        }
+        else
+        {
+            auto _reserve(n-size());
+        }
+    }
+#endif
+
+#if 0
+    //将[first, last)置于pos前
+    template<typename _InputIterator>
+    Iterator insert(_InputIterator first, _InputIterator last, Iterator pos)
+    {
+        auto num = last - first;
+        assert(num >= 0);
+        if (pos - first_ < last_ - pos)  //向前调整
+        {
+            auto new_first = _reserve(num);
+            uninitializedCopy(first, last,
+                              uninitializedMove(first_, pos, first_ - num));
+            first_ = new_first;
+            return first_ + num;
+        }
+        else  //向后调整
+        {
+            auto new_last = _reserve(num, 1);
+            uninitializedMove(pos, last_, pos + num);
+            uninitializedCopy(first, last, pos);
+            last_ = new_last;
+            return pos;
+        }
+    }
+#endif
+
+    // whence: 0首，1尾
+    Iterator _reserve(SizeType n, Int whence = 1)
+    {
+        if (!whence)  //首
+        {
+            DifferenceType remain = n - first_.start_ - first_.cur_;
+            if (remain <= 0)
+            {
+                return first_ - n;
+            }
+            auto arr_incr = n / bufsize + 1;
+            if (first_.arr_ - arr_ < arr_incr)
+            {
+                _extendArr(0, arr_incr);
+            }
+            while (arr_incr)
+            {
+                *(first_.arr_ - arr_incr - 1) = alloc_.allocate(bufsize);
+            }
+            return first_ - n;
+        }
+        else
+        {
+            DifferenceType remain = n - first_.start_ - first_.cur_;
+            if (remain <= 0)
+            {
+                return last_ + n;
+            }
+            auto arr_incr = remain / bufsize + 1;
+            if (arr_total_ - (arr_ - last_.arr_) < arr_incr)
+            {
+                _extendArr(1, arr_incr);
+            }
+            while (arr_incr)
+            {
+                *(last_.arr_ + arr_incr + 1) = alloc_.allocate(bufsize);
+            }
+            return last_ + n;
+        }
+    }
+
     // whence: 0首，1尾
     // incr: 增量
-    Void extendMap(Int whence = 0, Uint incr = 1)
+    // 扩二级索引表
+    Void _extendArr(Int whence = 0, Uint incr = 1)
     {
-        std::cout << "in " << __FUNCTION__ << std::endl;
         auto old_arr_size = last_.arr_ - first_.arr_;  //已用二级索引大小
         if (arr_total_ > old_arr_size * 2 + incr)
         {

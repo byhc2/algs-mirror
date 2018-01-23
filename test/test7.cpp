@@ -22,5 +22,10 @@ int main(int argc, char *argv[])
         cout << *it << endl;
     }
 
+    for (auto it = lst1->crbegin(); it != lst1->crend(); ++it)
+    {
+        cout << *it << endl;
+    }
+
     return 0;
 }

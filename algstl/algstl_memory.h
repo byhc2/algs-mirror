@@ -1,6 +1,7 @@
 #ifndef __ALGSTL_MEMORY__
 #define __ALGSTL_MEMORY__
 
+#include <iostream>
 #include <cstddef>
 #include <cstdlib>
 #include <exception>

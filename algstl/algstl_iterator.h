@@ -83,8 +83,8 @@ struct IteratorTraits
     typedef typename _Iterator::Reference Reference;
 };
 
-//偏特化给特定指针用
-//指针一定是可以随机访问的迭代器
+//偏特化给指针
+//指针是随机访问迭代器
 template<typename _Tp>
 struct IteratorTraits<_Tp *>
 {
@@ -104,6 +104,34 @@ struct IteratorTraits<const _Tp *>
     typedef const _Tp *Pointer;
     typedef const _Tp &Reference;
 };
+
+template<typename _InputIterator>
+inline typename IteratorTraits<_InputIterator>::DifferenceType distance(
+    _InputIterator first, _InputIterator last, InputIteratorTag)
+{
+    typename IteratorTraits<_InputIterator>::DifferenceType n = 0;
+    ;
+    while (first != last)
+    {
+        ++first;
+        ++n;
+    }
+    return n;
+}
+
+template<typename _InputIterator>
+inline typename IteratorTraits<_InputIterator>::DifferenceType distance(
+    _InputIterator first, _InputIterator last, RandomAccessIteratorTag)
+{
+    return last - first;
+}
+
+template<typename _Iterator>
+inline typename IteratorTraits<_Iterator>::DifferenceType distance(
+    _Iterator first, _Iterator last)
+{
+    return distance(first, last, typename IteratorTraits<_Iterator>::IteratorCategory());
+}
 
 template<typename _Iterator>
 class ReverseIterator
