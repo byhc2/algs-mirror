@@ -225,6 +225,10 @@ class Deque
 
     Void _deallocateArr(Pointer first, Pointer last)
     {
+        while (first != last)
+        {
+            alloc_.deallocate(first++, bufsize);
+        }
     }
 
     Iterator erase(Iterator first, Iterator last)
@@ -235,16 +239,18 @@ class Deque
         if (elems_before < elems_after)
         {
             auto new_first = algstl::moveBackward(begin(), first, last);
-            algstl::destroy(begin(), begin() + len);
-            auto p = first.arr_;
-            while (p != new_first.arr_)
-            {
-                arr_alloc_.deallocate(p++, bufsize); //销毁
-            }
+            algstl::destroy(begin(), new_first);
+            _deallocateArr(first_.arr_, new_first.arr_);
             algstl::destroy(first_.arr_, new_first.arr_);
+            return last;
         }
         else
         {
+            auto new_last = algstl::move(last, end(), first);
+            algstl::destroy(new_last, end());
+            _deallocateArr(new_last.arr_ + 1, last_.arr_ + 1);
+            algstl::destroy(new_last.arr_ + 1, last_.arr_ + 1);
+            return first;
         }
     }
 
