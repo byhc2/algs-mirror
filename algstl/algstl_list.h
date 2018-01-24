@@ -14,8 +14,11 @@ class ListNode
     public:
     typedef _T ValueType;
 
-    ListNode<ValueType>(const ValueType &&val) : data_(val)
-    {}
+    ListNode<ValueType>(const ValueType &&val)
+    {
+        swap(val);
+    }
+
     ListNode<ValueType>(const ValueType &val) : data_(val)
     {}
 
@@ -66,7 +69,7 @@ class ListIterator
     ListIterator operator++(int)  //后置自增，返回右值
     {
         NodeType *tmp = p_;
-        p_            = p_->next;
+        p_            = p_->next_;
 
         return tmp;
     }
@@ -88,6 +91,11 @@ class ListIterator
     Reference operator*()
     {
         return p_->data_;
+    }
+
+    Pointer operator->()
+    {
+        return &(p_->data_);
     }
 
     NodeType *p_;
@@ -113,7 +121,7 @@ class ListConstIterator
     ListConstIterator(const NodeType *p) : p_(p)
     {}
 
-#if 0 //不需兼容此情况
+#if 0  //不需兼容此情况
     typedef ListIterator<ValueType> Iterator;
     ListConstIterator(const Iterator &rhs):p_(rhs.p_)
     {}
@@ -175,7 +183,8 @@ class ListConstIterator
 };
 
 template<typename _T>
-bool operator!=(const ListConstIterator<_T> &lhs, const ListConstIterator<_T> &rhs)
+bool operator!=(const ListConstIterator<_T> &lhs,
+                const ListConstIterator<_T> &rhs)
 {
     return lhs.p_ != rhs.p_;
 }
@@ -211,6 +220,139 @@ class List
         head_->prev_ = head_;
     }
 
+    void clear()
+    {
+        this->erase(this->begin(), this->end());
+    }
+
+    List(const List &rhs) : List()
+    {
+        insert(rhs.begin(), rhs.end(), end());
+    }
+
+    List(ConstIterator first, ConstIterator last) : List()
+    {
+        while (first != last)
+        {
+            this->insert(*first, this->end());
+            ++first;
+        }
+    }
+
+    List &operator=(const List &rhs)
+    {
+        if (&rhs == this)
+        {
+            return *this;
+        }
+        auto first1 = begin();
+        auto last1  = end();
+        auto first2 = rhs.begin();
+        auto last2  = rhs.end();
+
+        while (first1 != last1 && first2 != last2)
+        {
+            *first1 = *first2;
+            ++first1;
+            ++first2;
+        }
+
+        if (first2 == last2)
+        {
+            erase(first1, last1);
+        }
+        else
+        {
+            insert(first2, last2, last1);
+        }
+        return *this;
+    }
+
+    Iterator erase(Iterator pos)
+    {
+        auto prev = pos;
+        auto next = pos;
+        --prev;
+        ++next;
+        _connect(prev, next);
+
+        alloc_.deconstruct(pos.p_);
+        alloc_.deallocate(pos.p_);
+        return next;
+    }
+
+    void _connect(Iterator p, Iterator n)
+    {
+        auto p0   = p.p_;
+        auto n0   = n.p_;
+        p0->next_ = n0;
+        n0->prev_ = p0;
+    }
+
+    Iterator erase(Iterator first, Iterator last)
+    {
+        auto prev = first;
+        auto next = last;
+        --prev;
+        _connect(prev, next);
+        while (first != last)
+        {
+            auto tmp = first;
+            ++tmp;
+            //此处或需allocator_traits等概念
+            //获知NodeAllocator及Value Allocator
+            //但因ListNode实现为内嵌ValueType
+            //则销毁p_时其data_一并销毁
+            // TODO 暂不考虑AllocatorTraits等
+            //详见 http://en.cppreference.com/w/cpp
+            //比较复杂
+            alloc_.deconstruct(first.p_);
+            alloc_.deallocate(first.p_);
+            first = tmp;
+        }
+        return next;
+    }
+
+    Void splice(List &x, Iterator first, Iterator last, Iterator pos)
+    {
+    }
+
+    //返回插入[first, last)后插入元素首迭代器
+    Iterator insert(Iterator first, Iterator last, Iterator pos)
+    {
+        auto ret = pos;
+        --ret;
+        while (first != last)
+        {
+            insert(*first++, pos);
+        }
+        return ++ret;
+    }
+
+    Iterator insert(const ValueType &v, Iterator pos)
+    {
+        NodeType *p = alloc_.allocate(1);
+        alloc_.construct(p, v);
+
+        auto pos0 = pos.p_;
+
+        pos0->prev_->next_ = p;
+        p->next_           = pos0;
+        p->prev_           = pos0->prev_;
+        pos0->prev_        = p;
+        return p;
+    }
+
+    Iterator insert(Iterator it, Iterator pos)
+    {
+        NodeType *p       = it->p_;
+        pos->prev_->next_ = p;
+        p->next_          = pos;
+        p->prev_          = pos->prev_;
+        pos->prev_        = p;
+        return p;
+    }
+
     ~List()
     {
         auto cur = head_->next_;
@@ -238,7 +380,7 @@ class List
         return ConstIterator(head_);
     }
 
-#if 0 //不需兼容此情况
+#if 0  //不需兼容此情况
     ConstIterator begin() const
     {
         return ConstIterator(head_->next_);
@@ -303,7 +445,7 @@ class List
     }
 
     private:
-    NodeType *head_;  //指向头节点的指针
+    NodeType *head_;  //头节点指针
     NodeAllocator alloc_;
 };
 }

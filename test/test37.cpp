@@ -35,8 +35,13 @@ int main(int argc, char *argv[])
         cout << *it << endl;
     }
 
+    cout << "=============================" << endl;
     cout << lst1->empty() << endl;
     cout << lst1->size() << endl;
+    lst1->clear();
+    cout << lst1->size() << endl;
+
+    delete lst1;
 
     return 0;
 }

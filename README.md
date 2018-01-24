@@ -30,3 +30,6 @@ algstl包含模版库
 algstl目录，基础数据结构，特别是容器类型模板库
 lib目录，基础库，比如stat、random、io库等
 algs书中的一些特定算法库，比如矩阵库等
+
+暂不实现AllocatorTraits及相关概念
+所有模板共用一套Allocator

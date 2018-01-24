@@ -51,12 +51,12 @@ class Allocator
     typedef const _Tp &ConstReference;
     typedef _Tp ValueType;
 
-    //这里需要单独声明一个struct
-    //使容器层在使用这个allocator的时候
-    //可以通过rebind来声明与容器相关的一种allocator
-    //比如list容器，数据本身是存放在list_node中的
-    //所以在知道了数据本身的allocator之后
-    //可以通过rebind来得到list_node的allocator
+    //此处单声明一struct
+    //容器层用allocator时
+    //可用rebind声明与容器相关的allocator
+    //如List，数据实存放于ListNode中
+    //List知道数据本身allocator后
+    //可通过rebind得到ListNode之allocator
     template<typename _Tp1>
     struct Rebind
     {
@@ -99,9 +99,9 @@ class Allocator
 
     void deallocate(Pointer p, SizeType n = 1)
     {
-        //因为分配的时候调用的是malloc
-        //操作系统已经记录了n的信息
-        //所以这里不用再使用n
+        //因分配时调用malloc
+        //操作系统已记录所分配大小信息
+        //故此处不用n
         free(p);
     }
 
