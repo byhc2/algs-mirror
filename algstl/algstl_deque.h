@@ -14,17 +14,19 @@
 //遇随机访问，则以序号大小，于B树寻至相应缓冲区
 //再寻址于缓冲区内
 
+//TODO FIXME
+//erase与insert实现有问题，但目前暂不用此二接口，故暂不管
+
 namespace algstl
 {
 const Int bufcnt = 512;
 //或为我实现之最复杂迭代器
-template<typename _T, typename _Alloc, Uint bufsize = bufcnt>
+template<typename _T, Uint bufsize = bufcnt>
 struct DequeIterator
 {
     typedef _T ValueType;
     typedef _T *Pointer;
     typedef _T &Reference;
-    typedef _Alloc Allocator;
     typedef PtrDiff DifferenceType;
     typedef RandomAccessIteratorTag IteratorCategory;
 
@@ -164,7 +166,8 @@ class Deque
     typedef _T &Reference;
     typedef _Alloc Allocator;
     typedef typename Allocator::template Rebind<Pointer>::Other ArrAllocator;
-    typedef DequeIterator<ValueType, Allocator> Iterator;
+    typedef DequeIterator<ValueType> Iterator;
+    typedef DequeIterator<const ValueType> ConstIterator;
     typedef typename algstl::ReverseIterator<Iterator> ReverseIterator;
     typedef Uint SizeType;
     typedef typename Iterator::DifferenceType DifferenceType;
@@ -172,6 +175,18 @@ class Deque
     Deque() : arr_(0), arr_total_(0), first_(), last_()
     {
         initArr();
+    }
+
+    Reference front()
+    {
+        return *begin();
+    }
+
+    Reference back()
+    {
+        auto tmp = end();
+        --tmp;
+        return *tmp;
     }
 
     Deque &operator=(const Deque &rhs)
@@ -193,9 +208,14 @@ class Deque
         return *this;
     }
 
-    SizeType size()
+    SizeType size() const
     {
         return last_ - first_;
+    }
+
+    Bool empty() const
+    {
+        return !size();
     }
 
     Iterator erase(Iterator first, Iterator last)
@@ -302,6 +322,16 @@ class Deque
         alloc_.construct(last_.cur_, t);
         ++last_.cur_;
         return;
+    }
+
+    ConstIterator cbegin() const
+    {
+        return first_;
+    }
+
+    ConstIterator cend() const
+    {
+        return last_;
     }
 
     Iterator begin()
