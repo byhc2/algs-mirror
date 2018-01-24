@@ -38,6 +38,7 @@ set(target
     test37
     test38
     test39
+    test40
     )
 
 foreach(one ${target})

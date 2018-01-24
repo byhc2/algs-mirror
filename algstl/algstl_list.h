@@ -3,6 +3,8 @@
 
 //双向链表
 
+#include <stdexcept>
+#include <iostream>
 #include "algstl_iterator.h"
 #include "algstl_memory.h"
 
@@ -121,11 +123,9 @@ class ListConstIterator
     ListConstIterator(const NodeType *p) : p_(p)
     {}
 
-#if 0  //不需兼容此情况
     typedef ListIterator<ValueType> Iterator;
     ListConstIterator(const Iterator &rhs):p_(rhs.p_)
     {}
-#endif
 
     ListConstIterator(const ListConstIterator &rhs)
     {
@@ -227,7 +227,7 @@ class List
 
     List(const List &rhs) : List()
     {
-        insert(rhs.begin(), rhs.end(), end());
+        insert(rhs.cbegin(), rhs.cend(), end());
     }
 
     List(ConstIterator first, ConstIterator last) : List()
@@ -313,20 +313,30 @@ class List
         return next;
     }
 
+    //[first, last)从x中摘除，加入pos之前
     Void splice(List &x, Iterator first, Iterator last, Iterator pos)
     {
+        if (&x == this)
+        {
+            //禁止自摘除
+            throw std::runtime_error("splice on self");
+        }
+
+        auto prev = first;
+        --prev;
+        _connect(prev, last);
+        while (first != last)
+        {
+            this->insert(*first++, pos);
+        }
     }
 
     //返回插入[first, last)后插入元素首迭代器
-    Iterator insert(Iterator first, Iterator last, Iterator pos)
+    ConstIterator insert(ConstIterator first, ConstIterator last, Iterator pos)
     {
-        auto ret = pos;
-        --ret;
-        while (first != last)
-        {
-            insert(*first++, pos);
-        }
-        return ++ret;
+        auto tmp = List(first, last);
+        this->splice(tmp, tmp.begin(), tmp.end(), pos);
+        return first;
     }
 
     Iterator insert(const ValueType &v, Iterator pos)
