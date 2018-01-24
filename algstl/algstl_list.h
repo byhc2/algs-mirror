@@ -3,8 +3,8 @@
 
 //双向链表
 
-#include <stdexcept>
 #include <iostream>
+#include <stdexcept>
 #include "algstl_iterator.h"
 #include "algstl_memory.h"
 
@@ -114,7 +114,7 @@ class ListConstIterator
 {
     public:
     typedef _T ValueType;
-    typedef const _T &Reference;
+    typedef const _T &ConstReference;
     typedef BidirectionalIteratorTag IteratorCategory;
     typedef const _T *Pointer;
     typedef PtrDiff DifferenceType;
@@ -124,7 +124,7 @@ class ListConstIterator
     {}
 
     typedef ListIterator<ValueType> Iterator;
-    ListConstIterator(const Iterator &rhs):p_(rhs.p_)
+    ListConstIterator(const Iterator &rhs) : p_(rhs.p_)
     {}
 
     ListConstIterator(const ListConstIterator &rhs)
@@ -452,6 +452,35 @@ class List
     SizeType size() const
     {
         return SizeType(algstl::distance(cbegin(), cend()));
+    }
+
+    SizeType maxSize() const
+    {
+        return SizeType(-1);
+    }
+
+    Iterator::Reference front()
+    {
+        return *begin();
+    }
+
+    ConstIterator::ConstReference front() const
+    {
+        return *cbegin();
+    }
+
+    Iterator::Reference back()
+    {
+        auto tmp = end();
+        --tmp;
+        return *tmp;
+    }
+
+    ConstIterator::ConstReference back() const
+    {
+        auto tmp = cend();
+        --tmp;
+        return *tmp;
     }
 
     private:
