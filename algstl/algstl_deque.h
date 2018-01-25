@@ -14,8 +14,8 @@
 //遇随机访问，则以序号大小，于B树寻至相应缓冲区
 //再寻址于缓冲区内
 
-//TODO FIXME
-//erase与insert实现有问题，但目前暂不用此二接口，故暂不管
+// TODO FIXME
+// erase与insert实现有问题，但目前暂不用此二接口，故暂不管
 
 namespace algstl
 {
@@ -213,18 +213,39 @@ class Deque
         return last_ - first_;
     }
 
+    SizeType maxSize() const
+    {
+        return SizeType(-1);
+    }
+
     Bool empty() const
     {
         return !size();
     }
 
+    Void _deallocateArr(Pointer first, Pointer last)
+    {
+    }
+
     Iterator erase(Iterator first, Iterator last)
     {
-        auto len = last - first;
-        destroy(first, last);  //先销毁
-        uninitializedMove(last, last_, first);
-        last_ -= len;
-        return first;
+        auto len          = last - first;
+        auto elems_before = first - this->begin();
+        auto elems_after  = last - this->end();
+        if (elems_before < elems_after)
+        {
+            auto new_first = algstl::moveBackward(begin(), first, last);
+            algstl::destroy(begin(), begin() + len);
+            auto p = first.arr_;
+            while (p != new_first.arr_)
+            {
+                arr_alloc_.deallocate(p++, bufsize); //销毁
+            }
+            algstl::destroy(first_.arr_, new_first.arr_);
+        }
+        else
+        {
+        }
     }
 
     Iterator erase(Iterator p)
@@ -272,7 +293,7 @@ class Deque
 
     void initArr(Uint n = 1)
     {
-        n          = this->round(n);
+        n          = this->_round(n);
         arr_       = arr_alloc_.allocate(8);
         arr_total_ = 8;
 
@@ -297,7 +318,10 @@ class Deque
             --first_.cur_;
             return;
         }
-        _extendArr();
+        if (first_.arr_ == arr_)
+        {
+            _extendArr();
+        }
         *(first_.arr_ - 1) = alloc_.allocate(bufsize);
         first_.resetArr(first_.arr_ - 1);
         first_.cur_ = first_.end_;
@@ -314,8 +338,11 @@ class Deque
             ++last_.cur_;
             return;
         }
-        //扩展二级索引
-        _extendArr(1);
+        if (last_.arr_ == arr_ + arr_total_ - 1)
+        {
+            //扩展二级索引
+            _extendArr(1);
+        }
         *(last_.arr_ + 1) = alloc_.allocate(bufsize);
         last_.resetArr(last_.arr_ + 1);
         last_.cur_ = last_.start_;
@@ -354,7 +381,6 @@ class Deque
         return ReverseIterator(begin());
     }
 
-#if 0
     void resize(SizeType n)
     {
         if (n <= this->size())
@@ -367,9 +393,7 @@ class Deque
             auto _reserve(n-size());
         }
     }
-#endif
 
-#if 0
     //将[first, last)置于pos前
     template<typename _InputIterator>
     Iterator insert(_InputIterator first, _InputIterator last, Iterator pos)
@@ -393,7 +417,6 @@ class Deque
             return pos;
         }
     }
-#endif
 
     // whence: 0首，1尾
     Iterator _reserve(SizeType n, Int whence = 1)
@@ -441,32 +464,42 @@ class Deque
     // 扩二级索引表
     Void _extendArr(Int whence = 0, Uint incr = 1)
     {
-        auto old_arr_size = last_.arr_ - first_.arr_;  //已用二级索引大小
-        if (arr_total_ > old_arr_size * 2 + incr)
+        auto arr_size = last_.arr_ - first_.arr_ + 1;  //已用二级索引大小
+        if (arr_total_ > arr_size * 2 + incr)
         {
             //仅移动
-            auto new_first = arr_ + (arr_total_ - old_arr_size - incr) / 2
+            auto new_first = arr_ + (arr_total_ - arr_size - incr) / 2
                              + (whence ? incr : 0);
-            uninitializedMove(first_.arr_, last_.arr_, new_first);
+            if (new_first < arr_)
+            {
+                algstl::move(first_.arr_, last_.arr_, new_first);
+            }
+            else
+            {
+                algstl::moveBackward(first_.arr, last_.arr_ + 1,
+                                     new_first + arr_size);
+            }
             first_.resetArr(new_first);
-            last_.resetArr(new_first + old_arr_size);
+            last_.resetArr(new_first + arr_size);
         }
         else
         {
             //要分配新内存
-            auto new_arr_total = this->round(arr_total_ * 2 + incr);
+            auto new_arr_total = this->_round(arr_total_ * 2 + incr);
             auto new_arr       = arr_alloc_.allocate(new_arr_total);
-            auto new_first = new_arr + (new_arr_total - old_arr_size - incr) / 2
+            auto new_first     = new_arr + (new_arr_total - arr_size - incr) / 2
                              + (whence ? incr : 0);
-            uninitializedMove(first_.arr_, last_.arr_, new_first);
+            algstl::uninitializedCopy(first_.arr_, last_.arr_, new_first);
+            destroy(first_.arr_,last_.arr_);
+            arr_alloc_.deallocate(arr_);
             arr_       = new_arr;
             arr_total_ = new_arr_total;
             first_.resetArr(new_first);
-            last_.resetArr(new_first + old_arr_size);
+            last_.resetArr(new_first + arr_size - 1);
         }
     }
 
-    SizeType round(SizeType n)
+    SizeType _round(SizeType n)
     {
         return (n + 7) & (SizeType(-1) ^ 0x7);  //八倍圆整
     }
