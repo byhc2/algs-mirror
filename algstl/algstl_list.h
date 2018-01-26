@@ -155,8 +155,8 @@ class ListConstIterator
 
     ListConstIterator operator++(int)  //后置自增，返回右值
     {
-        NodeType *tmp = p_;
-        p_            = p_->next;
+        const NodeType *tmp = p_;
+        p_                  = p_->next_;
 
         return tmp;
     }
@@ -169,8 +169,8 @@ class ListConstIterator
 
     ListConstIterator operator--(int)  //后置自减，返回右值
     {
-        NodeType *tmp = p_;
-        p_            = p_->prev_;
+        const NodeType *tmp = p_;
+        p_                  = p_->prev_;
 
         return tmp;
     }
@@ -189,14 +189,6 @@ bool operator!=(const ListConstIterator<_T> &lhs,
 {
     return lhs.p_ != rhs.p_;
 }
-
-#if 0
-template<typename _T>
-bool operator!=(const ListConstIterator<_T> &lhs, const ListIterator<_T> &rhs)
-{
-    return lhs.p_ != rhs.p_;
-}
-#endif
 
 template<typename _T, typename _Alloc = Allocator<_T>>
 class List
@@ -231,12 +223,12 @@ class List
         insert(rhs.cbegin(), rhs.cend(), end());
     }
 
-    List(ConstIterator first, ConstIterator last) : List()
+    template<typename _InputIterator>
+    List(_InputIterator first, _InputIterator last) : List()
     {
         while (first != last)
         {
-            this->insert(*first, this->end());
-            ++first;
+            this->insert(*first++, this->end());
         }
     }
 
@@ -333,7 +325,9 @@ class List
     }
 
     //返回插入[first, last)后插入元素首迭代器
-    ConstIterator insert(ConstIterator first, ConstIterator last, Iterator pos)
+    template<typename _InputIterator>
+    ConstIterator insert(_InputIterator first, _InputIterator last,
+                         Iterator pos)
     {
         auto tmp = List(first, last);
         this->splice(tmp, tmp.begin(), tmp.end(), pos);
@@ -354,13 +348,18 @@ class List
         return p;
     }
 
-    Iterator insert(Iterator it, Iterator pos)
+    template<typename _InputIterator>
+    Iterator insert(_InputIterator it, Iterator pos)
     {
-        NodeType *p       = it->p_;
-        pos->prev_->next_ = p;
-        p->next_          = pos;
-        p->prev_          = pos->prev_;
-        pos->prev_        = p;
+        NodeType *p = alloc_.allocate(1);
+        alloc_.construct(p, *it);
+
+        auto pos0 = pos.p_;
+
+        pos0->prev_->next_ = p;
+        p->next_           = pos0;
+        p->prev_           = pos0->prev_;
+        pos0->prev_        = p;
         return p;
     }
 

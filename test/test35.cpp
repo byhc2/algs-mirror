@@ -28,6 +28,9 @@ int main(int argc, char *argv[])
     }
     cout << endl;
 
+    dq.erase(dq.begin());
+    cout << dq.size() << endl;
+
     dq.erase(dq.begin(), dq.end());
     cout << dq.size() << endl;
 

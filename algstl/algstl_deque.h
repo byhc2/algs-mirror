@@ -33,6 +33,10 @@ struct DequeIterator
     DequeIterator() : start_(0), end_(0), cur_(0), arr_(0)
     {}
 
+    DequeIterator(const DequeIterator &rhs)
+        : start_(rhs.start_), end_(rhs.end_), cur_(rhs.cur_), arr_(rhs.arr_)
+    {}
+
     Reference operator*()
     {
         return *cur_;
@@ -75,6 +79,13 @@ struct DequeIterator
         }
     }
 
+    DequeIterator operator++(int)
+    {
+        auto r = *this;
+        ++*this;
+        return r;
+    }
+
     DequeIterator &operator--()
     {
         if (cur_ != start_)
@@ -87,6 +98,13 @@ struct DequeIterator
             gotoPrev();
             return *this;
         }
+    }
+
+    DequeIterator operator--(int)
+    {
+        auto r = *this;
+        --*this;
+        return r;
     }
 
     Bool operator==(const DequeIterator &rhs) const
@@ -177,6 +195,20 @@ class Deque
         initArr();
     }
 
+    Deque(const Deque &rhs) : Deque()
+    {
+        insert(rhs.begin(), rhs.end(), end());
+    }
+
+    template<typename _InputIterator>
+    Deque(_InputIterator first, _InputIterator last) : Deque()
+    {
+        while (first != last)
+        {
+            this->insert(*first++, end());
+        }
+    }
+
     Reference front()
     {
         return *begin();
@@ -223,17 +255,16 @@ class Deque
         return !size();
     }
 
-    Void _deallocateArr(Pointer first, Pointer last)
+    Void _deallocateArr(Pointer *first, Pointer *last)
     {
         while (first != last)
         {
-            alloc_.deallocate(first++, bufsize);
+            alloc_.deallocate(*first++, bufsize);
         }
     }
 
     Iterator erase(Iterator first, Iterator last)
     {
-        auto len          = last - first;
         auto elems_before = first - this->begin();
         auto elems_after  = last - this->end();
         if (elems_before < elems_after)
@@ -242,6 +273,7 @@ class Deque
             algstl::destroy(begin(), new_first);
             _deallocateArr(first_.arr_, new_first.arr_);
             algstl::destroy(first_.arr_, new_first.arr_);
+            first_ = new_first;
             return last;
         }
         else
@@ -250,6 +282,7 @@ class Deque
             algstl::destroy(new_last, end());
             _deallocateArr(new_last.arr_ + 1, last_.arr_ + 1);
             algstl::destroy(new_last.arr_ + 1, last_.arr_ + 1);
+            last_ = new_last;
             return first;
         }
     }
@@ -267,11 +300,12 @@ class Deque
             algstl::copy(first_, p, p);
             popBack();
         }
+        return p;
     }
 
     void popBack()
     {
-        if (last_.cur_ != first_.first_)
+        if (last_.cur_ != first_.start_)
         {
             destroy(first_.cur_);
             ++first_.cur_;
@@ -387,37 +421,43 @@ class Deque
         return ReverseIterator(begin());
     }
 
+#if 0
     void resize(SizeType n)
     {
         if (n <= this->size())
         {
             this->erase(first_ + n, last_);
-            last_-=n;
+            last_ -= n;
         }
         else
         {
-            auto _reserve(n-size());
+            auto _reserve(n - size());
         }
     }
+#endif
 
     //将[first, last)置于pos前
     template<typename _InputIterator>
     Iterator insert(_InputIterator first, _InputIterator last, Iterator pos)
     {
-        auto num = last - first;
+        auto num = algstl::distance(first, last);
+        std::cout << "nuuuuuum: " << num << std::endl;
         assert(num >= 0);
+        std::cout << "pos - first_ : last_ - pos -- " << pos - first_ << " : " << last_ - pos << std::endl;
         if (pos - first_ < last_ - pos)  //向前调整
         {
             auto new_first = _reserve(num);
-            uninitializedCopy(first, last,
-                              uninitializedMove(first_, pos, first_ - num));
+            std::cout << "new_first: "<< new_first.toString() << std::endl;
+            std::cout << "first    : "<< first_.toString() << std::endl;
+            auto dest = move(begin(), pos, first_ - num);
+            uninitializedCopy(first, last, dest);
             first_ = new_first;
             return first_ + num;
         }
         else  //向后调整
         {
             auto new_last = _reserve(num, 1);
-            uninitializedMove(pos, last_, pos + num);
+            move(pos, last_, pos + num);
             uninitializedCopy(first, last, pos);
             last_ = new_last;
             return pos;
@@ -425,29 +465,32 @@ class Deque
     }
 
     // whence: 0首，1尾
-    Iterator _reserve(SizeType n, Int whence = 1)
+    Iterator _reserve(SizeType n, Int whence = 0)
     {
         if (!whence)  //首
         {
-            DifferenceType remain = n - first_.start_ - first_.cur_;
+            DifferenceType remain = n - (first_.cur_ - first_.start_);
+            std::cout << " remain: " << remain << std::endl;
             if (remain <= 0)
             {
                 return first_ - n;
             }
             auto arr_incr = n / bufsize + 1;
+            std::cout << "arr_incr: " << arr_incr << std::endl;
             if (first_.arr_ - arr_ < arr_incr)
             {
                 _extendArr(0, arr_incr);
             }
             while (arr_incr)
             {
-                *(first_.arr_ - arr_incr - 1) = alloc_.allocate(bufsize);
+                *(first_.arr_ - arr_incr) = alloc_.allocate(bufsize);
+                --arr_incr;
             }
             return first_ - n;
         }
         else
         {
-            DifferenceType remain = n - first_.start_ - first_.cur_;
+            DifferenceType remain = n - (last_.end_ - last_.cur_);
             if (remain <= 0)
             {
                 return last_ + n;
@@ -459,7 +502,8 @@ class Deque
             }
             while (arr_incr)
             {
-                *(last_.arr_ + arr_incr + 1) = alloc_.allocate(bufsize);
+                *(last_.arr_ + arr_incr) = alloc_.allocate(bufsize);
+                --arr_incr;
             }
             return last_ + n;
         }
@@ -482,7 +526,7 @@ class Deque
             }
             else
             {
-                algstl::moveBackward(first_.arr, last_.arr_ + 1,
+                algstl::moveBackward(first_.arr_, last_.arr_ + 1,
                                      new_first + arr_size);
             }
             first_.resetArr(new_first);
@@ -496,7 +540,7 @@ class Deque
             auto new_first     = new_arr + (new_arr_total - arr_size - incr) / 2
                              + (whence ? incr : 0);
             algstl::uninitializedCopy(first_.arr_, last_.arr_, new_first);
-            destroy(first_.arr_,last_.arr_);
+            destroy(first_.arr_, last_.arr_);
             arr_alloc_.deallocate(arr_);
             arr_       = new_arr;
             arr_total_ = new_arr_total;

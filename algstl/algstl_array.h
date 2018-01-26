@@ -213,7 +213,7 @@ class Array
     Iterator erase(Iterator it)
     {
         destroy(*it);
-        algstl::uninitializedMove(it + 1, end(), it);
+        algstl::move(it + 1, end(), it);
         --end_;
         return it;
     }
