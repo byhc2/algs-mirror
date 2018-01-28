@@ -15,7 +15,7 @@
 //再寻址于缓冲区内
 
 // TODO FIXME
-// erase与insert实现有问题，但目前暂不用此二接口，故暂不管
+// insert实现暂时不允许自我插入
 
 namespace algstl
 {
@@ -49,7 +49,7 @@ struct DequeIterator
     }
 
     //以下二函数俱不检查边界
-    void gotoNext()
+    void _gotoNext()
     {
         ++arr_;
         start_ = *arr_;
@@ -57,7 +57,7 @@ struct DequeIterator
         cur_   = start_;
     }
 
-    void gotoPrev()
+    void _gotoPrev()
     {
         --arr_;
         start_ = *arr_;
@@ -74,7 +74,7 @@ struct DequeIterator
         }
         else
         {
-            gotoNext();
+            _gotoNext();
             return *this;
         }
     }
@@ -95,7 +95,7 @@ struct DequeIterator
         }
         else
         {
-            gotoPrev();
+            _gotoPrev();
             return *this;
         }
     }
@@ -117,7 +117,7 @@ struct DequeIterator
         return cur_ != rhs.cur_;
     }
 
-    Void resetArr(Pointer *n)
+    Void _resetArr(Pointer *n)
     {
         arr_   = n;
         start_ = *arr_;
@@ -147,8 +147,9 @@ struct DequeIterator
         }
         else
         {
-            resetArr(arr_
-                     + (offset > 0 ? offset / bufsize : -offset / bufsize - 1));
+            resetArr(
+                arr_
+                + (offset > 0 ? (offset / bufsize) : -(-offset / bufsize + 1)));
             cur_ = *arr_
                    + (offset > 0 ? offset % bufsize
                                  : bufsize - (-offset % bufsize));
@@ -192,7 +193,7 @@ class Deque
 
     Deque() : arr_(0), arr_total_(0), first_(), last_()
     {
-        initArr();
+        _initArr();
     }
 
     Deque(const Deque &rhs) : Deque()
@@ -331,7 +332,7 @@ class Deque
         return;
     }
 
-    void initArr(Uint n = 1)
+    void _initArr(Uint n = 1)
     {
         n          = this->_round(n);
         arr_       = arr_alloc_.allocate(8);
@@ -441,14 +442,10 @@ class Deque
     Iterator insert(_InputIterator first, _InputIterator last, Iterator pos)
     {
         auto num = algstl::distance(first, last);
-        std::cout << "nuuuuuum: " << num << std::endl;
         assert(num >= 0);
-        std::cout << "pos - first_ : last_ - pos -- " << pos - first_ << " : " << last_ - pos << std::endl;
         if (pos - first_ < last_ - pos)  //向前调整
         {
             auto new_first = _reserve(num);
-            std::cout << "new_first: "<< new_first.toString() << std::endl;
-            std::cout << "first    : "<< first_.toString() << std::endl;
             auto dest = move(begin(), pos, first_ - num);
             uninitializedCopy(first, last, dest);
             first_ = new_first;
@@ -470,13 +467,11 @@ class Deque
         if (!whence)  //首
         {
             DifferenceType remain = n - (first_.cur_ - first_.start_);
-            std::cout << " remain: " << remain << std::endl;
             if (remain <= 0)
             {
                 return first_ - n;
             }
             auto arr_incr = n / bufsize + 1;
-            std::cout << "arr_incr: " << arr_incr << std::endl;
             if (first_.arr_ - arr_ < arr_incr)
             {
                 _extendArr(0, arr_incr);
@@ -539,7 +534,7 @@ class Deque
             auto new_arr       = arr_alloc_.allocate(new_arr_total);
             auto new_first     = new_arr + (new_arr_total - arr_size - incr) / 2
                              + (whence ? incr : 0);
-            algstl::uninitializedCopy(first_.arr_, last_.arr_, new_first);
+            algstl::uninitializedCopy(first_.arr_, last_.arr_ + 1, new_first);
             destroy(first_.arr_, last_.arr_);
             arr_alloc_.deallocate(arr_);
             arr_       = new_arr;
