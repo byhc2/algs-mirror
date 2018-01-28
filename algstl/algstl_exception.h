@@ -1,6 +1,8 @@
 #ifndef __ALGSTL_EXCEPTION__
 #define __ALGSTL_EXCEPTION__
 
+namespace algstl
+{
 class AlgstlException
 {
     public:
@@ -19,5 +21,6 @@ class AlgstlException
     virtual const Char *what()
     {}
 };
+}
 
 #endif

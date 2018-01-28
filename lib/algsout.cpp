@@ -31,7 +31,7 @@ template<typename... _Args>
 void AlgsStdOut::printf(String f, const Int &v, const _Args &... args)
 {
     String buffer = "";
-    Char *p = f.c_str();
+    Char *p = f.cStr();
     while (p != '\0')
     {
         if (*p == "%")
@@ -53,7 +53,7 @@ void AlgsStdOut::printf(const String &f, ...)
 {
     va_list args;
     va_start(args, f);
-    vprintf(f.c_str(), args);
+    vprintf(f.cStr(), args);
     va_end(args);
 }
 #endif

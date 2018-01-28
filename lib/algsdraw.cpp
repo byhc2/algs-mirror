@@ -168,11 +168,11 @@ Void AlgsDraw::text(Double x, Double y, const String &s)
     init();
     drawInit();
 
-    cairo_select_font_face(cr_, font_.c_str(), CAIRO_FONT_SLANT_NORMAL,
+    cairo_select_font_face(cr_, font_.cStr(), CAIRO_FONT_SLANT_NORMAL,
                            CAIRO_FONT_WEIGHT_NORMAL);
     cairo_set_font_size(cr_, 14);
     cairo_move_to(cr_, c2sX(x), c2sY(y));
-    cairo_show_text(cr_, s.c_str());
+    cairo_show_text(cr_, s.cStr());
 
     drawFinish();
 }
@@ -261,13 +261,13 @@ Void AlgsDraw::show()
     }
     else
     {
-        display_ = XOpenDisplay(str_disp.c_str());
+        display_ = XOpenDisplay(str_disp.cStr());
     }
 
     if (display_ == NULL)
     {
         throw std::runtime_error(
-            ("Cannot open DISPLAY " + str_disp + ".").c_str());
+            ("Cannot open DISPLAY " + str_disp + ".").cStr());
         return;
     }
 
@@ -292,7 +292,7 @@ Void AlgsDraw::show()
     while (running)
     {
         XNextEvent(display_, &evt);
-        printf("Get %s\n", event2str(evt.type).c_str());
+        printf("Get %s\n", event2str(evt.type).cStr());
         switch (evt.type)
         {
         case Expose:

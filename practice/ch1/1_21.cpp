@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     while (cin >> name >> num1 >> num2)
     {
         AlgsStdOut::printf("%-10s\t%5d\t%5d\t%.3f\n",
-                name.c_str(), num1, num2,
+                name.cStr(), num1, num2,
                 static_cast<Double>(num1) / num2);
     }
 

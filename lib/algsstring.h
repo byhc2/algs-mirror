@@ -73,7 +73,7 @@ class StringBase
 
         StringBuf(SizeType n = 1)
         {
-            n += 8;  //本来8字节圆整只需要加7，但是考虑到c_str方法一定要多留出一个字节的空间放结束符，所以这里多分配点
+            n += 8;  //本来8字节圆整只需要加7，但是考虑到cStr方法一定要多留出一个字节的空间放结束符，所以这里多分配点
             n &= SizeType(-1) ^ 0x7;  // 8字节圆整对齐
             buf_       = buf_allocator.allocate(n);
             mstart_    = buf_;
@@ -194,7 +194,7 @@ class StringBase
         }
     }
 
-    const Char *c_str() const
+    const Char *cStr() const
     {
         *sbuf_->mend_ = '\0';
         return sbuf_->mstart_;
@@ -209,8 +209,8 @@ class StringBase
     {
         auto p = new BufferType(size() + rhs.size());
         assert(p);
-        p->append(c_str(), size());
-        p->append(rhs.c_str(), rhs.size());
+        p->append(cStr(), size());
+        p->append(rhs.cStr(), rhs.size());
 
         if (!sbuf_->decr())
         {
@@ -238,8 +238,8 @@ template<typename _A>
 StringBase<_A> operator+(const StringBase<_A> &lhs, const StringBase<_A> &rhs)
 {
     StringBase<_A> ret(lhs.size() + rhs.size());
-    ret.append(lhs.c_str(), lhs.size());
-    ret.append(rhs.c_str(), rhs.size());
+    ret.append(lhs.cStr(), lhs.size());
+    ret.append(rhs.cStr(), rhs.size());
 
     return ret;
 }
@@ -249,7 +249,7 @@ StringBase<_A> operator+(const StringBase<_A> &lhs, const Char *rhs)
 {
     auto rhs_size = strlen(rhs);
     StringBase<_A> ret(lhs.size() + rhs_size);
-    ret.append(lhs.c_str(), lhs.size());
+    ret.append(lhs.cStr(), lhs.size());
     ret.append(rhs, rhs_size);
 
     return ret;
@@ -261,7 +261,7 @@ StringBase<_A> operator+(const Char *lhs, const StringBase<_A> &rhs)
     auto lhs_size = strlen(lhs);
     StringBase<_A> ret(lhs_size + rhs.size());
     ret.append(lhs, lhs_size);
-    ret.append(rhs.c_str(), rhs.size());
+    ret.append(rhs.cStr(), rhs.size());
 
     return ret;
 }
@@ -269,25 +269,25 @@ StringBase<_A> operator+(const Char *lhs, const StringBase<_A> &rhs)
 template<typename _A>
 bool operator==(const StringBase<_A> &lhs, const StringBase<_A> &rhs)
 {
-    return !strncmp(lhs.c_str(), rhs.c_str(), lhs.size());
+    return !strncmp(lhs.cStr(), rhs.cStr(), lhs.size());
 }
 
 template<typename _A>
 bool operator==(const StringBase<_A> &lhs, const Char *rhs)
 {
-    return !strncmp(lhs.c_str(), rhs, lhs.size());
+    return !strncmp(lhs.cStr(), rhs, lhs.size());
 }
 
 template<typename _A>
 bool operator==(const Char *lhs, const StringBase<_A> &rhs)
 {
-    return !strncmp(lhs, rhs.c_str(), rhs.size());
+    return !strncmp(lhs, rhs.cStr(), rhs.size());
 }
 
 template<typename _A>
 std::ostream &operator<<(std::ostream &os, const StringBase<_A> &rhs)
 {
-    os << rhs.c_str();
+    os << rhs.cStr();
     return os;
 }
 

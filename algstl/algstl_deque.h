@@ -147,7 +147,7 @@ struct DequeIterator
         }
         else
         {
-            resetArr(
+            _resetArr(
                 arr_
                 + (offset > 0 ? (offset / bufsize) : -(-offset / bufsize + 1)));
             cur_ = *arr_
@@ -194,6 +194,14 @@ class Deque
     Deque() : arr_(0), arr_total_(0), first_(), last_()
     {
         _initArr();
+    }
+
+    ~Deque()
+    {
+        destroy(first_, last_);
+        _deallocateArr(first_.arr_, last_.arr_ + 1);
+        destroy(first_.arr_, last_.arr_);
+        arr_alloc_.deallocate(arr_);
     }
 
     Deque(const Deque &rhs) : Deque()
@@ -306,15 +314,16 @@ class Deque
 
     void popBack()
     {
-        if (last_.cur_ != first_.start_)
+        if (last_.cur_ != last_.start_)
         {
-            destroy(first_.cur_);
-            ++first_.cur_;
+            destroy(last_.cur_ - 1);
+            --last_.cur_;
             return;
         }
-        destroy(first_.cur_);
-        first_.gotoNext();
-        first_.cur_ = first_.start_;
+        last_._gotoPrev();
+        destroy(last_.cur_ - 1);
+        --last_.cur_;
+        arr_alloc_.deallocate(last_.arr_ + 1);
         return;
     }
 
@@ -327,8 +336,8 @@ class Deque
             return;
         }
         destroy(first_.cur_);
-        first_.gotoNext();
-        first_.cur_ = first_.start_;
+        first_._gotoNext();
+        arr_alloc_.deallocate(first_.arr_ - 1);
         return;
     }
 
@@ -364,7 +373,7 @@ class Deque
             _extendArr();
         }
         *(first_.arr_ - 1) = alloc_.allocate(bufsize);
-        first_.resetArr(first_.arr_ - 1);
+        first_._resetArr(first_.arr_ - 1);
         first_.cur_ = first_.end_;
         alloc_.construct(first_.cur_ - 1, t);
         --first_.cur_;
@@ -385,7 +394,7 @@ class Deque
             _extendArr(1);
         }
         *(last_.arr_ + 1) = alloc_.allocate(bufsize);
-        last_.resetArr(last_.arr_ + 1);
+        last_._resetArr(last_.arr_ + 1);
         last_.cur_ = last_.start_;
         alloc_.construct(last_.cur_, t);
         ++last_.cur_;
@@ -446,7 +455,7 @@ class Deque
         if (pos - first_ < last_ - pos)  //向前调整
         {
             auto new_first = _reserve(num);
-            auto dest = move(begin(), pos, first_ - num);
+            auto dest      = move(begin(), pos, first_ - num);
             uninitializedCopy(first, last, dest);
             first_ = new_first;
             return first_ + num;
@@ -524,8 +533,8 @@ class Deque
                 algstl::moveBackward(first_.arr_, last_.arr_ + 1,
                                      new_first + arr_size);
             }
-            first_.resetArr(new_first);
-            last_.resetArr(new_first + arr_size);
+            first_._resetArr(new_first);
+            last_._resetArr(new_first + arr_size);
         }
         else
         {
@@ -539,8 +548,8 @@ class Deque
             arr_alloc_.deallocate(arr_);
             arr_       = new_arr;
             arr_total_ = new_arr_total;
-            first_.resetArr(new_first);
-            last_.resetArr(new_first + arr_size - 1);
+            first_._resetArr(new_first);
+            last_._resetArr(new_first + arr_size - 1);
         }
     }
 

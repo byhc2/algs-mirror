@@ -15,7 +15,7 @@ class SmartDate
         if (month_ < 0 || month_ > 12)
         {
             throw std::runtime_error(
-                ("invalid month value " + Num::toString(month_)).c_str());
+                ("invalid month value " + Num::toString(month_)).cStr());
         }
 
         Bool isleap = (year % 100) ? (year % 4) : (year % 400);
@@ -32,7 +32,7 @@ class SmartDate
             if (day < 1 || day > 31)
             {
                 throw std::runtime_error(
-                    ("invalid day value " + Num::toString(day)).c_str());
+                    ("invalid day value " + Num::toString(day)).cStr());
             }
             break;
         case 4:
@@ -42,19 +42,19 @@ class SmartDate
             if (day < 1 || day > 30)
             {
                 throw std::runtime_error(
-                    ("invalid day value " + Num::toString(day)).c_str());
+                    ("invalid day value " + Num::toString(day)).cStr());
             }
             break;
         case 2:
             if (day < 1 || day > (isleap ? 29 : 28))
             {
                 throw std::runtime_error(
-                    ("invalid day value " + Num::toString(day)).c_str());
+                    ("invalid day value " + Num::toString(day)).cStr());
             }
             break;
         default:
             throw std::runtime_error(
-                ("invalid month value " + Num::toString(month)).c_str());
+                ("invalid month value " + Num::toString(month)).cStr());
         }
     }
 

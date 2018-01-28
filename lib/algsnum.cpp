@@ -8,12 +8,12 @@ namespace algs
 
 Int Num::parseInt(const String &s)
 {
-    return atoi(s.c_str());
+    return atoi(s.cStr());
 }
 
 Double Num::parseDouble(const String &s)
 {
-    return atof(s.c_str());
+    return atof(s.cStr());
 }
 
 String Num::toString(Double d, const Int precision, const Int ipart_precision)
@@ -87,7 +87,7 @@ String Num::toString(Double d, const Int precision, const Int ipart_precision)
         Int frac_part = static_cast<Int>(pow(10, precision) * d);
         ret += Num::toString(frac_part);
 #endif
-        snprintf(buf, 50, lgstr.c_str(), d);
+        snprintf(buf, 50, lgstr.cStr(), d);
     }
     else if (ipart_precision < mag)
     {
@@ -97,7 +97,7 @@ String Num::toString(Double d, const Int precision, const Int ipart_precision)
     else if (-ipart_precision <= mag && mag < 0)
     {
         //小数部分填充0
-        snprintf(buf, 50, lgstr.c_str(), d);
+        snprintf(buf, 50, lgstr.cStr(), d);
     }
     else
     {
