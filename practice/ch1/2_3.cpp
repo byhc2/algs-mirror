@@ -10,6 +10,8 @@ using namespace std;
 using namespace algs;
 using namespace algstl;
 
+//习题1.2.3
+
 struct Config
 {
     Bool has_min_;

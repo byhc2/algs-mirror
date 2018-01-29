@@ -5,10 +5,9 @@
 
 namespace algs
 {
-
 class AlgsMath
 {
-public:
+    public:
     static Double log(Double i);
     inline static Double abs(Double v)
     {
@@ -22,11 +21,10 @@ public:
     static Double sin(Double a);
     static Double cos(Double a);
     static Double pow(Double x, Double y);
+    static Double sqrt(Double a);
 
     static constexpr Double pi_ = 3.1415926;
-
 };
-
 }
 
 #endif

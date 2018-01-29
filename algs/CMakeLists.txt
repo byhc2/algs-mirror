@@ -3,6 +3,7 @@ set(utilalgs_src
     geometry.cpp
     misc.cpp
     accumulator.cpp
+    evaluate.cpp
    )
 
 add_library(utilalgs SHARED ${utilalgs_src})

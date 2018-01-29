@@ -2,6 +2,8 @@
 #include "algstl_array.h"
 #include "counter.h"
 
+//习题1.2.9
+
 using namespace std;
 using namespace algs;
 using namespace algstl;

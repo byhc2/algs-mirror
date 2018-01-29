@@ -23,6 +23,7 @@ Accumulator &Accumulator::operator=(const Accumulator &rhs)
     return *this;
 }
 
+//习题2.18
 Accumulator &Accumulator::operator+=(Double a)
 {
     //计算新的均值和方差
@@ -33,7 +34,7 @@ Accumulator &Accumulator::operator+=(Double a)
     //我这里直接就算出Sn了
     if (c_ > 0)
     {
-        //下面的写法是搓的，因为(c_-1)/c_*s_是0
+        //下面的写法是错的，因为(c_-1)/c_*s_是0
         // s_ = (c_ - 1) / c_ * s_ + (a - m_) * (a - m_) / (c_ + 1);
         s_ = s_ * (c_ - 1) / c_ + (a - m_) * (a - m_) / (c_ + 1);
         m_ = (c_ * m_ + a) / (c_ + 1);

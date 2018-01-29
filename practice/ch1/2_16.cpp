@@ -2,7 +2,7 @@
 // 2.14 略
 // 2.15 略
 
-//2.16 2.17均在以下代码中
+// 2.16 2.17均在以下代码中
 #include <iostream>
 #include <stdexcept>
 #include "algs_type.h"
@@ -231,3 +231,5 @@ int main(int argc, char *argv[])
     }
     return 0;
 }
+
+// 2.19 略

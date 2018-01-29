@@ -1,19 +1,12 @@
 #include <iostream>
-#include "algstl_stack.h"
-#include "algsstring.h"
+#include "evaluate.h"
 
 using namespace std;
 using namespace algs;
-using namespace algstl;
 
 int main(int argc, char *argv[])
 {
-    Stack<String> st;
+    cout << evaluate("2 * 3") << endl;
 
-    String x;
-    while (cin >> x)
-    {
-        if (x == "-")
-        st.push(x);
-    }
+    return 0;
 }

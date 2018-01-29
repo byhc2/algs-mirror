@@ -13,14 +13,17 @@ class Stack
     public:
     typedef _T ValueType;
     typedef typename _Container::SizeType SizeType;
+    typedef typename _Container::ConstIterator ConstIterator;
 
     class StackEmptyError : public AlgstlException
     {
         public:
         StackEmptyError(const algs::String &e) : e_(e)
         {}
+
         ~StackEmptyError()
         {}
+
         const Char *what()
         {
             return e_.cStr();
@@ -30,12 +33,30 @@ class Stack
         algs::String e_;
     };
 
+    ConstIterator cbegin() const
+    {
+        return deque_.cbegin();
+    }
+
+    ConstIterator cend() const
+    {
+        return deque_.cend();
+    }
+
     Stack()
+    {}
+
+    Stack(const Stack &rhs) : deque_(rhs.deque_)
     {}
 
     Void push(const ValueType &v)
     {
         deque_.pushBack(v);
+    }
+
+    const ValueType &top()
+    {
+        return deque_.back();
     }
 
     ValueType pop()

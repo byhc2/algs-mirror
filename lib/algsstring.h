@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <cstring>
+#include <ios>
 #include <iostream>
 #include "algs_type.h"
 #include "algstl_memory.h"
@@ -37,6 +38,7 @@ class StringBase
     {
         typedef Uint SizeType;
         typedef _BufAlloc Allocator;
+        typedef const Char *Iterator;
         Char *buf_;
         Char *mstart_;
         Char *mend_;
@@ -106,6 +108,20 @@ class StringBase
 
     typedef StringBuf<_Alloc> BufferType;
     typedef typename BufferType::SizeType SizeType;
+    typedef typename BufferType::Iterator Iterator;
+
+    Iterator begin() const
+    {
+        return sbuf_->mstart_;
+    }
+
+    Iterator end() const
+    {
+        return sbuf_->mend_;
+    }
+
+    StringBase(Iterator first, Iterator last) : StringBase(first, last - first)
+    {}
 
     StringBase() : sbuf_(nullptr)
     {
@@ -308,9 +324,18 @@ std::istream &operator>>(std::istream &is, StringBase<_A> &rhs)
     auto q  = 0;
     assert(p);
 
-    while (isspace(buf->sgetc()))
+    auto c = buf->sgetc();
+
+    if (c == EOF)
     {
-        buf->sbumpc();
+        is.sync();  //略去后续
+        is.clear(is.rdstate() | std::ios_base::eofbit | std::ios_base::failbit);
+        return is;
+    }
+
+    while (isspace(c))
+    {
+        buf->snextc();
     }
 
     while (buf->sgetc() != EOF)

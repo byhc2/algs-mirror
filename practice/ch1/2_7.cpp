@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 
+//习题1.2.7
+
 using namespace std;
 
 string mystery(const string &s)

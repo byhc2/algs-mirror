@@ -11,6 +11,8 @@ using namespace std;
 using namespace algs;
 using namespace algstl;
 
+//习题1.2.1
+
 int main(int argc, char *argv[])
 {
     int c;

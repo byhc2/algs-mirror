@@ -1,6 +1,8 @@
 #ifndef __ALGSTL_EXCEPTION__
 #define __ALGSTL_EXCEPTION__
 
+#include "algsstring.h"
+
 namespace algstl
 {
 class AlgstlException
@@ -16,10 +18,11 @@ class AlgstlException
     {}
 
     AlgstlException &operator=(const AlgstlException &e)
-    {}
+    {
+        return *this;
+    }
 
-    virtual const Char *what()
-    {}
+    virtual const Char *what() = 0;
 };
 }
 

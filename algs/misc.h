@@ -27,6 +27,10 @@ class Date
         return month_;
     }
 
+    //TODO 解析构造
+    Date(const String &s="")
+    {}
+
     algs::String toString(bool desc = false)
     {
         if (!desc)
